@@ -1,0 +1,364 @@
+"""
+k-cli — Main CLI entry point.
+
+All AI agents discover this CLI through SKILL.md or CLI-Anything registry.
+The --help/-h output is the primary interface for agents — it must be
+comprehensive enough for an agent to execute commands without additional docs.
+
+Usage:
+    k-cli [OPTIONS] COMMAND [ARGS]...
+
+Commands:
+    weather     날씨/환경 (미세먼지, 한강수위, 날씨, 혼잡도)
+    finance     법률/금융 (주식, DART, 법령, 코시스, 사업자등록)
+    transit     교통/이동 (SRT, KTX, 지하철, 버스, 항공)
+    shopping    쇼핑 (쿠팡, 올리브영, 마켓컬리, 다이소, 당근)
+    realestate  부동산 (실거래가, 공시가, 감정평가, 공고문)
+    sports      스포츠/엔터 (KBO, KBL, K리그, LCK, 영화관, 로또)
+    market      중고거래 (당근중고, 번개장터, 중고차)
+    search      검색 (네이버뉴스, 블로그, 긱뉴스, 특허, 실록)
+    document    문서 (HWP, 맞춤법, 글자수)
+    delivery    배송 (택배송장 추적)
+    life        생활 (쓰레기배출, 응급실, 주유소, 공중화장실, 기부처)
+    travel      여행 (마이리얼트립 항공권/숙소/투어)
+    list        설치된 스킬 목록 조회
+    setup       의존성 확인 및 설치
+
+Options:
+    --json, -j   JSON 출력 모드 (에이전트 자동처리용)
+    --version     버전 정보
+    --help, -h    이 도움말
+"""
+
+import asyncio
+import json
+import shutil
+import subprocess
+import sys
+from typing import Optional
+
+import click
+
+from . import __version__
+from .loader import discover_cli_groups, list_all_skills
+
+
+@click.group(invoke_without_command=True)
+@click.option(
+    "--json", "-j", "as_json",
+    is_flag=True,
+    default=False,
+    help="JSON 출력 모드. AI 에이전트가 구조화된 데이터를 파싱할 때 사용.",
+)
+@click.version_option(__version__, prog_name="k-cli")
+@click.pass_context
+def main(ctx: click.Context, as_json: bool):
+    """k-cli — 한국인을 위한 CLI 스킬 모음 (86+ 스킬)
+
+    다양한 한국 특화 유틸리티를 단일 CLI로 제공합니다.
+    프록시 기반 스킬은 추가 설치 없이 즉시 사용 가능합니다.
+
+    ─────────────────────────────────────────────
+    🤖 에이전트 빠른 실행 가이드 (Agent Quick Reference)
+    ─────────────────────────────────────────────
+    모든 명령에 -j (--json) 플래그를 붙이면 구조화 JSON이 반환됩니다.
+    에이전트는 JSON 응답의 data 필드를 파싱하여 사용하세요.
+
+    날씨/환경:
+      k-cli weather fine-dust --region "지역명" -j
+      k-cli weather airkorea --region "지역명" -j
+      k-cli weather forecast --region "지역명" -j
+
+    금융/법률:
+      k-cli finance stock-search --query "종목명" -j
+      k-cli finance dart --corp "기업명" -j
+      k-cli finance law-search --query "검색어" -j
+      k-cli finance kosis --stats-id "통계표ID" -j
+      k-cli finance business-reg --number "사업자번호" -j
+
+    교통:
+      k-cli transit subway-arrival --station "역명" -j
+      k-cli transit seoul-density --area "지역명" -j
+      k-cli transit lost-property --line "호선" -j
+
+    쇼핑:
+      k-cli shopping coupang --query "검색어" -j
+      k-cli shopping olive-young --query "검색어" -j
+
+    부동산:
+      k-cli realestate trade-price --region "시군구" -j
+      k-cli realestate gongsijiga --region "시군구" -j
+
+    스포츠/엔터:
+      k-cli sports kbo --date YYYY-MM-DD -j
+      k-cli sports kbl --date YYYY-MM-DD -j
+      k-cli sports kleague --date YYYY-MM-DD -j
+      k-cli sports lck --split "split명" -j
+      k-cli sports cinema --theater cgv --region "지역" -j
+      k-cli sports lotto --round "회차" -j
+
+    중고거래:
+      k-cli market daangn --category "카테고리" --region "지역" -j
+      k-cli market bunjang --query "검색어" -j
+
+    검색:
+      k-cli search naver-news --query "검색어" -j
+      k-cli search naver-blog --query "검색어" -j
+      k-cli search geeknews -j
+
+    생활:
+      k-cli life emergency-room --region "시도" -j
+      k-cli life gas-station --region "시도" --oil "휘발유" -j
+      k-cli life waste-info --region "시군구" -j
+
+    여행:
+      k-cli travel myrealtrip-flight --origin GMP --destination CJU --date YYYY-MM-DD -j
+      k-cli travel myrealtrip-stay --keyword "호텔명" --checkin YYYY-MM-DD --checkout YYYY-MM-DD -j
+
+    문서:
+      k-cli document char-count --text "텍스트" -j
+
+    유틸리티:
+      k-cli list --all -j                # 전체 스킬 목록
+      k-cli list -d weather -j           # 도메인별 스킬
+      k-cli setup check -j               # 의존성 상태
+      k-cli setup proxy -j               # 프록시 연결 상태
+
+    ─────────────────────────────────────────────
+    🔧 환경변수
+    ─────────────────────────────────────────────
+    KSKILL_PROXY_BASE_URL  프록시 URL 오버라이드
+                          (기본: https://k-skill-proxy.nomadamas.org)
+
+    ─────────────────────────────────────────────
+    📦 JSON 응답 형식 (모든 스킬 공통)
+    ─────────────────────────────────────────────
+    성공 시: {"skill": "...", "status": "success", "data": {...}, "meta": {"source": "...", "response_time_ms": N}}
+    실패 시: {"skill": "...", "status": "error", "error": {"code": "...", "message": "...", "fix": "..."}}
+
+    ─────────────────────────────────────────────
+    🔄 스킬 업데이트
+    ─────────────────────────────────────────────
+    스킬 추가/수정 시 기존 코드 변경 불필요:
+      manifest.yaml만 추가하면 로더가 자동 발견합니다.
+    """
+    ctx.ensure_object(dict)
+    ctx.obj["as_json"] = as_json
+
+    # Show help when no command is given
+    if ctx.invoked_subcommand is None:
+        click.echo(ctx.get_help())
+
+
+# ============================================================
+# Built-in commands (not loaded from skills/)
+# ============================================================
+
+
+@main.command()
+@click.option("--all", "list_all", is_flag=True, help="모든 스킬 상세 목록 조회")
+@click.option("--domain", "-d", help="특정 도메인의 스킬만 조회")
+@click.option("--category", "-c", help="특정 카테고리의 스킬만 조회")
+@click.pass_context
+def list(ctx: click.Context, list_all: bool, domain: Optional[str], category: Optional[str]):
+    """설치된 스킬 목록 조회.
+
+    스킬 도메인, 이름, 설명, 카테고리를 출력합니다.
+    --json 모드에서는 구조화된 배열을 반환합니다.
+
+    예시:
+      k-cli list                  # 도메인별 요약
+      k-cli list --all            # 전체 스킬 목록
+      k-cli list -d weather       # 날씨 도메인 스킬
+      k-cli list -c utility       # 유틸리티 카테고리
+    """
+    skills = list_all_skills()
+
+    if domain:
+        skills = [s for s in skills if s["domain"] == domain]
+    if category:
+        skills = [s for s in skills if s.get("category") == category]
+
+    if not list_all and not domain and not category:
+        # 기본: 도메인별 요약
+        domains_seen: set[str] = set()
+        domain_list: list[dict] = []
+        for s in skills:
+            if s["domain"] not in domains_seen:
+                domains_seen.add(s["domain"])
+                domain_skills = [sk for sk in skills if sk["domain"] == s["domain"]]
+                domain_list.append({
+                    "domain": s["domain"],
+                    "description": s.get("description", ""),
+                    "count": len(domain_skills),
+                })
+
+        if ctx.obj["as_json"]:
+            click.echo(json.dumps(domain_list, ensure_ascii=False, indent=2))
+        else:
+            for d in domain_list:
+                click.echo(f"  {d['domain']:12s} ({d['count']}개) {d['description']}")
+            click.echo(
+                f"\n총 {len(skills)}개 스킬 | k-cli list --all 전체목록 | k-cli list -d <domain> 도메인별"
+            )
+    else:
+        if ctx.obj["as_json"]:
+            click.echo(json.dumps(skills, ensure_ascii=False, indent=2))
+        else:
+            for s in skills:
+                click.echo(
+                    f"  {s['domain']}/{s['name']:25s} {s['display_name']}  [{s.get('category', '')}]"
+                )
+            click.echo(f"\n총 {len(skills)}개")
+
+
+@main.group(chain=True)
+@click.pass_context
+def setup(ctx: click.Context):
+    """의존성 확인 및 설치.
+
+    하위 명령:
+      check      시스템/패키지/런타임 의존성 상태 확인
+      install    누락된 의존성 설치 안내
+      proxy      프록시 연결 상태 확인
+    """
+    pass
+
+
+@setup.command("check")
+@click.pass_context
+def setup_check(ctx: click.Context):
+    """시스템 의존성 상태 전체 확인.
+
+    Python, Node.js, curl, jq, k-skill-proxy 연결 상태를 점검합니다.
+
+    예시:
+      k-cli setup check
+      k-cli setup check -j   # JSON 출력
+    """
+    checks: dict[str, dict] = {}
+
+    # Python
+    checks["python"] = {
+        "version": f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
+        "ok": sys.version_info >= (3, 10),
+    }
+
+    # Node.js
+    node_path = shutil.which("node")
+    if node_path:
+        try:
+            result = subprocess.run(
+                ["node", "--version"], capture_output=True, text=True
+            )
+            checks["node"] = {"version": result.stdout.strip(), "ok": True}
+        except Exception:
+            checks["node"] = {"version": None, "ok": False}
+    else:
+        checks["node"] = {"version": None, "ok": False, "note": "npm 스킬 사용 시 필요"}
+
+    # curl
+    checks["curl"] = {"ok": shutil.which("curl") is not None}
+
+    # jq
+    checks["jq"] = {"ok": shutil.which("jq") is not None, "note": "선택사항"}
+
+    # Proxy
+    try:
+        from .proxy import health_check
+        proxy_ok = asyncio.get_event_loop().run_until_complete(health_check())
+        checks["proxy"] = {"ok": proxy_ok}
+    except Exception:
+        checks["proxy"] = {"ok": False}
+
+    if ctx.obj["as_json"]:
+        click.echo(json.dumps(checks, ensure_ascii=False, indent=2))
+    else:
+        all_ok = True
+        for name, status in checks.items():
+            icon = "✅" if status["ok"] else "❌"
+            ver = status.get("version", "")
+            note = status.get("note", "")
+            click.echo(f"  {icon} {name:10s} {ver:12s} {note}")
+            if not status["ok"]:
+                all_ok = False
+
+        if all_ok:
+            click.echo("\n✨ 모든 의존성 준비 완료")
+        else:
+            click.echo("\n⚠️ 일부 의존성 누락 — k-cli setup install 참고")
+
+
+@setup.command("install")
+def setup_install():
+    """누락된 의존성 설치 안내.
+
+    보안 정책상 자동 설치는 수행하지 않습니다.
+    누락된 패키지별 수동 설치 명령어를 안내합니다.
+
+    예시:
+      k-cli setup install
+    """
+    click.echo("의존성 수동 설치 가이드:")
+    click.echo("  pip install -e .                    # k-cli 개발 설치")
+    click.echo("  pip install SRTrain                 # SRT 예매")
+    click.echo("  pip install korail2                 # KTX 예매")
+    click.echo("  pip install mcp                     # 마이리얼트립 (Remote MCP)")
+    click.echo("  npm install -g daiso                # 올리브영/영화관 검색")
+    click.echo("  npm install -g kbo-game             # KBO 경기 결과")
+    click.echo("  npm install -g kbl-results          # KBL 경기 결과")
+    click.echo("  npm install -g kleague-results      # K리그 경기 결과")
+    click.echo("  npm install -g lck-analytics        # LCK 분석")
+    click.echo("  npm install -g k-lotto              # 로또 당첨번호")
+    click.echo("  k-cli setup check                    # 설치 상태 재확인")
+
+
+@setup.command("proxy")
+@click.pass_context
+def setup_proxy(ctx: click.Context):
+    """k-skill-proxy 연결 상태 확인.
+
+    프록시 서버 가용성을 테스트합니다.
+    KSKILL_PROXY_BASE_URL 환경변수로 오버라이드 가능합니다.
+
+    예시:
+      k-cli setup proxy
+      k-cli setup proxy -j   # JSON 출력
+    """
+    from .proxy import get_proxy_base, health_check
+
+    base = get_proxy_base()
+    click.echo(f"프록시: {base}", err=True)
+    try:
+        ok = asyncio.get_event_loop().run_until_complete(health_check())
+        if ctx.obj["as_json"]:
+            click.echo(json.dumps({"proxy": base, "reachable": ok}))
+        else:
+            icon = "✅" if ok else "❌"
+            click.echo(f"{icon} 프록시 {'연결 가능' if ok else '연결 불가'}")
+    except Exception as e:
+        if ctx.obj["as_json"]:
+            click.echo(json.dumps({"proxy": base, "reachable": False, "error": str(e)}))
+        else:
+            click.echo(f"❌ 연결 실패: {e}")
+
+
+# ============================================================
+# Dynamic skill loading — register skill domain commands
+# ============================================================
+
+
+def register_skill_commands():
+    """Discover and register skill domain commands from skills/ directory."""
+    groups = discover_cli_groups()
+    for domain_name, cli_group in groups.items():
+        if main.get_command(ctx=None, cmd_name=domain_name) is None:
+            main.add_command(cli_group, name=domain_name)
+
+
+# Auto-register on module import
+register_skill_commands()
+
+
+if __name__ == "__main__":
+    main()
