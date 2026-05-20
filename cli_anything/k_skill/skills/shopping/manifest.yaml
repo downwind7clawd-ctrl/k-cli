@@ -1,8 +1,36 @@
 domain: shopping
-description: 쇼핑 검색 (네이버 쇼핑)
+description: 쇼핑 검색 (네이버, 올리브영, 다이소 등)
+dependencies:
+  proxy: false
+  npm: []
+  python: []
+  env_keys: []
 skills:
   naver_shop:
     name: naver-shopping
-    display_name: 네이버 쇼핑 검색
-    description: 네이버 쇼핑 상품 검색. 가격비교, 판매처, 리뷰 수.
-    category: shopping
+    display_name: 네이버 쇼핑
+    description: 네이버 쇼핑 검색
+  olive-young:
+    name: olive-young-search
+    display_name: 올리브영 검색
+    description: 올리브영 상품 검색 및 재고 확인
+  market-kurly:
+    name: market-kurly-search
+    display_name: 마켓컬리 검색
+    description: 마켓컬리 상품 검색
+  daiso:
+    name: daiso-product-search
+    display_name: 다이소몰 검색
+    description: 다이소몰 상품 재고 조회
+  danawa:
+    name: danawa-price-search
+    display_name: 다나와 가격비교
+    description: 다나와 최저가 검색/비교
+  ohou-deal:
+    name: ohou-today-deal
+    display_name: 오늘의집 데일리딜
+    description: 오늘의집 데일리특가 조회
+  coupang:
+    name: coupang-product-search
+    display_name: 쿠팡 상품 검색
+    description: 쿠팡 파트너스 API 상품 검색

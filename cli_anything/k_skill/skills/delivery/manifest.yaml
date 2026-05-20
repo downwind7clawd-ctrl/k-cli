@@ -1,0 +1,13 @@
+domain: delivery
+label: "배송"
+description: "택배 송장 조회"
+dependencies:
+  proxy: false
+  npm: []
+  python: []
+  env_keys: []
+skills:
+  delivery:
+    name: "delivery-tracking"
+    display_name: "택배 송장 조회"
+    description: "택배 송장번호로 배송 조회"

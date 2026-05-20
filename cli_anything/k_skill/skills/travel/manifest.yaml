@@ -1,0 +1,22 @@
+domain: travel
+label: "여행"
+description: "여행지, 숙소 검색"
+dependencies:
+  proxy: false
+  npm: []
+  python: []
+  env_keys: []
+skills:
+  myrealtrip:
+    name: "myrealtrip-search"
+    display_name: "마이리얼트립"
+    description: "마이리얼트립 숙소/패키지 검색"
+  hola-poke:
+    name: "hola-poke-yeoksam"
+    display_name: "올라포케 역삼점"
+    description: "올라포케 역삼점 메뉴/영업시간"
+  foresttrip:
+    name: "foresttrip-vacancy"
+    display_name: "숲나들예약"
+    description: "산림청 숲나들예약 잔여석 조회"
+    python: ["playwright"]

@@ -8,14 +8,21 @@ import pytest
 from cli_anything.k_skill.loader import SKILLS_DIR, load_manifest, discover_domains, list_all_skills
 
 
+# Phase 2 (proxy) + Phase 3 (non-proxy) 스킬 합산
 DOMAINS = [
     ("weather", 3),
-    ("transit", 1),
-    ("life", 7),
-    ("finance", 3),
-    ("realestate", 2),
-    ("shopping", 1),
-    ("search", 1),
+    ("transit", 8),
+    ("life", 23),
+    ("finance", 9),
+    ("realestate", 5),
+    ("shopping", 7),
+    ("search", 6),
+    ("market", 4),
+    ("document", 5),
+    ("sports", 8),
+    ("travel", 3),
+    ("delivery", 1),
+    ("other", 4),
 ]
 
 
@@ -221,6 +228,7 @@ class TestDiscoverDomainsIntegration:
     def test_all_phase2_skills_found(self):
         all_skills = list_all_skills()
         skill_ids = {s["skill_id"] for s in all_skills}
+        # Phase 2 프록시 스킬 (핵심만 체크)
         expected = [
             "weather", "dust", "han_river",
             "subway",
@@ -233,6 +241,12 @@ class TestDiscoverDomainsIntegration:
         for sid in expected:
             assert sid in skill_ids, f"list_all_skills에 '{sid}' 누락"
 
+        # Phase 3 스킬도 존재하는지 샘플 체크
+        phase3_samples = ["bunjang", "kbo", "lck", "hwp-convert", "lotto", "myrealtrip"]
+        for sid in phase3_samples:
+            assert sid in skill_ids, f"list_all_skills에 Phase3 스킬 '{sid}' 누락"
+
     def test_total_skill_count(self):
         all_skills = list_all_skills()
-        assert len(all_skills) >= 18
+        # Phase 2 (18) + Phase 3 (68) = 86개
+        assert len(all_skills) >= 86

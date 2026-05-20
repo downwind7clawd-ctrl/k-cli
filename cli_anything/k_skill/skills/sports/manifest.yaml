@@ -1,0 +1,48 @@
+domain: sports
+label: "스포츠/레저"
+description: "스포츠 경기, 로또, 영화관"
+dependencies:
+  proxy: false
+  npm: []
+  python: []
+  env_keys: []
+skills:
+  kbo:
+    name: "kbo-results"
+    display_name: "KBO 경기결과"
+    description: "KBO 한국야구 경기 결과 조회"
+    npm: ["kbo-game"]
+  kbl:
+    name: "kbl-results"
+    display_name: "KBL 농구결과"
+    description: "KBL 프로농구 경기 결과 조회"
+    npm: ["kbl-results"]
+  kleague:
+    name: "kleague-results"
+    display_name: "K리그 결과"
+    description: "K리그 축구 경기 결과 조회"
+    npm: ["kleague-results"]
+  lck:
+    name: "lck-analytics"
+    display_name: "LCK 분석"
+    description: "LCK 리그오브레전드 경기/분석"
+    npm: ["lck-analytics"]
+  cinema:
+    name: "korean-cinema-search"
+    display_name: "영화관 검색"
+    description: "CGV/메가박스/롯데시네마 영화관/상영작 검색"
+    npm: ["daiso"]
+  lotto:
+    name: "lotto-results"
+    display_name: "로또 당첨번호"
+    description: "로또 당첨번호 조회"
+    npm: ["k-lotto"]
+  marathon:
+    name: "korean-marathon-schedule"
+    display_name: "마라톤 일정"
+    description: "한국 마라톤 대회 일정 검색"
+    npm: ["korean-marathon-schedule"]
+  ticket:
+    name: "ticket-availability"
+    display_name: "공연 잔여석"
+    description: "공연/전시 티켓 잔여석 조회"

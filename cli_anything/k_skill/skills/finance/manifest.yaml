@@ -1,18 +1,44 @@
 domain: finance
-description: 금융/공공 (사업자등록, 주식, 창업공고)
+description: 금융/공공 (사업자등록, 주식, 법률, 통계)
+dependencies:
+  proxy: false
+  npm: []
+  python: []
+  env_keys: []
 skills:
   nts:
     name: nts-business
-    display_name: 사업자등록 진위확인
-    description: 국세청 사업자등록정보 상태조회 및 진위확인 (POST).
-    category: business
+    display_name: 사업자등록
+    description: 국세청 사업자등록
   stock:
     name: korean-stock
-    display_name: 한국 주식 조회
-    description: KRX 상장종목 검색, 기본정보, 일별시세.
-    category: finance
+    display_name: 한국 주식
+    description: 한국 주식 검색
   kstartup:
-    name: kstartup
-    display_name: K-Startup 창업공고
-    description: 창업진흥원 창업지원사업 공고/통계/콘텐츠 조회.
-    category: business
+    name: kstartup-search
+    display_name: K-스타트업
+    description: K-스타트업 공고
+  dart:
+    name: k-dart
+    display_name: DART 전자공시
+    description: 금융감독원 DART 전자공시 조회
+  kosis:
+    name: kosis-stats
+    display_name: KOSIS 통계
+    description: KOSIS 국가통계포털 통계 조회
+  korean-law:
+    name: korean-law-search
+    display_name: 법령/판례 검색
+    description: 대한민국 법령/판례/유권해석 검색
+  gongsijiga:
+    name: gongsijiga-search
+    display_name: 개별공시지가
+    description: 개별공시지가(토지가격) 조회
+  toss-stock:
+    name: toss-securities
+    display_name: 토스증권 주식
+    description: 토스증권 주식 시세/정보 조회
+  daishin-report:
+    name: daishin-report-search
+    display_name: 대신 리포트
+    description: 대신증권 리서치 리포트 검색

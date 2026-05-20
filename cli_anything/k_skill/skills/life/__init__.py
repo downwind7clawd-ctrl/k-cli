@@ -207,3 +207,180 @@ def food(query, as_json):
     params = {"searchText": query}
     resp = safe_proxy_get("mfds-food", "/v1/mfds/food-safety/search", params)
     emit(resp, as_json=as_json)
+from cli_anything.k_skill.runner import run_mcp, run_npm, run_script
+
+
+@cli.command(name='plastic-surgery', help='강남유니 성형외과 정보 검색')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def plastic_surgery(query, as_json, timeout):
+    """강남유니 성형외과."""
+    args = [query] if query else []
+    result = asyncio.run(run_npm('gangnamunni-clinic-search', args, npx=True, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='blue-ribbon', help='블루리본 인증 맛집 검색')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def blue_ribbon(query, as_json, timeout):
+    """블루리본 맛집."""
+    args = [query] if query else []
+    result = asyncio.run(run_npm('blue-ribbon-nearby', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='public-restroom', help='근처 공중화장실 검색')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def public_restroom(query, as_json, timeout):
+    """공중화장실."""
+    args = [query] if query else []
+    result = asyncio.run(run_npm('public-restroom-nearby', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='emergency-room', help='근처 응급실 실시간 병상 조회')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def emergency_room(query, as_json, timeout):
+    """응급실 병상."""
+    args = [query] if query else []
+    result = asyncio.run(run_npm('emergency-room-beds', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='election', help='지방선거 후보자 검색')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def election(query, as_json, timeout):
+    """선거 후보."""
+    args = [query] if query else []
+    result = asyncio.run(run_npm('local-election-candidate-search', args, npx=True, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='hipass', help='하이패스 통행료 영수증 조회')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def hipass(query, as_json, timeout):
+    """하이패스 영수증."""
+    args = [query] if query else []
+    result = asyncio.run(run_npm('hipass-receipt', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='donation', help='기부처 검색')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def donation(query, as_json, timeout):
+    """기부처."""
+    args = [query] if query else []
+    result = asyncio.run(run_npm('donation-place-search', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='kakao-bar', help='카카오맵 근처 술집 검색')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def kakao_bar(query, as_json, timeout):
+    """근처 술집."""
+    args = [query] if query else []
+    result = asyncio.run(run_npm('kakao-bar-nearby', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='daangn-jobs', help='당근마켓 알바 구인 검색')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def daangn_jobs(query, as_json, timeout):
+    """당근알바."""
+    args = [query] if query else []
+    result = asyncio.run(run_script('daangn_jobs.py', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='zipcode', help='우편번호 검색')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def zipcode(query, as_json, timeout):
+    """우편번호."""
+    args = [query] if query else []
+    result = asyncio.run(run_script('zipcode_search.py', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='slang', help='신조어/유행어 생성 및 검색')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def slang(query, as_json, timeout):
+    """신조어/유행어."""
+    args = [query] if query else []
+    result = asyncio.run(run_script('slang_search.py', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='kakaotalk', help='카카오톡 macOS 자동화')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def kakaotalk(query, as_json, timeout):
+    """카카오톡 자동화."""
+    args = [query] if query else []
+    result = asyncio.run(run_script('kakaotalk_mac.py', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='seoul-density', help='서울 실시간 인구밀도 조회')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def seoul_density(query, as_json, timeout):
+    """서울 인구밀도."""
+    args = [query] if query else []
+    result = asyncio.run(run_script('seoul_density.py', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='corp-registration', help='법인설립 서류 작성 자동화')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def corp_registration(query, as_json, timeout):
+    """법인설립 상담."""
+    args = [query] if query else []
+    result = asyncio.run(run_script('fill_official_hwp.py', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='catchtable', help='캐치테이블 예약 자동 캡처')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def catchtable(query, as_json, timeout):
+    """캐치테이블 캡처."""
+    result = asyncio.run(run_mcp('catchtable-sniper', server_url='local://chrome-mcp', timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='cleaner', help='k-skill 사용량 정리')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def cleaner(query, as_json, timeout):
+    """스킬 정리."""
+    args = [query] if query else []
+    result = asyncio.run(run_script('k_skill_cleaner.py', args, timeout=timeout))
+    emit(result, as_json=as_json)
+

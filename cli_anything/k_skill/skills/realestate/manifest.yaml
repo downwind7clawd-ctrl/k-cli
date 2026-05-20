@@ -1,13 +1,28 @@
 domain: realestate
-description: 부동산 (실거래가/전월세, LH 청약공고)
+description: 부동산 (실거래가, LH, 경매)
+dependencies:
+  proxy: false
+  npm: []
+  python: []
+  env_keys: []
 skills:
   realestate:
     name: real-estate
-    display_name: 부동산 실거래가 조회
-    description: 국토교통부 기반 아파트/오피스텔/연립/단독 실거래가·전월세 조회. 지역코드 검색 포함.
-    category: real-estate
+    display_name: 부동산 실거래가
+    description: 부동산 실거래가/전월세
   lh:
     name: lh-notice
-    display_name: LH 청약 공고문
-    description: 한국토지주택공사 임대/분양/주거복지 공고 조회. 공고상세 포함.
-    category: real-estate
+    display_name: LH 공고
+    description: LH 청약 공고문
+  sh-notice:
+    name: sh-notice-search
+    display_name: 서울주택도시공사 공고
+    description: 서울주택도시공사 분양/입주 공고 검색
+  court-auction:
+    name: court-auction-notice-search
+    display_name: 법원 경매 공고
+    description: 법원 경매 공고문 검색
+  daangn-realty:
+    name: daangn-realty-search
+    display_name: 당근부동산 매물
+    description: 당근부동산 매물 검색

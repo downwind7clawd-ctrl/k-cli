@@ -1,5 +1,6 @@
 """부동산 스킬 — 실거래가/전월세 조회, LH 청약공고."""
 
+import asyncio
 import click
 
 from cli_anything.k_skill.proxy import safe_proxy_get
@@ -150,3 +151,38 @@ def lh_detail(pan_id, ccr_cnnt_sys_ds_cd, spl_inf_tp_cd, as_json):
     }
     resp = safe_proxy_get("lh-notice", "/v1/lh-notice/detail", params)
     emit(resp, as_json=as_json)
+from cli_anything.k_skill.runner import run_npm, run_script
+
+
+@cli.command(name='sh-notice', help='서울주택도시공사 분양/입주 공고 검색')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def sh_notice(query, as_json, timeout):
+    """서울주택도시공사 공고."""
+    args = [query] if query else []
+    result = asyncio.run(run_npm('sh-notice-search', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='court-auction', help='법원 경매 공고문 검색')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def court_auction(query, as_json, timeout):
+    """법원 경매 공고."""
+    args = [query] if query else []
+    result = asyncio.run(run_npm('court-auction-notice-search', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='daangn-realty', help='당근부동산 매물 검색')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def daangn_realty(query, as_json, timeout):
+    """당근부동산 매물."""
+    args = [query] if query else []
+    result = asyncio.run(run_script('daangn_realty.py', args, timeout=timeout))
+    emit(result, as_json=as_json)
+

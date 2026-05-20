@@ -1,8 +1,32 @@
 domain: search
-description: 검색 (네이버 뉴스)
+description: 검색/조사 (뉴스, 블로그, 특허, 실록)
+dependencies:
+  proxy: false
+  npm: []
+  python: []
+  env_keys: []
 skills:
   naver_news:
     name: naver-news
-    display_name: 네이버 뉴스 검색
-    description: 네이버 뉴스 검색. 기사 제목, 요약, 발행시각, 링크.
-    category: search
+    display_name: 네이버 뉴스
+    description: 네이버 뉴스 검색
+  naver-blog:
+    name: naver-blog-research
+    display_name: 네이버 블로그 리서치
+    description: 네이버 블로그 검색 및 요약
+  geeknews:
+    name: geeknews-search
+    display_name: 긱뉴스
+    description: 긱뉴스 테크 뉴스 조회
+  patent:
+    name: korean-patent-search
+    display_name: 특허 검색
+    description: KIPIRIS 한국 특허 검색
+  sillok:
+    name: joseon-sillok-search
+    display_name: 조선왕조실록
+    description: 조선왕조실록 검색
+  scholarship:
+    name: korean-scholarship-search
+    display_name: 장학금 검색
+    description: 한국 장학금 검색

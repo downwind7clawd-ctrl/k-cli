@@ -1,8 +1,40 @@
 domain: transit
-description: 대중교통 (서울 지하철 실시간 도착정보)
+description: 대중교통 (지하철, 버스, 기차, 항공편)
+dependencies:
+  proxy: false
+  npm: []
+  python: []
+  env_keys: []
 skills:
   subway:
     name: seoul-subway
     display_name: 서울 지하철 도착정보
-    description: 서울 열린데이터 광장 기반 실시간 지하철 도착정보 조회.
-    category: transit
+    description: 실시간 지하철 도착정보
+  subway-lost:
+    name: subway-lost-property
+    display_name: 지하철 분실물
+    description: 서울교통공사 지하철 분실물 검색
+  intercity-bus:
+    name: intercity-bus-booking
+    display_name: 시외버스 예매
+    description: Tmoney 시외버스 시간표/잔여석 조회
+  express-bus:
+    name: express-bus-booking
+    display_name: 고속버스 예매
+    description: KOBUS 고속버스 시간표/잔여석 조회
+  flight-search:
+    name: flight-ticket-search
+    display_name: 항공권 검색
+    description: Google Flights 항공권 가격/일정 검색
+  srt:
+    name: srt-booking
+    display_name: SRT 예매
+    description: SRT 열차 조회/예매
+  ktx:
+    name: ktx-booking
+    display_name: KTX 예매
+    description: KTX/코레일 열차 조회/예매
+  transit-route:
+    name: korean-transit-route
+    display_name: 대중교통 길찾기
+    description: ODSay 대중교통 길찾기

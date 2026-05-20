@@ -1,0 +1,25 @@
+domain: other
+label: "기타"
+description: "기타 유틸리티"
+dependencies:
+  proxy: false
+  npm: []
+  python: []
+  env_keys: []
+skills:
+  iros:
+    name: "iros-registry-automation"
+    display_name: "지식재산권 등록"
+    description: "지식재산권 등록 자동화"
+  setup:
+    name: "k-skill-setup"
+    display_name: "k-skill 초기설정"
+    description: "k-skill 초기 설정 마법사"
+  jangbu:
+    name: "korean-jangbu-for"
+    display_name: "장부/가계부"
+    description: "한국식 장부/가계부"
+  privacy-terms:
+    name: "korean-privacy-terms"
+    display_name: "개인정보처리방침"
+    description: "개인정보처리방침 생성"

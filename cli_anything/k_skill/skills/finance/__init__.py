@@ -1,6 +1,7 @@
 """금융/공부 스킬 — 사업자등록, 주식, 창업공고."""
 
 import re
+import asyncio
 import click
 
 from cli_anything.k_skill.proxy import safe_proxy_get, safe_proxy_post
@@ -133,3 +134,70 @@ def kstartup(supt_regin, rcrt_prgs_yn, pan_nm, page, per_page, as_json):
         params["panNm"] = pan_nm
     resp = safe_proxy_get("kstartup", "/v1/kstartup/announcements", params)
     emit(resp, as_json=as_json)
+from cli_anything.k_skill.runner import run_mcp, run_npm, run_script
+
+
+@cli.command(name='dart', help='금융감독원 DART 전자공시 조회')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def dart(query, as_json, timeout):
+    """DART 전자공시."""
+    args = [query] if query else []
+    result = asyncio.run(run_script('k_dart.py', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='kosis', help='KOSIS 국가통계포털 통계 조회')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def kosis(query, as_json, timeout):
+    """KOSIS 통계."""
+    args = [query] if query else []
+    result = asyncio.run(run_script('run_kosis_stats.py', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='korean-law', help='대한민국 법령/판례/유권해석 검색')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def korean_law(query, as_json, timeout):
+    """법령/판례 검색."""
+    result = asyncio.run(run_mcp('korean-law-search', server_url='local://korean-law-mcp', timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='gongsijiga', help='개별공시지가(토지가격) 조회')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def gongsijiga(query, as_json, timeout):
+    """개별공시지가."""
+    args = [query] if query else []
+    result = asyncio.run(run_npm('gongsijiga-search', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='toss-stock', help='토스증권 주식 시세/정보 조회')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def toss_stock(query, as_json, timeout):
+    """토스증권 주식."""
+    args = [query] if query else []
+    result = asyncio.run(run_npm('toss-securities', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='daishin-report', help='대신증권 리서치 리포트 검색')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def daishin_report(query, as_json, timeout):
+    """대신 리포트."""
+    args = [query] if query else []
+    result = asyncio.run(run_npm('daishin-report-search', args, timeout=timeout))
+    emit(result, as_json=as_json)
+

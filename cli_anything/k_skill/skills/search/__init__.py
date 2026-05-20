@@ -1,5 +1,6 @@
 """검색 스킬 — 네이버 뉴스 검색."""
 
+import asyncio
 import click
 
 from cli_anything.k_skill.proxy import safe_proxy_get
@@ -44,3 +45,60 @@ def naver_news(query, display, start, sort, as_json):
     params = {"q": query, "display": display, "start": start, "sort": sort}
     resp = safe_proxy_get("naver-news", "/v1/naver-news/search", params)
     emit(resp, as_json=as_json)
+from cli_anything.k_skill.runner import run_script
+
+
+@cli.command(name='naver-blog', help='네이버 블로그 검색 및 요약')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def naver_blog(query, as_json, timeout):
+    """네이버 블로그 리서치."""
+    args = [query] if query else []
+    result = asyncio.run(run_script('naver_blog.py', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='geeknews', help='긱뉴스 테크 뉴스 조회')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def geeknews(query, as_json, timeout):
+    """긱뉴스."""
+    args = [query] if query else []
+    result = asyncio.run(run_script('geeknews_search.py', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='patent', help='KIPIRIS 한국 특허 검색')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def patent(query, as_json, timeout):
+    """특허 검색."""
+    args = [query] if query else []
+    result = asyncio.run(run_script('patent_search.py', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='sillok', help='조선왕조실록 검색')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def sillok(query, as_json, timeout):
+    """조선왕조실록."""
+    args = [query] if query else []
+    result = asyncio.run(run_script('sillok_search.py', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='scholarship', help='한국 장학금 검색')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def scholarship(query, as_json, timeout):
+    """장학금 검색."""
+    args = [query] if query else []
+    result = asyncio.run(run_script('scholarship_search.py', args, timeout=timeout))
+    emit(result, as_json=as_json)
+

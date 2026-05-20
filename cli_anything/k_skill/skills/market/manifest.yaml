@@ -1,0 +1,26 @@
+domain: market
+label: "중고거래"
+description: "당근마켓, 번개장터 등"
+dependencies:
+  proxy: false
+  npm: []
+  python: []
+  env_keys: []
+skills:
+  bunjang:
+    name: "bunjang-search"
+    display_name: "번개장터 검색"
+    description: "번개장터 중고상품 검색"
+    npm: ["bunjang-cli"]
+  daangn-market:
+    name: "daangn-used-goods-search"
+    display_name: "당근 중고거래"
+    description: "당근마켓 중고거래 검색"
+  daangn-cars:
+    name: "daangn-cars-search"
+    display_name: "당근중고차"
+    description: "당근마켓 중고차 매물 검색"
+  used-car-price:
+    name: "used-car-price-search"
+    display_name: "중고차 가격"
+    description: "SK렌터카 중고차 가격 조회"

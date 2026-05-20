@@ -1,0 +1,32 @@
+domain: document
+label: "문서"
+description: "HWP, 맞춤법, 글자수"
+dependencies:
+  proxy: false
+  npm: []
+  python: []
+  env_keys: []
+skills:
+  hwp-convert:
+    name: "hwp"
+    display_name: "HWP 변환"
+    description: "HWP/HWPX 문서를 PDF 등으로 변환"
+    npm: ["kordoc"]
+  rhwp-debug:
+    name: "rhwp-advanced"
+    display_name: "HWP 레이아웃 디버그"
+    description: "rhwp Rust CLI로 HWP 레이아웃 디버깅"
+  rhwp-edit:
+    name: "rhwp-edit"
+    display_name: "HWP 편집"
+    description: "HWP 문서 편집 (k-skill-rhwp)"
+    npm: ["k-skill-rhwp"]
+  spell-check:
+    name: "korean-spell-check"
+    display_name: "맞춤법 검사"
+    description: "한국어 맞춤법/문법 검사"
+  char-count:
+    name: "korean-character-count"
+    display_name: "글자 수 세기"
+    description: "한국어 글자/어절/문단 수 카운트"
+    npm: ["korean-character-count"]
