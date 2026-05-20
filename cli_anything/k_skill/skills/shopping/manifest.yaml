@@ -1,0 +1,8 @@
+domain: shopping
+description: 쇼핑 검색 (네이버 쇼핑)
+skills:
+  naver_shop:
+    name: naver-shopping
+    display_name: 네이버 쇼핑 검색
+    description: 네이버 쇼핑 상품 검색. 가격비교, 판매처, 리뷰 수.
+    category: shopping

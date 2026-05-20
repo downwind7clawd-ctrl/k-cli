@@ -10,6 +10,7 @@ Usage from skill commands:
     data = await proxy_get("/v1/fine-dust/report", {"regionHint": "강남구"})
 """
 
+import asyncio
 import os
 import time
 from typing import Any, Optional
@@ -79,6 +80,87 @@ async def proxy_post(
         elapsed_ms = (time.monotonic() - start) * 1000
 
     return resp.json(), elapsed_ms
+
+
+def safe_proxy_get(
+    skill: str,
+    path: str,
+    params: dict = None,
+    timeout: float = DEFAULT_TIMEOUT,
+):
+    """Synchronous wrapper: run proxy_get in event loop with full error handling.
+
+    Returns a response envelope dict (success or error).
+    Use this from Click commands to avoid boilerplate try/except.
+    """
+    from .output import success_response, error_response
+
+    try:
+        data, elapsed = asyncio.run(proxy_get(path, params, timeout))
+        return success_response(skill, data, response_time_ms=elapsed)
+    except httpx.ConnectError:
+        return error_response(
+            skill, "PROXY_DOWN",
+            "k-skill-proxy 서버에 연결할 수 없습니다",
+            "KSKILL_PROXY_BASE_URL 환경변수 확인 또는 네트워크 상태 점검",
+        )
+    except httpx.HTTPStatusError as e:
+        return error_response(
+            skill, "PROXY_HTTP_ERROR",
+            f"프록시 HTTP 오류: {e.response.status_code}",
+            f"응답: {e.response.text[:200]}",
+        )
+    except httpx.TimeoutException:
+        return error_response(
+            skill, "TIMEOUT",
+            "요청 시간이 초과되었습니다",
+            "잠시 후 재시도하세요",
+        )
+    except Exception as e:
+        return error_response(
+            skill, "UNKNOWN",
+            f"알 수 없는 오류: {e}",
+        )
+
+
+def safe_proxy_post(
+    skill: str,
+    path: str,
+    json_body: dict = None,
+    timeout: float = DEFAULT_TIMEOUT,
+):
+    """Synchronous wrapper: run proxy_post in event loop with full error handling.
+
+    Returns a response envelope dict (success or error).
+    """
+    from .output import success_response, error_response
+
+    try:
+        data, elapsed = asyncio.run(proxy_post(path, json_body, timeout))
+        return success_response(skill, data, response_time_ms=elapsed)
+    except httpx.ConnectError:
+        return error_response(
+            skill, "PROXY_DOWN",
+            "k-skill-proxy 서버에 연결할 수 없습니다",
+            "KSKILL_PROXY_BASE_URL 환경변수 확인 또는 네트워크 상태 점검",
+        )
+    except httpx.HTTPStatusError as e:
+        return error_response(
+            skill, "PROXY_HTTP_ERROR",
+            f"프록시 HTTP 오류: {e.response.status_code}",
+            f"응답: {e.response.text[:200]}",
+        )
+    except httpx.TimeoutException:
+        return error_response(
+            skill, "TIMEOUT",
+            "요청 시간이 초과되었습니다",
+            "잠시 후 재시도하세요",
+        )
+    except Exception as e:
+        return error_response(
+            skill, "UNKNOWN",
+            f"알 수 없는 오류: {e}",
+        )
 
 
 async def health_check(timeout: float = 5.0) -> bool:

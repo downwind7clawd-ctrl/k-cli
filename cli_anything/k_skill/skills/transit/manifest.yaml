@@ -1,0 +1,8 @@
+domain: transit
+description: 대중교통 (서울 지하철 실시간 도착정보)
+skills:
+  subway:
+    name: seoul-subway
+    display_name: 서울 지하철 도착정보
+    description: 서울 열린데이터 광장 기반 실시간 지하철 도착정보 조회.
+    category: transit

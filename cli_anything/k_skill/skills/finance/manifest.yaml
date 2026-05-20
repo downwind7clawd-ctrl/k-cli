@@ -1,0 +1,18 @@
+domain: finance
+description: 금융/공공 (사업자등록, 주식, 창업공고)
+skills:
+  nts:
+    name: nts-business
+    display_name: 사업자등록 진위확인
+    description: 국세청 사업자등록정보 상태조회 및 진위확인 (POST).
+    category: business
+  stock:
+    name: korean-stock
+    display_name: 한국 주식 조회
+    description: KRX 상장종목 검색, 기본정보, 일별시세.
+    category: finance
+  kstartup:
+    name: kstartup
+    display_name: K-Startup 창업공고
+    description: 창업진흥원 창업지원사업 공고/통계/콘텐츠 조회.
+    category: business

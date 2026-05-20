@@ -1,0 +1,38 @@
+domain: life
+description: 생활/편의 (주유소, 쓰레기, 주차장, 도서관, 급식, 의약품, 식품안전)
+skills:
+  gas:
+    name: cheap-gas
+    display_name: 근처 주유소 조회
+    description: 한국석유공사 Opinet 기반 근처 주유소 가격 조회.
+    category: convenience
+  waste:
+    name: household-waste
+    display_name: 쓰레기 분리수거 정보
+    description: 행정안전부 기반 지역별 쓰레기 배출 요일/시간/장소.
+    category: utility
+  parking:
+    name: parking-lot
+    display_name: 공영주차장 검색
+    description: 공공데이터포털 기반 근처 공영주차장 검색.
+    category: convenience
+  library:
+    name: library-book
+    display_name: 도서관 도서 검색
+    description: 국립중앙도서관 Data4Library 기반 도서 검색/소장 확인.
+    category: utility
+  lunch:
+    name: school-lunch
+    display_name: 학교 급식 식단
+    description: "NEIS 나이스 기반 학교 급식 식단 조회 (2단계: 학교검색→식단)."
+    category: utility
+  drug:
+    name: mfds-drug
+    display_name: 의약품 안전 조회
+    description: 식약처 e약은요 기반 의약품 개요/안전정보 조회.
+    category: health
+  food:
+    name: mfds-food
+    display_name: 식품 안전 조회
+    description: 식약처/식품안전나라 기반 건강기능식품/부적합/회수 조회.
+    category: health

@@ -1,0 +1,8 @@
+domain: search
+description: 검색 (네이버 뉴스)
+skills:
+  naver_news:
+    name: naver-news
+    display_name: 네이버 뉴스 검색
+    description: 네이버 뉴스 검색. 기사 제목, 요약, 발행시각, 링크.
+    category: search

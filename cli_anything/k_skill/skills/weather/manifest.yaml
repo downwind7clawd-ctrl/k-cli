@@ -1,0 +1,18 @@
+domain: weather
+description: 날씨/환경 조회 (기상청, 미세먼지, 한강수위)
+skills:
+  weather:
+    name: korea-weather
+    display_name: 한국 날씨
+    description: 기상청 단기예보 조회. 지역명 또는 위도/경도로 날씨 확인.
+    category: utility
+  dust:
+    name: fine-dust
+    display_name: 미세먼지 조회
+    description: 에어코리아 기반 PM10/PM2.5 미세먼지 지역별 조회.
+    category: utility
+  han_river:
+    name: han-river
+    display_name: 한강 수위
+    description: 한강홍수통제소 기반 관측소별 수위/유량 조회.
+    category: utility
