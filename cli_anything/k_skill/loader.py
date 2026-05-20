@@ -27,12 +27,16 @@ Manifest format (skills/<domain>/manifest.yaml):
 """
 
 import importlib
+import re
 from pathlib import Path
 from typing import Any, Optional
 
 import yaml
 
 SKILLS_DIR = Path(__file__).parent / "skills"
+
+# Security: only allow safe Python module names
+_SAFE_MODULE_PATTERN = re.compile(r"^[a-zA-Z][a-zA-Z0-9_]*$")
 
 
 class SkillManifest:
@@ -110,6 +114,10 @@ def discover_domains() -> dict[str, SkillManifest]:
     for domain_dir in sorted(SKILLS_DIR.iterdir()):
         if not domain_dir.is_dir() or domain_dir.name.startswith("_"):
             continue
+        if not _SAFE_MODULE_PATTERN.match(domain_dir.name):
+            continue
+        if domain_dir.is_symlink():
+            continue
         try:
             manifest = load_manifest(domain_dir)
             domains[manifest.domain] = manifest
@@ -133,6 +141,12 @@ def discover_cli_groups() -> dict[str, Any]:
 
     for domain_dir in sorted(SKILLS_DIR.iterdir()):
         if not domain_dir.is_dir() or domain_dir.name.startswith("_"):
+            continue
+        # Security: validate domain name is a safe Python identifier
+        if not _SAFE_MODULE_PATTERN.match(domain_dir.name):
+            continue
+        # Security: skip symbolic links to prevent directory traversal
+        if domain_dir.is_symlink():
             continue
         init_file = domain_dir / "__init__.py"
         if not init_file.exists():

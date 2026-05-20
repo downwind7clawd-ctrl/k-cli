@@ -71,12 +71,24 @@ def _check_system_tools(tools: list[str]) -> list[str]:
 
 
 def _check_python_packages(packages: list[str]) -> list[str]:
-    """Check if Python packages are importable."""
+    """Check if Python packages are importable.
+
+    Uses importlib.util.find_spec() instead of __import__() to prevent
+    arbitrary code execution from malicious manifest entries.
+    Validates package name pattern (alphanumeric + dots + underscores only).
+    """
+    import re
+    import importlib.util
     missing = []
+    name_pattern = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_.]*$")
     for pkg in packages:
+        if not name_pattern.match(pkg):
+            missing.append(pkg)
+            continue
         try:
-            __import__(pkg)
-        except ImportError:
+            if importlib.util.find_spec(pkg) is None:
+                missing.append(pkg)
+        except (ImportError, ValueError, ModuleNotFoundError):
             missing.append(pkg)
     return missing
 

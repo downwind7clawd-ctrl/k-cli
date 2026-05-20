@@ -12,10 +12,71 @@ Usage:
     result = await client.call_tool("searchDomesticFlights", {"origin": "GMP"})
 """
 
+import ipaddress
+import re
 import time
 from typing import Any, Optional
+from urllib.parse import urlparse
 
 import httpx
+
+
+# Private IP ranges for SSRF protection
+_PRIVATE_NETWORKS = [
+    ipaddress.ip_network("10.0.0.0/8"),
+    ipaddress.ip_network("172.16.0.0/12"),
+    ipaddress.ip_network("192.168.0.0/16"),
+    ipaddress.ip_network("127.0.0.0/8"),
+    ipaddress.ip_network("169.254.0.0/16"),  # AWS metadata
+    ipaddress.ip_network("::1/128"),
+    ipaddress.ip_network("fc00::/7"),  # IPv6 unique local
+]
+
+
+def _validate_endpoint_url(url: str) -> str:
+    """Validate and sanitize an MCP endpoint URL.
+
+    Security checks:
+    - Only https: scheme allowed (prevents SSRF via http)
+    - Blocks private/loopback/link-local IP addresses
+    - Blocks localhost hostname
+
+    Args:
+        url: The endpoint URL to validate.
+
+    Returns:
+        Sanitized URL with trailing slash stripped.
+
+    Raises:
+        MCPError: If URL fails security validation.
+    """
+    parsed = urlparse(url)
+    if parsed.scheme not in ("https",):
+        raise MCPError(
+            code="INVALID_ENDPOINT",
+            message=f"Only https:// URLs are allowed, got '{parsed.scheme}://'",
+        )
+    hostname = parsed.hostname
+    if not hostname:
+        raise MCPError(code="INVALID_ENDPOINT", message="URL must have a hostname")
+    # Block localhost
+    if hostname.lower() in ("localhost", "localhost.localdomain"):
+        raise MCPError(
+            code="INVALID_ENDPOINT",
+            message="localhost endpoints are not allowed",
+        )
+    # Block private IPs
+    try:
+        ip = ipaddress.ip_address(hostname)
+        for network in _PRIVATE_NETWORKS:
+            if ip in network:
+                raise MCPError(
+                    code="INVALID_ENDPOINT",
+                    message=f"Private IP addresses are not allowed: {hostname}",
+                )
+    except ValueError:
+        pass  # Not an IP address (hostname) — allow DNS resolution
+    return url.rstrip("/")
 
 
 class MCPError(Exception):
@@ -41,8 +102,11 @@ class RemoteMCPClient:
             endpoint: Remote MCP server URL
                        (e.g., https://mcp-servers.myrealtrip.com/mcp).
             timeout: Request timeout in seconds.
+
+        Raises:
+            MCPError: If endpoint URL fails security validation.
         """
-        self.endpoint = endpoint.rstrip("/")
+        self.endpoint = _validate_endpoint_url(endpoint)
         self.timeout = timeout
         self._request_id = 0
         self._protocol_version = "2025-03-26"

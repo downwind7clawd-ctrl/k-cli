@@ -266,7 +266,7 @@ def setup_check(ctx: click.Context):
     # Proxy
     try:
         from .proxy import health_check
-        proxy_ok = asyncio.get_event_loop().run_until_complete(health_check())
+        proxy_ok = asyncio.run(health_check())
         checks["proxy"] = {"ok": proxy_ok}
     except Exception:
         checks["proxy"] = {"ok": False}
@@ -330,7 +330,7 @@ def setup_proxy(ctx: click.Context):
     base = get_proxy_base()
     click.echo(f"프록시: {base}", err=True)
     try:
-        ok = asyncio.get_event_loop().run_until_complete(health_check())
+        ok = asyncio.run(health_check())
         if ctx.obj["as_json"]:
             click.echo(json.dumps({"proxy": base, "reachable": ok}))
         else:

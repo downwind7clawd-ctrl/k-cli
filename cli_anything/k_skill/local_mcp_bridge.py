@@ -12,8 +12,15 @@ Usage:
 import asyncio
 import json
 import os
+import re
 import time
 from typing import Any, Optional
+
+
+# Allowed command patterns for local MCP servers (security)
+_SAFE_COMMAND_PATTERN = re.compile(r"^[a-zA-Z0-9_\-.+/]+$")
+_READ_TIMEOUT = 30.0  # seconds for readline
+_DRAIN_TIMEOUT = 10.0  # seconds for stdin drain
 
 
 class MCPBridgeError(Exception):
@@ -45,6 +52,17 @@ class LocalMCPBridge:
             cwd: Working directory for the subprocess.
             env: Additional environment variables (merged with os.environ).
         """
+        # Security: validate command parts to prevent arbitrary execution
+        if not command or len(command) == 0:
+            raise MCPBridgeError(
+                code="INVALID_COMMAND", message="Command must be a non-empty list."
+            )
+        for part in command:
+            if not _SAFE_COMMAND_PATTERN.match(part):
+                raise MCPBridgeError(
+                    code="INVALID_COMMAND",
+                    message=f"Disallowed command part: '{part}'. Only alphanumeric, dots, dashes, slashes, plus signs are allowed.",
+                )
         self.command = command
         self.cwd = cwd
         self.env = env
@@ -156,12 +174,20 @@ class LocalMCPBridge:
         proc = self._ensure_process()
         data = json.dumps(payload) + "\n"
         proc.stdin.write(data.encode("utf-8"))
-        await proc.stdin.drain()
+        await asyncio.wait_for(proc.stdin.drain(), timeout=_DRAIN_TIMEOUT)
 
     async def _read_response(self) -> dict:
         """Read one JSON-RPC response from stdout."""
         proc = self._ensure_process()
-        line_bytes = await proc.stdout.readline()
+        try:
+            line_bytes = await asyncio.wait_for(
+                proc.stdout.readline(), timeout=_READ_TIMEOUT
+            )
+        except asyncio.TimeoutError:
+            raise MCPBridgeError(
+                code="MCP_TIMEOUT",
+                message=f"MCP server did not respond within {_READ_TIMEOUT}s.",
+            )
         if not line_bytes:
             raise MCPBridgeError(
                 code="MCP_EOF",
