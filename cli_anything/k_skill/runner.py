@@ -22,7 +22,11 @@ from cli_anything.k_skill.output import success_response, error_response
 
 # ── Constants ──────────────────────────────────────────────
 
-K_SKILL_ROOT = Path(os.environ.get("K_SKILL_ROOT", "~/nas_1tb/dev/k-skill")).expanduser()
+_K_SKILL_ROOT_ENV = os.environ.get("K_SKILL_ROOT")
+if _K_SKILL_ROOT_ENV:
+    K_SKILL_ROOT = Path(_K_SKILL_ROOT_ENV).expanduser()
+else:
+    K_SKILL_ROOT = Path(__file__).resolve().parent.parent.parent.parent / "k-skill"
 K_SKILL_SCRIPTS = K_SKILL_ROOT / "scripts"
 K_SKILL_PACKAGES = K_SKILL_ROOT / "packages"
 NODE_BIN = shutil.which("node") or shutil.which("nodejs") or "node"
@@ -30,6 +34,15 @@ NPX_BIN = shutil.which("npx") or shutil.which("npx.cmd") or "npx"
 PYTHON_BIN = sys.executable
 
 _NPM_BIN_CACHE: dict[str, str] = {}
+
+# Environment variable whitelist for subprocess execution
+# Only these keys (or prefixes) are passed to child processes
+_SUBPROCESS_ENV_ALLOWLIST = frozenset({
+    "PATH", "HOME", "USER", "SHELL", "LANG", "LC_ALL", "LC_CTYPE",
+    "TERM", "TMPDIR", "XDG_RUNTIME_DIR", "DISPLAY", "WAYLAND_DISPLAY",
+    "NODE_PATH", "PYTHONPATH", "K_SKILL_ROOT",
+})
+_SUBPROCESS_ENV_ALLOWLIST_PREFIXES = ("LC_", "XDG_")
 
 
 def _find_npm_bin(package_name: str) -> str | None:
@@ -60,6 +73,17 @@ def _find_npm_bin(package_name: str) -> str | None:
         return str(nm_bin)
 
     return None
+
+
+def _filter_env(additional: dict[str, str] | None = None) -> dict[str, str]:
+    """Build a filtered environment dict, allowing only safe keys plus explicit additions."""
+    env: dict[str, str] = {}
+    for k, v in os.environ.items():
+        if k in _SUBPROCESS_ENV_ALLOWLIST or any(k.startswith(p) for p in _SUBPROCESS_ENV_ALLOWLIST_PREFIXES):
+            env[k] = v
+    if additional:
+        env.update(additional)
+    return env
 
 
 async def _run_subprocess(
@@ -103,8 +127,7 @@ async def run_npm(
         cmd = [package] + args
 
     try:
-        env = os.environ.copy()
-        env["NODE_PATH"] = str(K_SKILL_ROOT / "node_modules")
+        env = _filter_env({"NODE_PATH": str(K_SKILL_ROOT / "node_modules")})
 
         stdout, stderr, rc = await _run_subprocess(
             cmd, timeout, cwd or K_SKILL_ROOT, env,
@@ -188,11 +211,11 @@ async def run_script(
         )
 
     try:
-        env = os.environ.copy()
-        env["PYTHONPATH"] = str(K_SKILL_SCRIPTS) + os.pathsep + env.get("PYTHONPATH", "")
-        env["K_SKILL_ROOT"] = str(K_SKILL_ROOT)
-        if env_vars:
-            env.update(env_vars)
+        env = _filter_env({
+            "PYTHONPATH": str(K_SKILL_SCRIPTS),
+            "K_SKILL_ROOT": str(K_SKILL_ROOT),
+            **(env_vars or {}),
+        })
 
         cmd = [python_path or PYTHON_BIN, str(script_path)] + args
         stdout, stderr, rc = await _run_subprocess(cmd, timeout, cwd or K_SKILL_ROOT, env)

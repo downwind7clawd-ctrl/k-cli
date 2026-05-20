@@ -73,6 +73,7 @@ k-skill setup check -j
 | 변수 | 설명 | 기본값 |
 |------|------|--------|
 | KSKILL_PROXY_BASE_URL | 프록시 URL | https://k-skill-proxy.nomadamas.org |
+| K_SKILL_ROOT | k-skill 스크립트/패키지 루트 경로 | 패키지 기준 상대경로 자동 계산 |
 
 ## 유틸리티
 
@@ -388,44 +389,16 @@ Commands:
 <details><summary>nts --help</summary>
 
 ```
-Usage: python -m cli_anything.k_skill.cli [OPTIONS] COMMAND [ARGS]...
-Try 'python -m cli_anything.k_skill.cli --help' for help.
+Usage: k-cli finance nts [OPTIONS] COMMAND [ARGS]...
 
-Error: No such command 'nts'.
-```
-
-</details>
-
-<details><summary>realestate --help</summary>
-
-```
-Usage: python -m cli_anything.k_skill.cli realestate [OPTIONS] COMMAND
-                                                     [ARGS]...
-
-  부동산 (실거래가/전월세, LH 청약공고).
-
-  국토교통부 실거래가 데이터와 LH 공고를 k-skill-proxy로 경유 조회.
+  국세청 사업자등록 진위확인.
 
 Options:
   --help  Show this message and exit.
 
 Commands:
-  court-auction  법원 경매 공고문 검색
-  daangn-realty  당근부동산 매물 검색
-  lh             LH 청약 공고문 조회.
-  realestate     부동산 실거래가/전월세 조회.
-  sh-notice      서울주택도시공사 분양/입주 공고 검색
-```
-
-</details>
-
-<details><summary>lh --help</summary>
-
-```
-Usage: python -m cli_anything.k_skill.cli [OPTIONS] COMMAND [ARGS]...
-Try 'python -m cli_anything.k_skill.cli --help' for help.
-
-Error: No such command 'lh'.
+  status    사업자등록 상태조회.
+  validate  사업자등록 진위확인.
 ```
 
 </details>

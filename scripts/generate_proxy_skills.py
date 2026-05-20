@@ -1,18 +1,18 @@
-"""생성 스크립트 - Phase 2 프록시 스킬 도메인 파일 생성
+"""DEPRECATED — Phase 2 proxy skill generation script.
 
-사용법: python scripts/generate_proxy_skills.py
+This script is a leftover from Phase 1 scaffolding. Phase 2 domain files
+(weather, transit, life, finance, etc.) are now maintained directly in
+cli_anything/k_skill/skills/<domain>/.
+
+TODO: Remove this file in a future cleanup pass if no longer needed.
 """
-import subprocess, sys
-from pathlib import Path
-
-SKILLS_DIR = Path(__file__).parent.parent / "cli_anything" / "k_skill" / "skills"
+import sys
 
 def run():
-    """manifest.yaml + __init__.py 생성"""
-    for d in (SKILLS_DIR).iterdir():
-        if d.is_dir() and (d / "manifest.yaml").exists():
-            print(f"  {d.name}/ already exists, skipping")
-    print("Run domain creation manually or use write_file for each domain.")
+    print("DEPRECATED: This generator is no longer used.")
+    print("Phase 2+ domain files are maintained directly in cli_anything/k_skill/skills/.")
+    print("Remove this script if it is no longer needed.")
+    sys.exit(1)
 
 if __name__ == "__main__":
     run()

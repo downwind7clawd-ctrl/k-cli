@@ -14,6 +14,7 @@ Usage:
 
 import ipaddress
 import re
+import socket
 import time
 from typing import Any, Optional
 from urllib.parse import urlparse
@@ -65,7 +66,7 @@ def _validate_endpoint_url(url: str) -> str:
             code="INVALID_ENDPOINT",
             message="localhost endpoints are not allowed",
         )
-    # Block private IPs
+    # Block private IPs (direct IP literals)
     try:
         ip = ipaddress.ip_address(hostname)
         for network in _PRIVATE_NETWORKS:
@@ -74,8 +75,26 @@ def _validate_endpoint_url(url: str) -> str:
                     code="INVALID_ENDPOINT",
                     message=f"Private IP addresses are not allowed: {hostname}",
                 )
+        return url.rstrip("/")
     except ValueError:
-        pass  # Not an IP address (hostname) — allow DNS resolution
+        pass  # Not an IP literal — need DNS check
+
+    # DNS rebinding protection: resolve hostname and check all IPs
+    try:
+        addr_infos = socket.getaddrinfo(hostname, None)
+        for family, type_, proto, canonname, sockaddr in addr_infos:
+            ip = ipaddress.ip_address(sockaddr[0])
+            for network in _PRIVATE_NETWORKS:
+                if ip in network:
+                    raise MCPError(
+                        code="INVALID_ENDPOINT",
+                        message=f"DNS resolution points to private IP: {sockaddr[0]}",
+                    )
+    except socket.gaierror as e:
+        raise MCPError(
+            code="INVALID_ENDPOINT",
+            message=f"DNS resolution failed for '{hostname}': {e}",
+        )
     return url.rstrip("/")
 
 

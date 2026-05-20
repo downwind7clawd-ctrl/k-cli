@@ -6,6 +6,7 @@ import click
 
 from cli_anything.k_skill.proxy import safe_proxy_get, safe_proxy_post
 from cli_anything.k_skill.output import emit, error_response
+from cli_anything.k_skill.runner import run_mcp, run_npm, run_script
 
 
 @click.group()
@@ -134,7 +135,6 @@ def kstartup(supt_regin, rcrt_prgs_yn, pan_nm, page, per_page, as_json):
         params["panNm"] = pan_nm
     resp = safe_proxy_get("kstartup", "/v1/kstartup/announcements", params)
     emit(resp, as_json=as_json)
-from cli_anything.k_skill.runner import run_mcp, run_npm, run_script
 
 
 @cli.command(name='dart', help='금융감독원 DART 전자공시 조회')

@@ -5,6 +5,7 @@ import click
 
 from cli_anything.k_skill.proxy import proxy_get, safe_proxy_get
 from cli_anything.k_skill.output import emit, success_response, error_response
+from cli_anything.k_skill.runner import run_mcp, run_npm, run_script
 
 
 @click.group()
@@ -207,7 +208,6 @@ def food(query, as_json):
     params = {"searchText": query}
     resp = safe_proxy_get("mfds-food", "/v1/mfds/food-safety/search", params)
     emit(resp, as_json=as_json)
-from cli_anything.k_skill.runner import run_mcp, run_npm, run_script
 
 
 @cli.command(name='plastic-surgery', help='강남유니 성형외과 정보 검색')

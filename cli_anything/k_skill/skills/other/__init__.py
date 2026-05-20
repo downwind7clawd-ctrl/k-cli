@@ -37,7 +37,7 @@ def setup(query, as_json, timeout):
 def jangbu(query, as_json, timeout):
     """장부/가계부."""
     args = [query] if query else []
-    result = asyncio.run(run_script('install.sh', args, timeout=timeout, is_binary=True))
+    result = asyncio.run(run_script('jangbu_main.py', args, timeout=timeout))
     emit(result, as_json=as_json)
 
 @cli.command(name='privacy-terms', help='개인정보처리방침 생성')
@@ -47,5 +47,5 @@ def jangbu(query, as_json, timeout):
 def privacy_terms(query, as_json, timeout):
     """개인정보처리방침."""
     args = [query] if query else []
-    result = asyncio.run(run_script('install.sh', args, timeout=timeout, is_binary=True))
+    result = asyncio.run(run_script('privacy_terms.py', args, timeout=timeout))
     emit(result, as_json=as_json)

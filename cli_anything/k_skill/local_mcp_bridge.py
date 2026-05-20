@@ -75,7 +75,13 @@ class LocalMCPBridge:
 
     async def start(self):
         """Start the MCP server process and perform initialization handshake."""
-        env = {**os.environ, **(self.env or {})} if self.env else None
+        if self.env:
+            safe_keys = {"PATH", "HOME", "USER", "SHELL", "LANG", "LC_ALL", "LC_CTYPE",
+                         "TERM", "TMPDIR", "XDG_RUNTIME_DIR", "NODE_PATH", "PYTHONPATH"}
+            env = {k: v for k, v in os.environ.items() if k in safe_keys or k.startswith("LC_") or k.startswith("XDG_")}
+            env.update(self.env)
+        else:
+            env = None
 
         self._process = await asyncio.create_subprocess_exec(
             *self.command,
