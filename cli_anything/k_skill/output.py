@@ -137,6 +137,15 @@ def format_human(response: dict) -> str:
 
 def emit(response: dict, as_json: bool = False):
     """Write formatted output to stdout."""
+    # click context를 조회하여 전역 --json 플래그 상속 처리
+    try:
+        import click
+        ctx = click.get_current_context(silent=True)
+        if ctx and ctx.obj and ctx.obj.get("as_json"):
+            as_json = True
+    except Exception:
+        pass
+
     if as_json:
         sys.stdout.write(format_json(response) + "\n")
     else:

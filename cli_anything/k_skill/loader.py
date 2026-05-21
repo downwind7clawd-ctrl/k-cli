@@ -27,11 +27,14 @@ Manifest format (skills/<domain>/manifest.yaml):
 """
 
 import importlib
+import logging
 import re
 from pathlib import Path
 from typing import Any, Optional
 
 import yaml
+
+logger = logging.getLogger("k_cli.loader")
 
 SKILLS_DIR = Path(__file__).parent / "skills"
 
@@ -121,7 +124,8 @@ def discover_domains() -> dict[str, SkillManifest]:
         try:
             manifest = load_manifest(domain_dir)
             domains[manifest.domain] = manifest
-        except ManifestLoadError:
+        except ManifestLoadError as e:
+            logger.warning("스킬 디렉토리 '%s'의 manifest.yaml 로딩 실패: %s", domain_dir.name, e)
             continue
 
     return domains

@@ -95,13 +95,18 @@ def _check_python_packages(packages: list[str]) -> list[str]:
 
 def _check_npm_packages(packages: list[str]) -> list[str]:
     """Check if npm global packages are installed."""
+    if not shutil.which("npm"):
+        return list(packages)
     missing = []
     for pkg in packages:
-        result = subprocess.run(
-            ["npm", "list", "-g", pkg, "--depth=0"],
-            capture_output=True, text=True, timeout=5,
-        )
-        if result.returncode != 0:
+        try:
+            result = subprocess.run(
+                ["npm", "list", "-g", pkg, "--depth=0"],
+                capture_output=True, text=True, timeout=5,
+            )
+            if result.returncode != 0:
+                missing.append(pkg)
+        except Exception:
             missing.append(pkg)
     return missing
 

@@ -2,6 +2,7 @@
 
 import asyncio
 import click
+import httpx
 
 from cli_anything.k_skill.proxy import proxy_get, safe_proxy_get
 from cli_anything.k_skill.output import emit, success_response, error_response
@@ -130,36 +131,52 @@ def lunch(edu_office, school_name, meal_date, as_json):
         # Step 1: Search school
         school_params = {"educationOffice": edu_office, "schoolName": school_name}
         school_data, _ = asyncio.run(proxy_get("/v1/neis/school-search", school_params))
+    except httpx.ConnectError:
+        emit(error_response("school-lunch", "PROXY_DOWN", "k-skill-proxy 서버에 연결할 수 없습니다"), as_json=as_json)
+        return
+    except httpx.TimeoutException:
+        emit(error_response("school-lunch", "TIMEOUT", "요청 시간이 초과되었습니다"), as_json=as_json)
+        return
+    except httpx.HTTPStatusError as e:
+        emit(error_response("school-lunch", "PROXY_HTTP_ERROR", f"프록시 HTTP 오류: {e.response.status_code}"), as_json=as_json)
+        return
 
-        # Extract school codes from response
-        rows = school_data
-        if isinstance(school_data, dict):
-            rows = school_data.get("schoolInfo", school_data.get("rows", school_data.get("data", [])))
-        if isinstance(rows, dict):
-            rows = rows.get("row", rows.get("items", []))
+    # Extract school codes from response
+    rows = school_data
+    if isinstance(school_data, dict):
+        rows = school_data.get("schoolInfo", school_data.get("rows", school_data.get("data", [])))
+    if isinstance(rows, dict):
+        rows = rows.get("row", rows.get("items", []))
 
-        if not rows or (isinstance(rows, list) and len(rows) == 0):
-            emit(error_response("school-lunch", "INVALID_INPUT",
-                                f"학교를 찾을 수 없습니다: {edu_office} {school_name}"),
-                 as_json=as_json)
-            return
+    if not rows or (isinstance(rows, list) and len(rows) == 0):
+        emit(error_response("school-lunch", "INVALID_INPUT",
+                            f"학교를 찾을 수 없습니다: {edu_office} {school_name}"),
+             as_json=as_json)
+        return
 
-        # Pick first school
-        school = rows[0] if isinstance(rows, list) else rows
-        atpt_code = school.get("ATPT_OFCDC_SC_CODE", school.get("atpt_ofcdc_sc_code", ""))
-        sd_code = school.get("SD_SCHUL_CODE", school.get("sd_schul_code", ""))
+    # Pick first school
+    school = rows[0] if isinstance(rows, list) else rows
+    atpt_code = school.get("ATPT_OFCDC_SC_CODE", school.get("atpt_ofcdc_sc_code", ""))
+    sd_code = school.get("SD_SCHUL_CODE", school.get("sd_schul_code", ""))
 
-        if not atpt_code or not sd_code:
-            emit(error_response("school-lunch", "UNKNOWN", "학교 코드를 추출할 수 없습니다"),
-                 as_json=as_json)
-            return
+    if not atpt_code or not sd_code:
+        emit(error_response("school-lunch", "UNKNOWN", "학교 코드를 추출할 수 없습니다"),
+             as_json=as_json)
+        return
 
-        # Step 2: Fetch meal
+    # Step 2: Fetch meal
+    try:
         meal_params = {"ATPT_OFCDC_SC_CODE": atpt_code, "SD_SCHUL_CODE": sd_code}
         if meal_date:
             meal_params["MLSV_YMD"] = meal_date
         meal_data, elapsed = asyncio.run(proxy_get("/v1/neis/school-meal", meal_params))
         resp = success_response("school-lunch", meal_data, response_time_ms=elapsed)
+    except httpx.ConnectError:
+        resp = error_response("school-lunch", "PROXY_DOWN", "k-skill-proxy 서버에 연결할 수 없습니다")
+    except httpx.TimeoutException:
+        resp = error_response("school-lunch", "TIMEOUT", "요청 시간이 초과되었습니다")
+    except httpx.HTTPStatusError as e:
+        resp = error_response("school-lunch", "PROXY_HTTP_ERROR", f"프록시 HTTP 오류: {e.response.status_code}")
     except Exception as e:
         resp = error_response("school-lunch", "UNKNOWN", f"오류: {e}")
 
@@ -370,7 +387,7 @@ def corp_registration(query, as_json, timeout):
 @click.argument('query', required=False)
 def catchtable(query, as_json, timeout):
     """캐치테이블 캡처."""
-    result = asyncio.run(run_mcp('catchtable-sniper', server_url='local://chrome-mcp', timeout=timeout))
+    result = asyncio.run(run_mcp('catchtable-sniper', server_url='local://chrome-mcp', tool_name='예약', timeout=timeout))
     emit(result, as_json=as_json)
 
 

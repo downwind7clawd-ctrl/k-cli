@@ -9,6 +9,7 @@ import asyncio
 import importlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -35,12 +36,30 @@ PYTHON_BIN = sys.executable
 
 _NPM_BIN_CACHE: dict[str, str] = {}
 
+
+def _ensure_k_skill_root() -> str | None:
+    """Validate K_SKILL_ROOT exists. Returns error message or None if OK."""
+    if not K_SKILL_ROOT.exists():
+        return (
+            f"K_SKILL_ROOT 경로가 존재하지 않습니다: {K_SKILL_ROOT}\n"
+            f"K_SKILL_ROOT 환경변수로 올바른 k-skill 디렉토리 경로를 설정하세요."
+        )
+    return None
+
 # Environment variable whitelist for subprocess execution
 # Only these keys (or prefixes) are passed to child processes
 _SUBPROCESS_ENV_ALLOWLIST = frozenset({
     "PATH", "HOME", "USER", "SHELL", "LANG", "LC_ALL", "LC_CTYPE",
     "TERM", "TMPDIR", "XDG_RUNTIME_DIR", "DISPLAY", "WAYLAND_DISPLAY",
     "NODE_PATH", "PYTHONPATH", "K_SKILL_ROOT",
+    "KSKILL_PROXY_BASE_URL",
+    "ODSAY_API_KEY",
+    "NAVER_CLIENT_ID",
+    "NAVER_CLIENT_SECRET",
+    "COUPANG_ACCESS_KEY",
+    "COUPANG_SECRET_KEY",
+    "DART_API_KEY",
+    "KOSIS_API_KEY",
 })
 _SUBPROCESS_ENV_ALLOWLIST_PREFIXES = ("LC_", "XDG_")
 
@@ -58,12 +77,14 @@ def _find_npm_bin(package_name: str) -> str | None:
                 data = json.loads(pkg_json.read_text())
                 bins = data.get("bin", {})
                 if isinstance(bins, str):
-                    _NPM_BIN_CACHE[package_name] = bins
-                    return bins
+                    abs_path = str((pkg_dir / bins).resolve())
+                    _NPM_BIN_CACHE[package_name] = abs_path
+                    return abs_path
                 elif isinstance(bins, dict) and bins:
                     val = list(bins.values())[0]
-                    _NPM_BIN_CACHE[package_name] = val
-                    return val
+                    abs_path = str((pkg_dir / val).resolve())
+                    _NPM_BIN_CACHE[package_name] = abs_path
+                    return abs_path
             except Exception:
                 pass
 
@@ -93,7 +114,7 @@ async def _run_subprocess(
     env: dict[str, str],
 ) -> tuple[str, str, int]:
     """subprocess를 비동기로 실행."""
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
     process = await loop.run_in_executor(
         None,
         lambda: subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, cwd=cwd, env=env),
@@ -102,6 +123,9 @@ async def _run_subprocess(
 
 
 # ── npm runner ────────────────────────────────────────────
+
+# npm 패키지명 검증 패턴: 알파벳, 숫자, 하이픈, 언더스코어, @, /, . 만 허용
+_SAFE_NPM_PKG = re.compile(r'^[a-zA-Z0-9_\-@/.]+$')
 
 async def run_npm(
     package: str,
@@ -115,6 +139,16 @@ async def run_npm(
     """npm 패키지를 실행하고 결과를 반환."""
     args = args or []
     start = time.monotonic()
+
+    err = _ensure_k_skill_root()
+    if err:
+        return error_response(package, "CONFIG_ERROR", err)
+
+    if not _SAFE_NPM_PKG.match(package):
+        return error_response(
+            package, "INVALID_INPUT",
+            f"잘못된 npm 패키지명: {package}",
+        )
 
     bin_cmd = _find_npm_bin(package)
 
@@ -175,6 +209,9 @@ async def run_script(
 ) -> dict[str, Any]:
     """Python 스크립트를 실행하고 결과를 반환."""
     args = args or []
+    err = _ensure_k_skill_root()
+    if err:
+        return error_response(script_name, "CONFIG_ERROR", err)
     start = time.monotonic()
 
     search_roots = script_dirs or [K_SKILL_SCRIPTS, K_SKILL_ROOT / script_name / "scripts"]
@@ -255,7 +292,7 @@ async def run_pip_import(
     start = time.monotonic()
     packages = packages or [module_name]
 
-    dep = SkillDependency(python=packages)
+    dep = SkillDependency(name=module_name, python=packages)
     report = await check_dependency(dep)
     if report.missing_python:
         pkg_str = ", ".join(report.missing_python)
@@ -314,19 +351,50 @@ async def run_mcp(
             if not tools:
                 return error_response(skill_name, "MCP_ERROR", "MCP 서버에 도구가 없습니다.")
 
-            tool = tool_name or tools[0].get("name", "")
-            content, _ = await client.call_tool(tool, arguments)
+            if not tool_name:
+                return error_response(
+                    skill_name, "INVALID_INPUT",
+                    f"tool_name이 필요합니다. 사용 가능한 도구: {', '.join(t.get('name', '') for t in tools)}",
+                )
+            content, _ = await client.call_tool(tool_name, arguments)
             elapsed_ms = int((time.monotonic() - start) * 1000)
             return success_response(skill_name, {"content": content}, response_time_ms=elapsed_ms)
 
         elif server_url and server_url.startswith("local://"):
-            from cli_anything.k_skill.local_mcp_bridge import LocalMCPBridge
+            from cli_anything.k_skill.local_mcp_bridge import LocalMCPBridge, _SAFE_COMMAND_PATTERN
             command_str = server_url[8:]
             command = command_str.split() if command_str else []
+            if not command:
+                return error_response(
+                    skill_name, "INVALID_INPUT",
+                    "local:// MCP 서버 URL에 명령어가 필요합니다.",
+                )
+            if not shutil.which(command[0]):
+                return error_response(
+                    skill_name, "MISSING_DEPENDENCY",
+                    f"MCP 서버 명령어를 찾을 수 없습니다: '{command[0]}'",
+                    fix="k-skill setup install 로 설치 가이드를 확인하세요.",
+                )
+            for part in command:
+                if ".." in part:
+                    return error_response(
+                        skill_name, "INVALID_INPUT",
+                        f"MCP 서버 명령어에 '..'은 허용되지 않습니다: '{part}'",
+                    )
+                if not _SAFE_COMMAND_PATTERN.match(part):
+                    return error_response(
+                        skill_name, "INVALID_INPUT",
+                        f"허용되지 않은 MCP 서버 명령어: '{part}'",
+                    )
             bridge = LocalMCPBridge(command=command)
             await bridge.start()
             try:
-                content = await bridge.call_tool(tool_name or "", arguments)
+                if not tool_name:
+                    return error_response(
+                        skill_name, "INVALID_INPUT",
+                        "local:// MCP 서버 호출 시 tool_name이 필요합니다.",
+                    )
+                content, _ = await bridge.call_tool(tool_name, arguments)
                 elapsed_ms = int((time.monotonic() - start) * 1000)
                 return success_response(skill_name, {"content": content}, response_time_ms=elapsed_ms)
             finally:

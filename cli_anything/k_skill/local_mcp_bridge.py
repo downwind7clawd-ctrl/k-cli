@@ -16,6 +16,8 @@ import re
 import time
 from typing import Any, Optional
 
+from cli_anything.k_skill.runner import _filter_env
+
 
 # Allowed command patterns for local MCP servers (security)
 _SAFE_COMMAND_PATTERN = re.compile(r"^[a-zA-Z0-9_\-.+/]+$")
@@ -58,6 +60,11 @@ class LocalMCPBridge:
                 code="INVALID_COMMAND", message="Command must be a non-empty list."
             )
         for part in command:
+            if ".." in part:
+                raise MCPBridgeError(
+                    code="INVALID_COMMAND",
+                    message=f"Disallowed '..' in command part: '{part}'. Path traversal is not allowed.",
+                )
             if not _SAFE_COMMAND_PATTERN.match(part):
                 raise MCPBridgeError(
                     code="INVALID_COMMAND",
@@ -75,13 +82,7 @@ class LocalMCPBridge:
 
     async def start(self):
         """Start the MCP server process and perform initialization handshake."""
-        if self.env:
-            safe_keys = {"PATH", "HOME", "USER", "SHELL", "LANG", "LC_ALL", "LC_CTYPE",
-                         "TERM", "TMPDIR", "XDG_RUNTIME_DIR", "NODE_PATH", "PYTHONPATH"}
-            env = {k: v for k, v in os.environ.items() if k in safe_keys or k.startswith("LC_") or k.startswith("XDG_")}
-            env.update(self.env)
-        else:
-            env = None
+        env = _filter_env(self.env)
 
         self._process = await asyncio.create_subprocess_exec(
             *self.command,

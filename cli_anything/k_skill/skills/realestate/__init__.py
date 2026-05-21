@@ -5,6 +5,7 @@ import click
 
 from cli_anything.k_skill.proxy import safe_proxy_get
 from cli_anything.k_skill.output import emit, error_response
+from cli_anything.k_skill.runner import run_npm, run_script
 
 
 @click.group()
@@ -151,7 +152,6 @@ def lh_detail(pan_id, ccr_cnnt_sys_ds_cd, spl_inf_tp_cd, as_json):
     }
     resp = safe_proxy_get("lh-notice", "/v1/lh-notice/detail", params)
     emit(resp, as_json=as_json)
-from cli_anything.k_skill.runner import run_npm, run_script
 
 
 @cli.command(name='sh-notice', help='서울주택도시공사 분양/입주 공고 검색')

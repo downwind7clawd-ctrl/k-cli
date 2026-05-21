@@ -3,7 +3,7 @@
 import asyncio
 import click
 
-from cli_anything.k_skill.runner import run_npm, run_script, run_pip_import, run_mcp
+from cli_anything.k_skill.runner import run_npm, run_script, run_pip_import, run_mcp, K_SKILL_ROOT
 from cli_anything.k_skill.output import emit
 
 
@@ -88,5 +88,5 @@ def marathon(query, as_json, timeout):
 def ticket(query, as_json, timeout):
     """공연 잔여석."""
     args = [query] if query else []
-    result = asyncio.run(run_script('ticket_availability.py', args, timeout=timeout, script_subdir='ticket-availability'))
+    result = asyncio.run(run_script('ticket_availability.py', args, timeout=timeout, script_dirs=[K_SKILL_ROOT / "ticket-availability"]))
     emit(result, as_json=as_json)

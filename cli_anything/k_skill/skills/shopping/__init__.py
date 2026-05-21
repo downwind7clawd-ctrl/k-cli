@@ -23,8 +23,9 @@ def cli():
 @click.option("--sort", default="rel", type=click.Choice(["rel", "date", "price_asc", "price_dsc", "review"]),
               help="정렬 (rel=관련도, date=최신, price_asc=낮은가격, price_dsc=높은가격, review=리뷰많은순)")
 @click.option("--page", default=1, help="페이지 (기본 1)")
+@click.option("--timeout", "-t", default=30, type=int, help="타임아웃(초)")
 @click.option("--json", "-j", "as_json", is_flag=True, help="JSON 출력")
-def naver_shop(query, limit, sort, page, as_json):
+def naver_shop(query, limit, sort, page, as_json, timeout):
     """네이버 쇼핑 검색.
 
     상품명/검색어로 네이버 쇼핑 후보를 검색합니다.
@@ -39,7 +40,7 @@ def naver_shop(query, limit, sort, page, as_json):
              as_json=as_json)
         return
     params = {"q": query, "limit": min(max(limit, 1), 40), "sort": sort, "page": max(page, 1)}
-    resp = safe_proxy_get("naver-shopping", "/v1/naver-shopping/search", params)
+    resp = safe_proxy_get("naver-shopping", "/v1/naver-shopping/search", params, timeout=timeout)
     emit(resp, as_json=as_json)
 
 @cli.command(name='olive-young', help='올리브영 상품 검색 및 재고 확인')

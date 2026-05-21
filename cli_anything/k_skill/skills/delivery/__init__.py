@@ -3,7 +3,7 @@
 import asyncio
 import click
 
-from cli_anything.k_skill.runner import run_npm, run_script, run_pip_import, run_mcp
+from cli_anything.k_skill.runner import run_npm, run_script, run_pip_import
 from cli_anything.k_skill.output import emit
 
 

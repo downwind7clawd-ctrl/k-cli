@@ -3,7 +3,7 @@
 import asyncio
 import click
 
-from cli_anything.k_skill.runner import run_npm, run_script, run_pip_import, run_mcp
+from cli_anything.k_skill.runner import run_npm, run_script, run_pip_import
 from cli_anything.k_skill.output import emit
 
 
@@ -28,7 +28,7 @@ def hwp_convert(query, as_json, timeout):
 def rhwp_debug(query, as_json, timeout):
     """HWP 레이아웃 디버그."""
     args = [query] if query else []
-    result = asyncio.run(run_script('rhwp', args, timeout=timeout, is_binary=True))
+    result = asyncio.run(run_script('rhwp', args, timeout=timeout))
     emit(result, as_json=as_json)
 
 @cli.command(name='rhwp-edit', help='HWP 문서 편집 (k-skill-rhwp)')

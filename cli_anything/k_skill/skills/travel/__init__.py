@@ -17,7 +17,8 @@ def cli():
 @click.argument('query', required=False)
 def myrealtrip(query, as_json, timeout):
     """마이리얼트립."""
-    result = asyncio.run(run_mcp('myrealtrip-search', server_url='https://mcp-servers.myrealtrip.com/mcp', timeout=timeout))
+    args = {"keyword": query} if query else {}
+    result = asyncio.run(run_mcp('myrealtrip-search', server_url='https://mcp-servers.myrealtrip.com/mcp', tool_name='searchStays', arguments=args, timeout=timeout))
     emit(result, as_json=as_json)
 
 @cli.command(name='hola-poke', help='올라포케 역삼점 메뉴/영업시간')
@@ -26,7 +27,7 @@ def myrealtrip(query, as_json, timeout):
 @click.argument('query', required=False)
 def hola_poke(query, as_json, timeout):
     """올라포케 역삼점."""
-    result = asyncio.run(run_mcp('hola-poke-yeoksam', server_url='https://hola-poke-yeoksam-skill.onrender.com/mcp', timeout=timeout))
+    result = asyncio.run(run_mcp('hola-poke-yeoksam', server_url='https://hola-poke-yeoksam-skill.onrender.com/mcp', tool_name='get_menu', timeout=timeout))
     emit(result, as_json=as_json)
 
 @cli.command(name='foresttrip', help='산림청 숲나들예약 잔여석 조회')

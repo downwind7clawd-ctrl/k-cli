@@ -5,6 +5,7 @@ import click
 
 from cli_anything.k_skill.proxy import safe_proxy_get
 from cli_anything.k_skill.output import emit
+from cli_anything.k_skill.runner import run_script
 
 
 @click.group()
@@ -45,7 +46,6 @@ def naver_news(query, display, start, sort, as_json):
     params = {"q": query, "display": display, "start": start, "sort": sort}
     resp = safe_proxy_get("naver-news", "/v1/naver-news/search", params)
     emit(resp, as_json=as_json)
-from cli_anything.k_skill.runner import run_script
 
 
 @cli.command(name='naver-blog', help='네이버 블로그 검색 및 요약')

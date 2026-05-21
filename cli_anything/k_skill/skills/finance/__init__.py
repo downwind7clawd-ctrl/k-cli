@@ -165,7 +165,8 @@ def kosis(query, as_json, timeout):
 @click.argument('query', required=False)
 def korean_law(query, as_json, timeout):
     """법령/판례 검색."""
-    result = asyncio.run(run_mcp('korean-law-search', server_url='local://korean-law-mcp', timeout=timeout))
+    args = {"query": query} if query else {}
+    result = asyncio.run(run_mcp('korean-law', server_url='local://korean-law-mcp', tool_name='search', arguments=args, timeout=timeout))
     emit(result, as_json=as_json)
 
 

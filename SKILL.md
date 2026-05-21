@@ -75,15 +75,17 @@ k-skill setup check -j
 | KSKILL_PROXY_BASE_URL | 프록시 URL | https://k-skill-proxy.nomadamas.org |
 | K_SKILL_ROOT | k-skill 스크립트/패키지 루트 경로 | 패키지 기준 상대경로 자동 계산 |
 
+* **보안 서브프로세스 환경변수 상속:** 로컬 스크립트 실행에 필요한 주요 API 키 및 프록시 설정 변수(`KSKILL_PROXY_BASE_URL`, `ODSAY_API_KEY`, `NAVER_CLIENT_ID`, `NAVER_CLIENT_SECRET`, `COUPANG_ACCESS_KEY`, `COUPANG_SECRET_KEY`, `DART_API_KEY`, `KOSIS_API_KEY`)는 하위 실행 환경으로 안전하게 자동 상속되도록 설계되어 있습니다.
+
 ## 유틸리티
 
 ```bash
-k-skill list                  # 도메인별 요약
-k-skill list --all -j          # 전체 스킬 JSON
-k-skill list -d weather -j    # 도메인별
-k-skill setup check -j         # 의존성 상태
-k-skill setup proxy -j         # 프록시 연결
-k-skill setup install          # 설치 가이드
+k-cli list                   # 도메인별 요약
+k-cli -j list --all          # 전체 스킬 JSON (전역 -j 사용)
+k-cli list -d weather        # 도메인별
+k-cli -j setup check         # 의존성 상태 (JSON)
+k-cli -j setup proxy         # 프록시 연결 (JSON)
+k-cli setup install          # 설치 가이드
 ```
 
 ---

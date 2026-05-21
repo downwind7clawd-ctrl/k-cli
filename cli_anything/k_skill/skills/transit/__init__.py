@@ -4,7 +4,7 @@ import asyncio
 import click
 
 from cli_anything.k_skill.proxy import safe_proxy_get
-from cli_anything.k_skill.runner import run_script, run_pip_import, run_mcp
+from cli_anything.k_skill.runner import run_script, run_pip_import
 from cli_anything.k_skill.output import emit
 
 
@@ -110,5 +110,5 @@ def transit_route(query, as_json, timeout):
     import os
     env_vars = {k: os.environ[k] for k in ["ODSAY_API_KEY"] if k in os.environ}
     args = [query] if query else []
-    result = asyncio.run(run_script('transit_route.py', args, env_keys=["ODSAY_API_KEY"], timeout=timeout))
+    result = asyncio.run(run_script('transit_route.py', args, env_vars=env_vars, timeout=timeout))
     emit(result, as_json=as_json)

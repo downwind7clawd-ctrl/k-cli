@@ -85,7 +85,7 @@ async def proxy_post(
 def safe_proxy_get(
     skill: str,
     path: str,
-    params: dict = None,
+    params: Optional[dict] = None,
     timeout: float = DEFAULT_TIMEOUT,
 ):
     """Synchronous wrapper: run proxy_get in event loop with full error handling.
@@ -126,7 +126,7 @@ def safe_proxy_get(
 def safe_proxy_post(
     skill: str,
     path: str,
-    json_body: dict = None,
+    json_body: Optional[dict] = None,
     timeout: float = DEFAULT_TIMEOUT,
 ):
     """Synchronous wrapper: run proxy_post in event loop with full error handling.
@@ -169,6 +169,6 @@ async def health_check(timeout: float = 5.0) -> bool:
     try:
         async with httpx.AsyncClient() as client:
             resp = await client.get(f"{base}/health", timeout=timeout)
-            return resp.status_code < 500
+            return 200 <= resp.status_code < 300
     except Exception:
         return False

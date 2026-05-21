@@ -114,8 +114,8 @@ cli_anything/k_skill/
 # 설치
 pip install -e ".[dev]"
 
-# 테스트
-pytest tests/ -v
+# 테스트 (venv 환경에서 실행)
+.venv/bin/pytest tests/ -v
 
 # 의존성 상태
 k-skill setup check -j

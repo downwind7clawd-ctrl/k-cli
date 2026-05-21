@@ -167,10 +167,12 @@ def list(ctx: click.Context, list_all: bool, domain: Optional[str], category: Op
     --json 모드에서는 구조화된 배열을 반환합니다.
 
     예시:
-      k-cli list                  # 도메인별 요약
-      k-cli list --all            # 전체 스킬 목록
-      k-cli list -d weather       # 날씨 도메인 스킬
-      k-cli list -c utility       # 유틸리티 카테고리
+      k-cli list                     # 도메인별 요약
+      k-cli list --all               # 전체 스킬 목록
+      k-cli list -d weather          # 날씨 도메인 스킬
+      k-cli list -c utility          # 유틸리티 카테고리
+      k-cli -j list                  # JSON 출력 (전역 -j 플래그)
+      k-cli -j list --all            # 전체 목록 JSON
     """
     skills = list_all_skills()
 
@@ -234,7 +236,7 @@ def setup_check(ctx: click.Context):
 
     예시:
       k-cli setup check
-      k-cli setup check -j   # JSON 출력
+      k-cli -j setup check   # JSON 출력 (전역 -j 플래그)
     """
     checks: dict[str, dict] = {}
 
@@ -323,7 +325,7 @@ def setup_proxy(ctx: click.Context):
 
     예시:
       k-cli setup proxy
-      k-cli setup proxy -j   # JSON 출력
+      k-cli -j setup proxy   # JSON 출력 (전역 -j 플래그)
     """
     from .proxy import get_proxy_base, health_check
 
