@@ -48,7 +48,7 @@
 ## 설치
 
 ```bash
-pip install cli-anything-k-skill
+pip install k-skill-cli
 ```
 
 의존성: Python 3.10+, curl
