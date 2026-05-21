@@ -31,3 +31,7 @@ Thumbs.db
 # Distribution
 *.tar.gz
 *.whl
+
+# Project docs (internal)
+k-skill-cli-anything-architecture.md
+BUGFIX_LOG.md
