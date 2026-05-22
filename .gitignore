@@ -35,3 +35,6 @@ Thumbs.db
 # Project docs (internal)
 k-skill-cli-anything-architecture.md
 BUGFIX_LOG.md
+
+# Logs
+LOG/
