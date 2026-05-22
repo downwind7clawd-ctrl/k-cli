@@ -42,3 +42,6 @@ LOG/
 # Test artifacts
 .coverage
 htmlcov/
+
+# Credentials
+.pypirc
