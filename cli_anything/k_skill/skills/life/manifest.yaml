@@ -1,7 +1,7 @@
 domain: life
 description: 생활/편의 (주유소, 쓰레기, 주차장, 맛집 등)
 dependencies:
-  proxy: false
+  proxy: true
   npm: []
   python: []
   env_keys: []

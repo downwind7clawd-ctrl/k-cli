@@ -88,12 +88,32 @@ def danawa(query, as_json, timeout):
 
 
 @cli.command(name='ohou-deal', help='오늘의집 데일리특가 조회')
+@click.option('--query', '-q', 'search_query', help='상품명/브랜드 키워드')
+@click.option('--min-discount', 'min_discount', type=int, help='최소 할인율 (0~100)')
+@click.option('--free-delivery', 'free_delivery', is_flag=True, help='무료배송 상품만')
+@click.option('--sort', 'sort_by', default='discount', type=click.Choice(['discount', 'price', 'review', 'annual-sales']), help='정렬 기준 (기본: discount)')
+@click.option('--limit', default=10, type=int, help='결과 개수 (기본 10)')
 @click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
 @click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
-@click.argument('query', required=False)
-def ohou_deal(query, as_json, timeout):
-    """오늘의집 데일리딜."""
-    args = [query] if query else []
+def ohou_deal(search_query, min_discount, free_delivery, sort_by, limit, as_json, timeout):
+    """오늘의집 데일리딜 조회.
+
+    오늘의집 공개 오늘의딜 페이지에서 특가 상품을 조회합니다.
+
+    예시:
+      k-cli shopping ohou-deal
+      k-cli shopping ohou-deal --query 러그 --min-discount 30 --free-delivery --limit 5 -j
+    """
+    args = ["list"]
+    if search_query:
+        args.extend(["--query", search_query])
+    if min_discount is not None:
+        args.extend(["--min-discount", str(min_discount)])
+    if free_delivery:
+        args.append("--free-delivery")
+    if sort_by:
+        args.extend(["--sort", sort_by])
+    args.extend(["--limit", str(limit)])
     result = asyncio.run(run_script('ohou_today_deal.py', args, timeout=timeout))
     emit(result, as_json=as_json)
 

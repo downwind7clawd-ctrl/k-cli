@@ -1,7 +1,7 @@
 domain: realestate
 description: 부동산 (실거래가, LH, 경매)
 dependencies:
-  proxy: false
+  proxy: true
   npm: []
   python: []
   env_keys: []

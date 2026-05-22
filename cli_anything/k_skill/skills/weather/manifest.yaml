@@ -1,5 +1,10 @@
 domain: weather
 description: 날씨/환경 조회 (기상청, 미세먼지, 한강수위)
+dependencies:
+  proxy: true
+  npm: []
+  python: []
+  env_keys: []
 skills:
   weather:
     name: korea-weather

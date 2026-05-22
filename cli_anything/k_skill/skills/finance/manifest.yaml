@@ -1,7 +1,7 @@
 domain: finance
 description: 금융/공공 (사업자등록, 주식, 법률, 통계)
 dependencies:
-  proxy: false
+  proxy: true
   npm: []
   python: []
   env_keys: []
@@ -17,7 +17,7 @@ skills:
   kstartup:
     name: kstartup-search
     display_name: K-스타트업
-    description: K-스타트업 공고
+    description: K-스타트업 공고/사업정보/콘텐츠/통계 조회
   dart:
     name: k-dart
     display_name: DART 전자공시

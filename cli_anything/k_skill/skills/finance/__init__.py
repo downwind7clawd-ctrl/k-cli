@@ -110,21 +110,39 @@ def stock(query, bas_dd, limit, as_json):
 
 # ── K-Startup ─────────────────────────────────────────────
 
-@cli.command("kstartup")
+@cli.group()
+def kstartup():
+    """K-Startup 창업공고/사업정보/콘텐츠/통계 조회.
+    
+    창업진흥원 K-Startup Open API를 k-skill-proxy 경유로 조회합니다.
+    """
+    pass
+
+
+@kstartup.command("announcements")
 @click.option("--region", "supt_regin", help="지역 (예: 서울특별시, 부산광역시)")
 @click.option("--open", "rcrt_prgs_yn", help="모집진행여부 (Y/N)")
 @click.option("--keyword", "pan_nm", help="공고명 검색어")
+@click.option("--biz-clsfc", "supt_biz_clsfc", help="지원 분야 (예: 사업화, 창업기업지원)")
+@click.option("--target", "aply_trgt", help="신청 대상 (예: 예비창업자,일반인)")
+@click.option("--biz-enyy", "biz_enyy", help="창업 기간 (예: 예비창업자,1년미만)")
+@click.option("--age", "biz_trgt_age", help="대상 연령 (예: 만 20세 이상 ~ 만 39세 이하)")
+@click.option("--start-date", "pbanc_rcpt_bgng_dt", help="접수 시작일 YYYYMMDD")
+@click.option("--end-date", "pbanc_rcpt_end_dt", help="접수 종료일 YYYYMMDD")
 @click.option("--page", default=1, help="페이지 (기본 1)")
 @click.option("--per-page", "per_page", default=10, help="페이지당 건수 (기본 10, 최대 100)")
 @click.option("--json", "-j", "as_json", is_flag=True, help="JSON 출력")
-def kstartup(supt_regin, rcrt_prgs_yn, pan_nm, page, per_page, as_json):
-    """K-Startup 창업공고 검색.
+def kstartup_announcements(supt_regin, rcrt_prgs_yn, pan_nm, supt_biz_clsfc,
+                           aply_trgt, biz_enyy, biz_trgt_age,
+                           pbanc_rcpt_bgng_dt, pbanc_rcpt_end_dt,
+                           page, per_page, as_json):
+    """지원사업 공고 검색 (가장 활용도 높음).
     
-    창업진흥원 창업지원사업 공고를 조회합니다.
+    창업지원사업 공고를 공고명/지역/대상/모집상태 등으로 검색합니다.
     
     예시:
-      k-cli finance kstartup --region "서울특별시" --open Y
-      k-cli finance kstartup --keyword "청년" --per-page 5 -j
+      k-cli finance kstartup announcements --region "서울특별시" --open Y
+      k-cli finance kstartup announcements --keyword "청년" --target "예비창업자" -j
     """
     params = {"page": max(page, 1), "perPage": min(max(per_page, 1), 100)}
     if supt_regin:
@@ -133,7 +151,92 @@ def kstartup(supt_regin, rcrt_prgs_yn, pan_nm, page, per_page, as_json):
         params["rcrt_prgs_yn"] = rcrt_prgs_yn
     if pan_nm:
         params["panNm"] = pan_nm
+    if supt_biz_clsfc:
+        params["supt_biz_clsfc"] = supt_biz_clsfc
+    if aply_trgt:
+        params["aply_trgt"] = aply_trgt
+    if biz_enyy:
+        params["biz_enyy"] = biz_enyy
+    if biz_trgt_age:
+        params["biz_trgt_age"] = biz_trgt_age
+    if pbanc_rcpt_bgng_dt:
+        params["pbanc_rcpt_bgng_dt"] = pbanc_rcpt_bgng_dt
+    if pbanc_rcpt_end_dt:
+        params["pbanc_rcpt_end_dt"] = pbanc_rcpt_end_dt
     resp = safe_proxy_get("kstartup", "/v1/kstartup/announcements", params)
+    emit(resp, as_json=as_json)
+
+
+@kstartup.command("business-info")
+@click.option("--biz-yr", "biz_yr", help="사업 연도 (4자리, 예: 2024)")
+@click.option("--biz-category-cd", "biz_category_cd", help="사업 구분 코드 (예: cmrczn_Tab3)")
+@click.option("--biz-name", "supt_biz_titl_nm", help="사업 명 (예: 1인 창조기업)")
+@click.option("--page", default=1, help="페이지 (기본 1)")
+@click.option("--per-page", "per_page", default=10, help="페이지당 건수 (기본 10, 최대 100)")
+@click.option("--json", "-j", "as_json", is_flag=True, help="JSON 출력")
+def kstartup_business_info(biz_yr, biz_category_cd, supt_biz_titl_nm, page, per_page, as_json):
+    """통합공고 사업 정보 조회.
+    
+    통합공고 지원사업 정보(예산, 규모, 수행기관, 사업소개)를 조회합니다.
+    
+    예시:
+      k-cli finance kstartup business-info --biz-yr 2024 --biz-category-cd cmrczn_Tab3 -j
+    """
+    params = {"page": max(page, 1), "perPage": min(max(per_page, 1), 100)}
+    if biz_yr:
+        params["biz_yr"] = biz_yr
+    if biz_category_cd:
+        params["biz_category_cd"] = biz_category_cd
+    if supt_biz_titl_nm:
+        params["supt_biz_titl_nm"] = supt_biz_titl_nm
+    resp = safe_proxy_get("kstartup", "/v1/kstartup/business-info", params)
+    emit(resp, as_json=as_json)
+
+
+@kstartup.command("contents")
+@click.option("--clss-cd", "clss_cd", help="콘텐츠 구분 코드 (예: notice_matr)")
+@click.option("--keyword", "titl_nm", help="제목 키워드")
+@click.option("--page", default=1, help="페이지 (기본 1)")
+@click.option("--per-page", "per_page", default=10, help="페이지당 건수 (기본 10, 최대 100)")
+@click.option("--json", "-j", "as_json", is_flag=True, help="JSON 출력")
+def kstartup_contents(clss_cd, titl_nm, page, per_page, as_json):
+    """창업 콘텐츠 조회 (공지·뉴스·우수사례).
+    
+    창업관련 콘텐츠(공지, 뉴스, 우수사례)를 조회합니다.
+    
+    예시:
+      k-cli finance kstartup contents --clss-cd notice_matr -j
+      k-cli finance kstartup contents --keyword "공모전" -j
+    """
+    params = {"page": max(page, 1), "perPage": min(max(per_page, 1), 100)}
+    if clss_cd:
+        params["clss_cd"] = clss_cd
+    if titl_nm:
+        params["titl_nm"] = titl_nm
+    resp = safe_proxy_get("kstartup", "/v1/kstartup/contents", params)
+    emit(resp, as_json=as_json)
+
+
+@kstartup.command("statistics")
+@click.option("--keyword", "titl_nm", help="통계 자료 명 키워드")
+@click.option("--file-nm", "file_nm", help="파일 명/내용 키워드")
+@click.option("--page", default=1, help="페이지 (기본 1)")
+@click.option("--per-page", "per_page", default=10, help="페이지당 건수 (기본 10, 최대 100)")
+@click.option("--json", "-j", "as_json", is_flag=True, help="JSON 출력")
+def kstartup_statistics(titl_nm, file_nm, page, per_page, as_json):
+    """통계 보고서 조회.
+    
+    창업관련 통계보고서를 조회합니다.
+    
+    예시:
+      k-cli finance kstartup statistics --keyword "창업기업 실태조사" -j
+    """
+    params = {"page": max(page, 1), "perPage": min(max(per_page, 1), 100)}
+    if titl_nm:
+        params["titl_nm"] = titl_nm
+    if file_nm:
+        params["file_nm"] = file_nm
+    resp = safe_proxy_get("kstartup", "/v1/kstartup/statistics", params)
     emit(resp, as_json=as_json)
 
 

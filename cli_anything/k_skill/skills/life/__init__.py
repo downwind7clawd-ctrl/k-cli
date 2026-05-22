@@ -2,10 +2,9 @@
 
 import asyncio
 import click
-import httpx
 
-from cli_anything.k_skill.proxy import proxy_get, safe_proxy_get
-from cli_anything.k_skill.output import emit, success_response, error_response
+from cli_anything.k_skill.proxy import safe_proxy_get
+from cli_anything.k_skill.output import emit, error_response
 from cli_anything.k_skill.runner import run_mcp, run_npm, run_script
 
 
@@ -114,9 +113,9 @@ def library(keyword, page, page_size, as_json):
 
 
 @cli.command()
-@click.option("--edu-office", "edu_office", required=True, help="교육청명 (예: 서울특별시교육청)")
-@click.option("--school", "school_name", required=True, help="학교명 (예: 미래초등학교)")
-@click.option("--date", "meal_date", help="급식일 YYYYMMDD (기본: 오늘)")
+@click.option("--edu-office", required=True, help="교육청명 (예: 서울특별시교육청)")
+@click.option("--school", "school_name", required=True, help="학교명")
+@click.option("--date", "meal_date", help="급식일자 (YYYYMMDD, 기본: 오늘)")
 @click.option("--json", "-j", "as_json", is_flag=True, help="JSON 출력")
 def lunch(edu_office, school_name, meal_date, as_json):
     """학교 급식 식단.
@@ -127,24 +126,14 @@ def lunch(edu_office, school_name, meal_date, as_json):
       k-cli life lunch --edu-office "서울특별시교육청" --school "미래초등학교"
       k-cli life lunch --edu-office "서울특별시교육청" --school "미래초등학교" --date 20260521 -j
     """
-    try:
-        # Step 1: Search school
-        school_params = {"educationOffice": edu_office, "schoolName": school_name}
-        school_data, _ = asyncio.run(proxy_get("/v1/neis/school-search", school_params))
-    except httpx.ConnectError:
-        emit(error_response("school-lunch", "PROXY_DOWN", "k-skill-proxy 서버에 연결할 수 없습니다"), as_json=as_json)
-        return
-    except httpx.TimeoutException:
-        emit(error_response("school-lunch", "TIMEOUT", "요청 시간이 초과되었습니다"), as_json=as_json)
-        return
-    except httpx.HTTPStatusError as e:
-        emit(error_response("school-lunch", "PROXY_HTTP_ERROR", f"프록시 HTTP 오류: {e.response.status_code}"), as_json=as_json)
+    # Step 1: Search school
+    school_resp = asyncio.run(safe_proxy_get("school-lunch", "/v1/neis/school-search", {"educationOffice": edu_office, "schoolName": school_name}))
+    if school_resp.get("status") == "error":
+        emit(school_resp, as_json=as_json)
         return
 
-    # Extract school codes from response
-    rows = school_data
-    if isinstance(school_data, dict):
-        rows = school_data.get("schoolInfo", school_data.get("rows", school_data.get("data", [])))
+    school_data = school_resp.get("data", {})
+    rows = school_data.get("schoolInfo", school_data.get("rows", school_data.get("data", [])))
     if isinstance(rows, dict):
         rows = rows.get("row", rows.get("items", []))
 
@@ -154,7 +143,6 @@ def lunch(edu_office, school_name, meal_date, as_json):
              as_json=as_json)
         return
 
-    # Pick first school
     school = rows[0] if isinstance(rows, list) else rows
     atpt_code = school.get("ATPT_OFCDC_SC_CODE", school.get("atpt_ofcdc_sc_code", ""))
     sd_code = school.get("SD_SCHUL_CODE", school.get("sd_schul_code", ""))
@@ -165,21 +153,10 @@ def lunch(edu_office, school_name, meal_date, as_json):
         return
 
     # Step 2: Fetch meal
-    try:
-        meal_params = {"ATPT_OFCDC_SC_CODE": atpt_code, "SD_SCHUL_CODE": sd_code}
-        if meal_date:
-            meal_params["MLSV_YMD"] = meal_date
-        meal_data, elapsed = asyncio.run(proxy_get("/v1/neis/school-meal", meal_params))
-        resp = success_response("school-lunch", meal_data, response_time_ms=elapsed)
-    except httpx.ConnectError:
-        resp = error_response("school-lunch", "PROXY_DOWN", "k-skill-proxy 서버에 연결할 수 없습니다")
-    except httpx.TimeoutException:
-        resp = error_response("school-lunch", "TIMEOUT", "요청 시간이 초과되었습니다")
-    except httpx.HTTPStatusError as e:
-        resp = error_response("school-lunch", "PROXY_HTTP_ERROR", f"프록시 HTTP 오류: {e.response.status_code}")
-    except Exception as e:
-        resp = error_response("school-lunch", "UNKNOWN", f"오류: {e}")
-
+    meal_params = {"ATPT_OFCDC_SC_CODE": atpt_code, "SD_SCHUL_CODE": sd_code}
+    if meal_date:
+        meal_params["MLSV_YMD"] = meal_date
+    resp = asyncio.run(safe_proxy_get("school-lunch", "/v1/neis/school-meal", meal_params))
     emit(resp, as_json=as_json)
 
 
@@ -261,23 +238,54 @@ def public_restroom(query, as_json, timeout):
 
 
 @cli.command(name='emergency-room', help='근처 응급실 실시간 병상 조회')
+@click.option('--limit', default=3, type=int, help='결과 개수 (기본 3, 최대 10)')
+@click.option('--radius', default=5, type=int, help='검색 반경(km, 기본 5, 최대 20)')
 @click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
 @click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
-@click.argument('query', required=False)
-def emergency_room(query, as_json, timeout):
-    """응급실 병상."""
-    args = [query] if query else []
+@click.argument('query', required=True)
+def emergency_room(query, limit, radius, as_json, timeout):
+    """응급실 병상 조회.
+
+    위치 기준 근처 응급실과 E-Gen 운영 플래그를 조회합니다.
+
+    예시:
+      k-cli life emergency-room "광화문"
+      k-cli life emergency-room "강남역" --limit 5 --radius 10 -j
+    """
+    import shlex
+    args = [query, f"--limit", str(min(max(limit, 1), 10)), f"--radius", str(min(max(radius, 1), 20))]
     result = asyncio.run(run_npm('emergency-room-beds', args, timeout=timeout))
     emit(result, as_json=as_json)
 
 
 @cli.command(name='election', help='지방선거 후보자 검색')
+@click.option('--election', 'election_type', help='선거 종류 (시도지사/기초단체장/광역의원/기초의원/광역비례/기초비례/교육감)')
+@click.option('--date', 'election_date', help='선거일 (YYYY, YYYYMMDD, YYYY.MM.DD)')
+@click.option('--region', 'election_region', help='지역 필터')
+@click.option('--limit', default=10, type=int, help='결과 개수 (기본 10, 최대 100)')
+@click.option('--all', 'include_all', is_flag=True, help='지방선거 외 전체 선거 결과 포함')
 @click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
 @click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
-@click.argument('query', required=False)
-def election(query, as_json, timeout):
-    """선거 후보."""
-    args = [query] if query else []
+@click.argument('query', required=True)
+def election(query, election_type, election_date, election_region, limit, include_all, as_json, timeout):
+    """지방선거 후보자 검색.
+
+    중앙선거관리위원회 공개 통합검색으로 후보자 정보를 조회합니다.
+
+    예시:
+      k-cli life election "오세훈" --election 시도지사
+      k-cli life election "김동연" --date 2014 --region 동작 -j
+    """
+    args = [query]
+    if election_type:
+        args.extend(["--election", election_type])
+    if election_date:
+        args.extend(["--date", election_date])
+    if election_region:
+        args.extend(["--region", election_region])
+    args.extend(["--limit", str(min(max(limit, 1), 100))])
+    if include_all:
+        args.append("--all")
     result = asyncio.run(run_npm('local-election-candidate-search', args, npx=True, timeout=timeout))
     emit(result, as_json=as_json)
 

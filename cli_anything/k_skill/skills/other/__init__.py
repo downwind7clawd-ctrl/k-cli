@@ -23,6 +23,7 @@ def iros(query, as_json, timeout):
 
 @cli.command(name='setup', help='k-skill 초기 설정 마법사')
 @click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
 @click.argument('query', required=False)
 def setup(query, as_json, timeout):
     """k-skill 초기설정."""

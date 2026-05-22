@@ -53,7 +53,7 @@ from .loader import discover_cli_groups, list_all_skills
 @click.version_option(__version__, prog_name="k-cli")
 @click.pass_context
 def main(ctx: click.Context, as_json: bool):
-    """k-cli — 한국인을 위한 CLI 스킬 모음 (86+ 스킬)
+    """k-cli — 한국인을 위한 CLI 스킬 모음 (86개 스킬)
 
     다양한 한국 특화 유틸리티를 단일 CLI로 제공합니다.
     프록시 기반 스킬은 추가 설치 없이 즉시 사용 가능합니다.
@@ -65,58 +65,72 @@ def main(ctx: click.Context, as_json: bool):
     에이전트는 JSON 응답의 data 필드를 파싱하여 사용하세요.
 
     날씨/환경:
-      k-cli weather fine-dust --region "지역명" -j
-      k-cli weather airkorea --region "지역명" -j
-      k-cli weather forecast --region "지역명" -j
+      k-cli weather dust "서울 강남구" -j
+      k-cli weather forecast "서울" -j
+      k-cli weather han-river -j
 
     금융/법률:
-      k-cli finance stock-search --query "종목명" -j
-      k-cli finance dart --corp "기업명" -j
-      k-cli finance law-search --query "검색어" -j
-      k-cli finance kosis --stats-id "통계표ID" -j
-      k-cli finance business-reg --number "사업자번호" -j
+      k-cli finance stock "삼성전자" -j
+      k-cli finance nts status --b-no 1234567890 -j
+      k-cli finance nts validate --b-no 1234567890 --p-nm "홍길동" --start-dt 20200101 -j
+      k-cli finance kstartup announcements --region "서울특별시" --open Y -j
+      k-cli finance kstartup business-info --biz-yr 2024 -j
+      k-cli finance dart -j
+      k-cli finance kosis "통계명" -j
+      k-cli finance korean-law "검색어" -j
+      k-cli finance gongsijiga "지역명" -j
 
     교통:
-      k-cli transit subway-arrival --station "역명" -j
-      k-cli transit seoul-density --area "지역명" -j
-      k-cli transit lost-property --line "호선" -j
+      k-cli transit subway "강남" -j
+      k-cli transit ktx "서울" "부산" --date 20260523 -j
+      k-cli transit srt "수서" "부산" --date 20260523 -j
 
     쇼핑:
-      k-cli shopping coupang --query "검색어" -j
-      k-cli shopping olive-young --query "검색어" -j
+      k-cli shopping naver-shop "에어팟" -j
+      k-cli shopping ohou-deal --query "러그" --min-discount 30 --free-delivery -j
+      k-cli shopping coupang "검색어" -j
+      k-cli shopping olive-young "검색어" -j
 
     부동산:
-      k-cli realestate trade-price --region "시군구" -j
-      k-cli realestate gongsijiga --region "시군구" -j
+      k-cli realestate realestate code "서울 강남구" -j
+      k-cli realestate realestate search --lawd-cd 11680 --date 202403 -j
+      k-cli realestate lh search --status "공고중" --region "서울특별시" -j
+      k-cli realestate sh-notice "행복주택" --category 임대 -j
 
     스포츠/엔터:
-      k-cli sports kbo --date YYYY-MM-DD -j
-      k-cli sports kbl --date YYYY-MM-DD -j
-      k-cli sports kleague --date YYYY-MM-DD -j
-      k-cli sports lck --split "split명" -j
-      k-cli sports cinema --theater cgv --region "지역" -j
-      k-cli sports lotto --round "회차" -j
+      k-cli sports kbo --date 2026-05-23 -j
+      k-cli sports kbl --date 2026-05-23 -j
+      k-cli sports kleague --date 2026-05-23 -j
+      k-cli sports lck -j
+      k-cli sports cinema theaters --chain cgv --keyword "강남" -j
+      k-cli sports cinema movies --chain cgv --keyword "강남" --date 20260523 -j
+      k-cli sports cinema timetable --chain cgv --keyword "강남" --date 20260523 -j
+      k-cli sports lotto -j
 
     중고거래:
-      k-cli market daangn --category "카테고리" --region "지역" -j
-      k-cli market bunjang --query "검색어" -j
+      k-cli market daangn-market --region "서울" -j
+      k-cli market bunjang "검색어" -j
 
     검색:
-      k-cli search naver-news --query "검색어" -j
-      k-cli search naver-blog --query "검색어" -j
-      k-cli search geeknews -j
+      k-cli search naver-news "AI" -j
+      k-cli search naver-blog "키워드" -j
+      k-cli search patent "특허명" -j
+      k-cli search sillok "검색어" -j
 
     생활:
-      k-cli life emergency-room --region "시도" -j
-      k-cli life gas-station --region "시도" --oil "휘발유" -j
-      k-cli life waste-info --region "시군구" -j
+      k-cli life emergency-room "광화문" --limit 5 -j
+      k-cli life election "오세훈" --election 시도지사 -j
+      k-cli life waste "강남구" -j
+      k-cli life gas --lat 37.5665 --lon 126.9780 -j
+      k-cli life drug "타이레놀" -j
 
     여행:
-      k-cli travel myrealtrip-flight --origin GMP --destination CJU --date YYYY-MM-DD -j
-      k-cli travel myrealtrip-stay --keyword "호텔명" --checkin YYYY-MM-DD --checkout YYYY-MM-DD -j
+      k-cli travel myrealtrip --query "제주도" -j
+      k-cli travel foresttrip --region "지역" -j
 
     문서:
-      k-cli document char-count --text "텍스트" -j
+      k-cli document spell-check "문장" -j
+      k-cli document char-count "텍스트" -j
 
     유틸리티:
       k-cli list --all -j                # 전체 스킬 목록
@@ -338,11 +352,11 @@ def setup_proxy(ctx: click.Context):
         else:
             icon = "✅" if ok else "❌"
             click.echo(f"{icon} 프록시 {'연결 가능' if ok else '연결 불가'}")
-    except Exception as e:
+    except Exception:
         if ctx.obj["as_json"]:
-            click.echo(json.dumps({"proxy": base, "reachable": False, "error": str(e)}))
+            click.echo(json.dumps({"proxy": base, "reachable": False, "error": "프록시 연결 확인 중 오류가 발생했습니다."}))
         else:
-            click.echo(f"❌ 연결 실패: {e}")
+            click.echo("❌ 연결 실패: 프록시 서버에 접속할 수 없습니다")
 
 
 # ============================================================

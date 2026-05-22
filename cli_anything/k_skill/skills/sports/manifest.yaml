@@ -30,7 +30,7 @@ skills:
   cinema:
     name: "korean-cinema-search"
     display_name: "영화관 검색"
-    description: "CGV/메가박스/롯데시네마 영화관/상영작 검색"
+    description: "CGV/메가박스/롯데시네마 영화관/상영작/시간표/잔여석 검색"
     npm: ["daiso"]
   lotto:
     name: "lotto-results"

@@ -7,7 +7,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/skills-86-blue" alt="86 skills">
   <img src="https://img.shields.io/badge/domains-13-green" alt="13 domains">
-  <img src="https://img.shields.io/badge/tests-92 passed-success" alt="92 tests">
+  <img src="https://img.shields.io/badge/tests-116 passed-success" alt="116 tests">
   <img src="https://img.shields.io/badge/license-MIT-yellow" alt="MIT">
   <img src="https://img.shields.io/badge/python-3.10+-blue" alt="Python 3.10+">
 </p>
@@ -57,67 +57,71 @@ pip install k-skill-cli
 
 ```bash
 # 날씨/환경
-k-skill weather forecast --lat 37.5665 --lon 126.9780 -j
-k-skill weather fine-dust --region "서울 강남구" -j
+k-skill weather dust "서울 강남구" -j
+k-skill weather forecast "서울" -j
 k-skill weather han-river -j
 
 # 교통
-k-skill transit subway --station "강남" -j
-k-skill transit bus --route "500" -j
-k-skill transit srt-booking -j          # SRT 예약 (인증 필요)
-k-skill transit ktx-booking -j          # KTX 예약 (인증 필요)
+k-skill transit subway "강남" -j
+k-skill transit ktx "서울" "부산" --date 20260523 -j
+k-skill transit srt "수서" "부산" --date 20260523 -j
+k-skill transit express-bus "서울경부" "부산" --date 20260523 -j
 
 # 금융/공공
-k-skill finance stock --query "삼성전자" -j
-k-skill finance dart --corp "삼성전자" -j
-k-skill finance nts-reg --bizno "123-45-67890" -j
-k-skill finance kosis --stat-id "1061001" -j
+k-skill finance stock "삼성전자" -j
+k-skill finance nts status --b-no 1234567890 -j
+k-skill finance kosis "통계명" -j
+k-skill finance kstartup announcements --keyword "청년" --open Y -j
+k-skill finance korean-law "검색어" -j
+k-skill finance gongsijiga "지역명" -j
 
 # 부동산
-k-skill realestate trade-price --region "서울 강남구" --type "아파트" -j
-k-skill realestate gongsijiga --addr "서울 강남구 역삼동" -j
-k-skill realestate lh-notice -j
+k-skill realestate realestate search --lawd-cd 11680 --date 202403 -j
+k-skill realestate lh search --status "공고중" -j
+k-skill realestate sh-notice "행복주택" --category 임대 -j
 
 # 쇼핑
-k-skill shopping naver-shopping --query "에어팟" -j
-k-skill shopping olive-young --query "선크림" -j
-k-skill shopping daiso --query "수납함" -j
-k-skill shopping coupang --query "키보드" -j
+k-skill shopping naver-shop "에어팟" -j
+k-skill shopping ohou-deal --min-discount 30 -j
+k-skill shopping olive-young "선크림" -j
+k-skill shopping coupang "키보드" -j
 
 # 당근마켓/중고거래
-k-skill market daangn-market --region "서울" --query "맥북" -j
+k-skill market daangn-market --region "서울" -j
+k-skill market bunjang "아이폰" -j
 
 # 스포츠/엔터
-k-skill sports kbo --date 2026-05-21 --team "LG" -j
+k-skill sports kbo --date 2026-05-23 -j
+k-skill sports cinema theaters --chain cgv --keyword "강남" -j
 k-skill sports lotto -j
-k-skill sports movie --region "강남" -j
 
 # 검색/조사
-k-skill search naver-news --query "AI" -j
-k-skill search naver-blog --query "제주 여행" -j
-k-skill search patent --query "반도체" -j
+k-skill search naver-news "AI" -j
+k-skill search naver-blog "제주 여행" -j
+k-skill search patent "반도체" -j
+k-skill search sillok "검색어" -j
 
 # 생활/편의
-k-skill life gas-station --region "서울" -j
-k-skill life waste --region "강남구" -j
-k-skill life parking --region "강남역" -j
-k-skill life hospital --region "서울" -j
+k-skill life election "오세훈" --election 시도지사 -j
+k-skill life emergency-room "광화문" --limit 5 -j
+k-skill life gas --lat 37.5665 --lon 126.9780 -j
+k-skill life waste "강남구" -j
+k-skill life drug "타이레놀" -j
 
 # 문서
-k-skill document hwp-read --file "문서.hwp" -j
-k-skill document spell-check --text "안녕하세여" -j
-k-skill document char-count --text "글자수를 셉니다" -j
+k-skill document hwp-convert "문서.hwp" -j
+k-skill document spell-check "안녕하세여" -j
+k-skill document char-count "글자수를 셉니다" -j
 
 # 배송
-k-skill delivery track --carrier "CJ대한통운" --number "1234567890" -j
+k-skill delivery delivery "1234567890" -j
 
 # 스킬 목록 확인
-k-skill list --all
-k-skill list --domain weather
+k-skill list --all -j
+k-skill list -d weather -j
 
 # 의존성 체크
-k-skill setup check
-k-skill setup install-deps
+k-skill setup check -j
 ```
 
 모든 명령에 `-j` (`--json`) 플래그를 붙이면 구조화된 JSON 응답을 받을 수 있습니다.
@@ -160,11 +164,13 @@ cd cli-anything-k-skill
 # 설치 (dev)
 pip install -e ".[dev]"
 
-# 테스트 (92개)
+# 테스트 (116개)
 pytest tests/ -v
 
-# 의존성 스캐폴딩로 신규 스킬 추가
-python scripts/add_skill.py --domain transit --name airport-lounge
+# 스킬 추가 방법
+# 1. skills/<domain>/__init__.py에 Click 명령어 구현
+# 2. skills/<domain>/manifest.yaml에 스킬 엔트리 추가
+# ※ loader.py가 manifest.yaml을 자동 발견하므로 cli.py 수정 불필요
 ```
 
 ---

@@ -90,10 +90,10 @@ def _validate_endpoint_url(url: str) -> str:
                         code="INVALID_ENDPOINT",
                         message=f"DNS resolution points to private IP: {sockaddr[0]}",
                     )
-    except socket.gaierror as e:
+    except socket.gaierror:
         raise MCPError(
             code="INVALID_ENDPOINT",
-            message=f"DNS resolution failed for '{hostname}': {e}",
+            message=f"DNS resolution failed for '{hostname}'",
         )
     return url.rstrip("/")
 

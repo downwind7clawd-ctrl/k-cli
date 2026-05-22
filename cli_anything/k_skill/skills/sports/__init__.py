@@ -51,13 +51,67 @@ def lck(query, as_json, timeout):
     result = asyncio.run(run_npm('lck-analytics', args, global_install=True, timeout=timeout))
     emit(result, as_json=as_json)
 
-@cli.command(name='cinema', help='CGV/메가박스/롯데시네마 영화관/상영작 검색')
+@cli.group(name='cinema', help='CGV/메가박스/롯데시네마 영화관/상영작 검색')
+def cinema():
+    """영화관 검색 (CGV, 메가박스, 롯데시네마)."""
+    pass
+
+
+@cinema.command('theaters')
+@click.option('--chain', default='cgv', type=click.Choice(['cgv', 'megabox', 'lottecinema']), help='영화관 체인 (기본: cgv)')
+@click.option('--keyword', required=True, help='지역 또는 지점명')
+@click.option('--limit', default=5, type=int, help='결과 개수 (기본 5)')
 @click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
 @click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
-@click.argument('query', required=False)
-def cinema(query, as_json, timeout):
+def cinema_theaters(chain, keyword, limit, as_json, timeout):
     """영화관 검색."""
-    args = [query] if query else []
+    args = ["get", f"/api/{chain}/theaters", "--keyword", keyword, "--limit", str(limit), "--json"]
+    result = asyncio.run(run_npm('daiso', args, npx=True, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cinema.command('movies')
+@click.option('--chain', default='cgv', type=click.Choice(['cgv', 'megabox', 'lottecinema']), help='영화관 체인 (기본: cgv)')
+@click.option('--keyword', required=True, help='지역 또는 지점명')
+@click.option('--date', 'play_date', help='상영일 YYYYMMDD (기본: 오늘)')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+def cinema_movies(chain, keyword, play_date, as_json, timeout):
+    """상영작 검색."""
+    args = ["get", f"/api/{chain}/movies", "--keyword", keyword, "--json"]
+    if play_date:
+        args.extend(["--playDate", play_date])
+    result = asyncio.run(run_npm('daiso', args, npx=True, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cinema.command('timetable')
+@click.option('--chain', default='cgv', type=click.Choice(['cgv', 'megabox', 'lottecinema']), help='영화관 체인 (기본: cgv)')
+@click.option('--keyword', required=True, help='지역 또는 지점명')
+@click.option('--date', 'play_date', help='상영일 YYYYMMDD (기본: 오늘)')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+def cinema_timetable(chain, keyword, play_date, as_json, timeout):
+    """시간표 조회."""
+    args = ["get", f"/api/{chain}/timetable", "--keyword", keyword, "--json"]
+    if play_date:
+        args.extend(["--playDate", play_date])
+    result = asyncio.run(run_npm('daiso', args, npx=True, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cinema.command('seats')
+@click.option('--chain', default='megabox', type=click.Choice(['cgv', 'megabox', 'lottecinema']), help='영화관 체인 (기본: megabox)')
+@click.option('--keyword', required=True, help='지역 또는 지점명')
+@click.option('--date', 'play_date', help='상영일 YYYYMMDD (기본: 오늘)')
+@click.option('--limit', default=10, type=int, help='결과 개수 (기본 10)')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+def cinema_seats(chain, keyword, play_date, limit, as_json, timeout):
+    """잔여석 조회 (메가박스/롯데시네마)."""
+    args = ["get", f"/api/{chain}/seats", "--keyword", keyword, "--limit", str(limit), "--json"]
+    if play_date:
+        args.extend(["--playDate", play_date])
     result = asyncio.run(run_npm('daiso', args, npx=True, timeout=timeout))
     emit(result, as_json=as_json)
 

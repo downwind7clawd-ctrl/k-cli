@@ -1,7 +1,7 @@
 domain: transit
 description: 대중교통 (지하철, 버스, 기차, 항공편)
 dependencies:
-  proxy: false
+  proxy: true
   npm: []
   python: []
   env_keys: []

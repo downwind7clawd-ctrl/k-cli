@@ -155,12 +155,34 @@ def lh_detail(pan_id, ccr_cnnt_sys_ds_cd, spl_inf_tp_cd, as_json):
 
 
 @cli.command(name='sh-notice', help='서울주택도시공사 분양/입주 공고 검색')
+@click.option('--category', default='임대', help='게시판 분류 (임대/분양/매입/토지/상가/기타/전체, 기본: 임대)')
+@click.option('--status', 'sh_status', help='상태 필터 (진행/마감/당첨자 - 제목 기반 분류)')
+@click.option('--page', default=1, type=int, help='페이지 (기본 1)')
+@click.option('--limit', default=10, type=int, help='결과 개수 (기본 10)')
+@click.option('--seq', 'sh_seq', help='공고 상세 조회 (seq 번호)')
 @click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
 @click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
 @click.argument('query', required=False)
-def sh_notice(query, as_json, timeout):
-    """서울주택도시공사 공고."""
-    args = [query] if query else []
+def sh_notice(query, category, sh_status, page, limit, sh_seq, as_json, timeout):
+    """서울주택도시공사 공고 검색.
+
+    SH 공개 게시판에서 청약/주택 공고를 검색하거나 상세를 조회합니다.
+
+    예시:
+      k-cli realestate sh-notice "행복주택"
+      k-cli realestate sh-notice "매입임대" --category 주거복지 --status 진행
+      k-cli realestate sh-notice --seq 304371 --category 임대 -j
+    """
+    args = []
+    if sh_seq:
+        args.extend(["--seq", str(sh_seq)])
+    if query:
+        args.append(query)
+    if category:
+        args.extend(["--category", category])
+    if sh_status:
+        args.extend(["--status", sh_status])
+    args.extend(["--page", str(max(page, 1)), "--limit", str(limit)])
     result = asyncio.run(run_npm('sh-notice-search', args, timeout=timeout))
     emit(result, as_json=as_json)
 

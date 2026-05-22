@@ -116,10 +116,10 @@ def safe_proxy_get(
             "요청 시간이 초과되었습니다",
             "잠시 후 재시도하세요",
         )
-    except Exception as e:
+    except Exception:
         return error_response(
             skill, "UNKNOWN",
-            f"알 수 없는 오류: {e}",
+            "알 수 없는 오류가 발생했습니다.",
         )
 
 
@@ -156,10 +156,10 @@ def safe_proxy_post(
             "요청 시간이 초과되었습니다",
             "잠시 후 재시도하세요",
         )
-    except Exception as e:
+    except Exception:
         return error_response(
             skill, "UNKNOWN",
-            f"알 수 없는 오류: {e}",
+            "알 수 없는 오류가 발생했습니다.",
         )
 
 

@@ -191,8 +191,8 @@ async def run_npm(
         )
     except subprocess.TimeoutExpired:
         return error_response(package, "TIMEOUT", f"실행이 {timeout}초 초과되었습니다.")
-    except Exception as e:
-        return error_response(package, "UNKNOWN", str(e))
+    except Exception:
+        return error_response(package, "UNKNOWN", f"'{package}' 실행 중 예기치 않은 오류가 발생했습니다.")
 
 
 # ── Python script runner ──────────────────────────────────
@@ -274,8 +274,8 @@ async def run_script(
 
     except subprocess.TimeoutExpired:
         return error_response(script_name, "TIMEOUT", f"실행이 {timeout}초 초과되었습니다.")
-    except Exception as e:
-        return error_response(script_name, "UNKNOWN", str(e))
+    except Exception:
+        return error_response(script_name, "UNKNOWN", f"'{script_name}' 스크립트 실행 중 예기치 않은 오류가 발생했습니다.")
 
 
 # ── pip package runner ────────────────────────────────────
@@ -302,6 +302,14 @@ async def run_pip_import(
             fix=f"pip install {' '.join(report.missing_python)}",
         )
 
+    _SAFE_MODULE = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)*$")
+    _SAFE_FUNCTION = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*$")
+
+    if not _SAFE_MODULE.match(module_name):
+        return error_response(module_name, "INVALID_INPUT", f"잘못된 모듈명: {module_name}")
+    if not _SAFE_FUNCTION.match(function_name):
+        return error_response(module_name, "INVALID_INPUT", f"잘못된 함수명: {function_name}")
+
     try:
         mod = importlib.import_module(module_name)
         func = getattr(mod, function_name, None)
@@ -323,9 +331,9 @@ async def run_pip_import(
             return success_response(module_name, result, response_time_ms=elapsed_ms)
         return success_response(module_name, {"result": str(result)}, response_time_ms=elapsed_ms)
 
-    except Exception as e:
+    except Exception:
         elapsed_ms = int((time.monotonic() - start) * 1000)
-        return error_response(module_name, "COMMAND_FAILED", str(e))
+        return error_response(module_name, "COMMAND_FAILED", f"'{module_name}.{function_name}' 실행 중 예기치 않은 오류가 발생했습니다.")
 
 
 # ── MCP runner ────────────────────────────────────────────
@@ -406,6 +414,6 @@ async def run_mcp(
                 "MCP 서버 URL이 필요합니다. (http://... 또는 local://...)",
             )
 
-    except Exception as e:
+    except Exception:
         elapsed_ms = int((time.monotonic() - start) * 1000)
-        return error_response(skill_name, "MCP_ERROR", str(e))
+        return error_response(skill_name, "MCP_ERROR", f"MCP '{skill_name}' 호출 중 예기치 않은 오류가 발생했습니다.")

@@ -38,3 +38,7 @@ BUGFIX_LOG.md
 
 # Logs
 LOG/
+
+# Test artifacts
+.coverage
+htmlcov/
