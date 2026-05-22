@@ -1,12 +1,12 @@
 """
-k-cli — Main CLI entry point.
+k-skill — Main CLI entry point.
 
 All AI agents discover this CLI through SKILL.md or CLI-Anything registry.
 The --help/-h output is the primary interface for agents — it must be
 comprehensive enough for an agent to execute commands without additional docs.
 
 Usage:
-    k-cli [OPTIONS] COMMAND [ARGS]...
+    k-skill [OPTIONS] COMMAND [ARGS]...
 
 Commands:
     weather     날씨/환경 (미세먼지, 한강수위, 날씨, 혼잡도)
@@ -50,10 +50,10 @@ from .loader import discover_cli_groups, list_all_skills
     default=False,
     help="JSON 출력 모드. AI 에이전트가 구조화된 데이터를 파싱할 때 사용.",
 )
-@click.version_option(__version__, prog_name="k-cli")
+@click.version_option(__version__, prog_name="k-skill")
 @click.pass_context
 def main(ctx: click.Context, as_json: bool):
-    """k-cli — 한국인을 위한 CLI 스킬 모음 (86개 스킬)
+    """k-skill — 한국인을 위한 CLI 스킬 모음 (86개 스킬)
 
     다양한 한국 특화 유틸리티를 단일 CLI로 제공합니다.
     프록시 기반 스킬은 추가 설치 없이 즉시 사용 가능합니다.
@@ -65,78 +65,78 @@ def main(ctx: click.Context, as_json: bool):
     에이전트는 JSON 응답의 data 필드를 파싱하여 사용하세요.
 
     날씨/환경:
-      k-cli weather dust "서울 강남구" -j
-      k-cli weather forecast "서울" -j
-      k-cli weather han-river -j
+      k-skill weather dust "서울 강남구" -j
+      k-skill weather forecast "서울" -j
+      k-skill weather han-river -j
 
     금융/법률:
-      k-cli finance stock "삼성전자" -j
-      k-cli finance nts status --b-no 1234567890 -j
-      k-cli finance nts validate --b-no 1234567890 --p-nm "홍길동" --start-dt 20200101 -j
-      k-cli finance kstartup announcements --region "서울특별시" --open Y -j
-      k-cli finance kstartup business-info --biz-yr 2024 -j
-      k-cli finance dart -j
-      k-cli finance kosis "통계명" -j
-      k-cli finance korean-law "검색어" -j
-      k-cli finance gongsijiga "지역명" -j
+      k-skill finance stock "삼성전자" -j
+      k-skill finance nts status --b-no 1234567890 -j
+      k-skill finance nts validate --b-no 1234567890 --p-nm "홍길동" --start-dt 20200101 -j
+      k-skill finance kstartup announcements --region "서울특별시" --open Y -j
+      k-skill finance kstartup business-info --biz-yr 2024 -j
+      k-skill finance dart -j
+      k-skill finance kosis "통계명" -j
+      k-skill finance korean-law "검색어" -j
+      k-skill finance gongsijiga "지역명" -j
 
     교통:
-      k-cli transit subway "강남" -j
-      k-cli transit ktx "서울" "부산" --date 20260523 -j
-      k-cli transit srt "수서" "부산" --date 20260523 -j
+      k-skill transit subway "강남" -j
+      k-skill transit ktx "서울" "부산" --date 20260523 -j
+      k-skill transit srt "수서" "부산" --date 20260523 -j
 
     쇼핑:
-      k-cli shopping naver-shop "에어팟" -j
-      k-cli shopping ohou-deal --query "러그" --min-discount 30 --free-delivery -j
-      k-cli shopping coupang "검색어" -j
-      k-cli shopping olive-young "검색어" -j
+      k-skill shopping naver-shop "에어팟" -j
+      k-skill shopping ohou-deal --query "러그" --min-discount 30 --free-delivery -j
+      k-skill shopping coupang "검색어" -j
+      k-skill shopping olive-young "검색어" -j
 
     부동산:
-      k-cli realestate realestate code "서울 강남구" -j
-      k-cli realestate realestate search --lawd-cd 11680 --date 202403 -j
-      k-cli realestate lh search --status "공고중" --region "서울특별시" -j
-      k-cli realestate sh-notice "행복주택" --category 임대 -j
+      k-skill realestate realestate code "서울 강남구" -j
+      k-skill realestate realestate search --lawd-cd 11680 --date 202403 -j
+      k-skill realestate lh search --status "공고중" --region "서울특별시" -j
+      k-skill realestate sh-notice "행복주택" --category 임대 -j
 
     스포츠/엔터:
-      k-cli sports kbo --date 2026-05-23 -j
-      k-cli sports kbl --date 2026-05-23 -j
-      k-cli sports kleague --date 2026-05-23 -j
-      k-cli sports lck -j
-      k-cli sports cinema theaters --chain cgv --keyword "강남" -j
-      k-cli sports cinema movies --chain cgv --keyword "강남" --date 20260523 -j
-      k-cli sports cinema timetable --chain cgv --keyword "강남" --date 20260523 -j
-      k-cli sports lotto -j
+      k-skill sports kbo --date 2026-05-23 -j
+      k-skill sports kbl --date 2026-05-23 -j
+      k-skill sports kleague --date 2026-05-23 -j
+      k-skill sports lck -j
+      k-skill sports cinema theaters --chain cgv --keyword "강남" -j
+      k-skill sports cinema movies --chain cgv --keyword "강남" --date 20260523 -j
+      k-skill sports cinema timetable --chain cgv --keyword "강남" --date 20260523 -j
+      k-skill sports lotto -j
 
     중고거래:
-      k-cli market daangn-market --region "서울" -j
-      k-cli market bunjang "검색어" -j
+      k-skill market daangn-market --region "서울" -j
+      k-skill market bunjang "검색어" -j
 
     검색:
-      k-cli search naver-news "AI" -j
-      k-cli search naver-blog "키워드" -j
-      k-cli search patent "특허명" -j
-      k-cli search sillok "검색어" -j
+      k-skill search naver-news "AI" -j
+      k-skill search naver-blog "키워드" -j
+      k-skill search patent "특허명" -j
+      k-skill search sillok "검색어" -j
 
     생활:
-      k-cli life emergency-room "광화문" --limit 5 -j
-      k-cli life election "오세훈" --election 시도지사 -j
-      k-cli life waste "강남구" -j
-      k-cli life gas --lat 37.5665 --lon 126.9780 -j
-      k-cli life drug "타이레놀" -j
+      k-skill life emergency-room "광화문" --limit 5 -j
+      k-skill life election "오세훈" --election 시도지사 -j
+      k-skill life waste "강남구" -j
+      k-skill life gas --lat 37.5665 --lon 126.9780 -j
+      k-skill life drug "타이레놀" -j
 
     여행:
-      k-cli travel myrealtrip --query "제주도" -j
-      k-cli travel foresttrip --region "지역" -j
+      k-skill travel myrealtrip --query "제주도" -j
+      k-skill travel foresttrip --region "지역" -j
 
     문서:
-      k-cli document spell-check "문장" -j
-      k-cli document char-count "텍스트" -j
+      k-skill document spell-check "문장" -j
+      k-skill document char-count "텍스트" -j
 
     유틸리티:
-      k-cli list --all -j                # 전체 스킬 목록
-      k-cli list -d weather -j           # 도메인별 스킬
-      k-cli setup check -j               # 의존성 상태
-      k-cli setup proxy -j               # 프록시 연결 상태
+      k-skill list --all -j                # 전체 스킬 목록
+      k-skill list -d weather -j           # 도메인별 스킬
+      k-skill setup check -j               # 의존성 상태
+      k-skill setup proxy -j               # 프록시 연결 상태
 
     ─────────────────────────────────────────────
     🔧 환경변수
@@ -181,12 +181,12 @@ def list(ctx: click.Context, list_all: bool, domain: Optional[str], category: Op
     --json 모드에서는 구조화된 배열을 반환합니다.
 
     예시:
-      k-cli list                     # 도메인별 요약
-      k-cli list --all               # 전체 스킬 목록
-      k-cli list -d weather          # 날씨 도메인 스킬
-      k-cli list -c utility          # 유틸리티 카테고리
-      k-cli -j list                  # JSON 출력 (전역 -j 플래그)
-      k-cli -j list --all            # 전체 목록 JSON
+      k-skill list                     # 도메인별 요약
+      k-skill list --all               # 전체 스킬 목록
+      k-skill list -d weather          # 날씨 도메인 스킬
+      k-skill list -c utility          # 유틸리티 카테고리
+      k-skill -j list                  # JSON 출력 (전역 -j 플래그)
+      k-skill -j list --all            # 전체 목록 JSON
     """
     skills = list_all_skills()
 
@@ -215,7 +215,7 @@ def list(ctx: click.Context, list_all: bool, domain: Optional[str], category: Op
             for d in domain_list:
                 click.echo(f"  {d['domain']:12s} ({d['count']}개) {d['description']}")
             click.echo(
-                f"\n총 {len(skills)}개 스킬 | k-cli list --all 전체목록 | k-cli list -d <domain> 도메인별"
+                f"\n총 {len(skills)}개 스킬 | k-skill list --all 전체목록 | k-skill list -d <domain> 도메인별"
             )
     else:
         if ctx.obj["as_json"]:
@@ -249,8 +249,8 @@ def setup_check(ctx: click.Context):
     Python, Node.js, curl, jq, k-skill-proxy 연결 상태를 점검합니다.
 
     예시:
-      k-cli setup check
-      k-cli -j setup check   # JSON 출력 (전역 -j 플래그)
+      k-skill setup check
+      k-skill -j setup check   # JSON 출력 (전역 -j 플래그)
     """
     checks: dict[str, dict] = {}
 
@@ -302,7 +302,7 @@ def setup_check(ctx: click.Context):
         if all_ok:
             click.echo("\n✨ 모든 의존성 준비 완료")
         else:
-            click.echo("\n⚠️ 일부 의존성 누락 — k-cli setup install 참고")
+            click.echo("\n⚠️ 일부 의존성 누락 — k-skill setup install 참고")
 
 
 @setup.command("install")
@@ -313,10 +313,10 @@ def setup_install():
     누락된 패키지별 수동 설치 명령어를 안내합니다.
 
     예시:
-      k-cli setup install
+      k-skill setup install
     """
     click.echo("의존성 수동 설치 가이드:")
-    click.echo("  pip install -e .                    # k-cli 개발 설치")
+    click.echo("  pip install -e .                    # k-skill 개발 설치")
     click.echo("  pip install SRTrain                 # SRT 예매")
     click.echo("  pip install korail2                 # KTX 예매")
     click.echo("  pip install mcp                     # 마이리얼트립 (Remote MCP)")
@@ -326,7 +326,7 @@ def setup_install():
     click.echo("  npm install -g kleague-results      # K리그 경기 결과")
     click.echo("  npm install -g lck-analytics        # LCK 분석")
     click.echo("  npm install -g k-lotto              # 로또 당첨번호")
-    click.echo("  k-cli setup check                    # 설치 상태 재확인")
+    click.echo("  k-skill setup check                    # 설치 상태 재확인")
 
 
 @setup.command("proxy")
@@ -338,8 +338,8 @@ def setup_proxy(ctx: click.Context):
     KSKILL_PROXY_BASE_URL 환경변수로 오버라이드 가능합니다.
 
     예시:
-      k-cli setup proxy
-      k-cli -j setup proxy   # JSON 출력 (전역 -j 플래그)
+      k-skill setup proxy
+      k-skill -j setup proxy   # JSON 출력 (전역 -j 플래그)
     """
     from .proxy import get_proxy_base, health_check
 

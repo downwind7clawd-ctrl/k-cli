@@ -5,9 +5,9 @@ k-cli — CLI-Anything harness for k-skill.
 Zero-config for proxy-based skills; auto dependency detection for others.
 
 Quick start:
-    pip install cli-anything-k-skill
-    k-cli weather dust "서울 강남구" --json
-    k-cli finance stock "삼성전자" --json
+    pip install k-skill-cli
+    k-skill weather dust "서울 강남구" --json
+    k-skill finance stock "삼성전자" --json
 
 Environment variables:
     KSKILL_PROXY_BASE_URL  Override default k-skill-proxy URL

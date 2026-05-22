@@ -140,7 +140,7 @@ k-skill setup check -j
 | shopping | 7 | 쇼핑 (네이버, 올리브영, 다이소, 쿠팡) |
 | market | 4 | 중고거래 (당근마켓, 번개장터, 중고차) |
 | search | 6 | 검색 (네이버 뉴스/블로그, 특허, 실록, 장학금) |
-| document | 5 | 문서 (HWP, 맞춤법, 글자수, 한국어 슬랭) |
+| document | 5 | 문서 (HWP, 맞춤법, 글자수) |
 | sports | 8 | 스포츠 (KBO, KBL, K리그, LCK, 로또, 영화관) |
 | travel | 3 | 여행 (여행지, 숙소, 마이리얼트립) |
 | delivery | 1 | 택배 송장 조회 |
