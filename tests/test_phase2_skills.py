@@ -257,5 +257,5 @@ class TestDiscoverDomainsIntegration:
 
     def test_total_skill_count(self):
         all_skills = list_all_skills()
-        # Phase 2 (18) + Phase 3 (68) = 86개
-        assert len(all_skills) >= 86
+        # Phase 2 (18) + Phase 3 (72) = 90개
+        assert len(all_skills) >= 90

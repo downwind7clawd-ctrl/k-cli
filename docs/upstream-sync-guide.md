@@ -88,7 +88,7 @@ def skill_name(param1, param2, as_json):
     """스킬 설명.
 
     예시:
-      k-cli domain skill-name --param1 "값" -j
+      k-skill domain skill-name --param1 "값" -j
     """
     params = {"param1": param1}
     if param2:
@@ -174,9 +174,9 @@ skills:
 ```bash
 cd ~/nas_1tb/dev/k-cli
 pip install -e ".[dev]"                    # editable 설치 (필요시)
-k-cli <domain> <skill> --param "값"        # 수동 테스트
-k-cli <domain> <skill> --param "값" -j     # JSON 출력 테스트
-k-cli list --all -j                        # 스킬 목록에 나타나는지 확인
+k-skill <domain> <skill> --param "값"        # 수동 테스트
+k-skill <domain> <skill> --param "값" -j     # JSON 출력 테스트
+k-skill list --all -j                        # 스킬 목록에 나타나는지 확인
 ```
 
 ---
@@ -224,6 +224,6 @@ git push
 - [ ] `__init__.py`에 Click 명령어 구현
 - [ ] `manifest.yaml`에 스킬 엔트리 추가
 - [ ] `cli.py` 도움말 업데이트 (에이전트 빠른 실행 가이드, 신규 도메인인 경우만)
-- [ ] `k-cli list --all`로 등록 확인
+- [ ] `k-skill list --all`로 등록 확인
 - [ ] 실제 호출 테스트
 - [ ] 버전 배포 (`pyproject.toml` CalVer 업데이트 → PyPI 배포)
