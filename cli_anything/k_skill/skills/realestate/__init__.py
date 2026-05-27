@@ -34,8 +34,8 @@ def realestate_code(query, as_json):
     지역명으로 법정동 코드를 검색합니다. 실거래가 조회에 필요합니다.
     
     예시:
-      k-cli realestate realestate code "서울 강남구"
-      k-cli realestate realestate code "마포구" -j
+      k-skill realestate realestate code "서울 강남구"
+      k-skill realestate realestate code "마포구" -j
     """
     if not query or not query.strip():
         emit(error_response("real-estate", "INVALID_INPUT", "지역명을 입력하세요"),
@@ -62,8 +62,8 @@ def realestate_search(lawd_cd, deal_ymd, asset_type, deal_type, num_of_rows, as_
     법정동코드와 거래년월로 실거래가 데이터를 조회합니다.
     
     예시:
-      k-cli realestate realestate search --lawd-cd 11680 --date 202403
-      k-cli realestate realestate search --lawd-cd 11680 --date 202403 --asset-type officetel --deal-type rent -j
+      k-skill realestate realestate search --lawd-cd 11680 --date 202403
+      k-skill realestate realestate search --lawd-cd 11680 --date 202403 --asset-type officetel --deal-type rent -j
     """
     lawd_cd_clean = lawd_cd.strip()
     deal_ymd_clean = deal_ymd.strip()
@@ -112,8 +112,8 @@ def lh_search(pan_ss, cnp_cd_nm, pan_nm, upp_ais_tp_cd, pan_nt_st_dt, clsg_dt, p
     지역/상태/키워드로 LH 공고를 검색합니다.
     
     예시:
-      k-cli realestate lh search --status "공고중" --region "서울특별시"
-      k-cli realestate lh search --keyword "행복주택" --category 06 -j
+      k-skill realestate lh search --status "공고중" --region "서울특별시"
+      k-skill realestate lh search --keyword "행복주택" --category 06 -j
     """
     params = {"page": max(page, 1), "pageSize": min(max(page_size, 1), 1000)}
     if pan_ss:
@@ -143,7 +143,7 @@ def lh_detail(pan_id, ccr_cnnt_sys_ds_cd, spl_inf_tp_cd, as_json):
     공고ID로 상세 정보를 조회합니다. search 응답의 ID 값을 그대로 사용하세요.
     
     예시:
-      k-cli realestate lh detail --pan-id 2015122300019828 --ccr-code ... --spl-code ... -j
+      k-skill realestate lh detail --pan-id 2015122300019828 --ccr-code ... --spl-code ... -j
     """
     params = {
         "panId": pan_id,
@@ -169,9 +169,9 @@ def sh_notice(query, category, sh_status, page, limit, sh_seq, as_json, timeout)
     SH 공개 게시판에서 청약/주택 공고를 검색하거나 상세를 조회합니다.
 
     예시:
-      k-cli realestate sh-notice "행복주택"
-      k-cli realestate sh-notice "매입임대" --category 주거복지 --status 진행
-      k-cli realestate sh-notice --seq 304371 --category 임대 -j
+      k-skill realestate sh-notice "행복주택"
+      k-skill realestate sh-notice "매입임대" --category 주거복지 --status 진행
+      k-skill realestate sh-notice --seq 304371 --category 임대 -j
     """
     args = []
     if sh_seq:

@@ -26,8 +26,8 @@ def subway(station_name, as_json):
     역명으로 도착 예정 열차 정보를 조회합니다.
 
     예시:
-      k-cli transit subway "강남"
-      k-cli transit subway "서울역" -j
+      k-skill transit subway "강남"
+      k-skill transit subway "서울역" -j
     """
     if not station_name or not station_name.strip():
         emit({"skill": "seoul-subway", "status": "error",

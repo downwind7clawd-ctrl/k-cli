@@ -15,19 +15,19 @@ def cli():
     pass
 
 
-@cli.command()
+@cli.command(name='forecast')
 @click.option("--lat", type=float, required=True, help="위도 (WGS84)")
 @click.option("--lon", type=float, required=True, help="경도 (WGS84)")
 @click.option("--json", "-j", "as_json", is_flag=True, help="JSON 출력")
-def weather(lat, lon, as_json):
+def forecast(lat, lon, as_json):
     """한국 날씨 (기상청 단기예보).
 
     위도/경도로 기상청 단기예보를 조회합니다.
     주요 도시 좌표: 서울(37.5665,126.9780) 부산(35.1796,129.0756) 대구(35.8714,128.6014)
 
     예시:
-      k-cli weather weather --lat 37.5665 --lon 126.9780
-      k-cli weather weather --lat 35.1796 --lon 129.0756 -j
+      k-skill weather forecast --lat 37.5665 --lon 126.9780
+      k-skill weather forecast --lat 35.1796 --lon 129.0756 -j
     """
     params = {"lat": lat, "lon": lon}
     resp = safe_proxy_get("korea-weather", "/v1/korea-weather/forecast", params)
@@ -44,8 +44,8 @@ def dust(region, station_name, as_json):
     지역명 또는 측정소명으로 PM10/PM2.5를 조회합니다.
 
     예시:
-      k-cli weather dust "서울 강남구"
-      k-cli weather dust --station "강남구" -j
+      k-skill weather dust "서울 강남구"
+      k-skill weather dust --station "강남구" -j
     """
     params = {}
     if region:
@@ -71,8 +71,8 @@ def han_river(query, station_code, as_json):
     관측소명(교량명) 또는 관측소코드로 현재 수위를 조회합니다.
 
     예시:
-      k-cli weather han-river "한강대교"
-      k-cli weather han-river --code 1018683 -j
+      k-skill weather han-river "한강대교"
+      k-skill weather han-river --code 1018683 -j
     """
     params = {}
     if query:

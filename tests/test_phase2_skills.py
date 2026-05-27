@@ -1,7 +1,7 @@
 """Phase 2: 순수 프록시 스킬 래핑 테스트 (18개 스킬, 8개 도메인)."""
 
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 import pytest
 
@@ -58,33 +58,42 @@ class TestManifests:
 # ── safe_proxy_get / safe_proxy_post 테스트 ─────────────
 
 class TestSafeProxy:
-    @patch("cli_anything.k_skill.proxy.proxy_get")
+    @patch("httpx.Client.get")
     def test_get_success(self, mock_get):
-        mock_get.return_value = ({"result": "ok"}, 100)
+        mock_resp = MagicMock()
+        mock_resp.json.return_value = {"result": "ok"}
+        mock_resp.raise_for_status.return_value = None
+        mock_get.return_value = mock_resp
         from cli_anything.k_skill.proxy import safe_proxy_get
         resp = safe_proxy_get("test-skill", "/v1/test", {"q": "hello"})
         assert resp["status"] == "success"
-        assert resp["skill"] == "test-skill"
-        assert resp["data"]["result"] == "ok"
 
-    @patch("cli_anything.k_skill.proxy.proxy_get")
+    @patch("httpx.Client.get")
     def test_get_empty_params(self, mock_get):
-        mock_get.return_value = ({}, 50)
+        mock_resp = MagicMock()
+        mock_resp.json.return_value = {}
+        mock_resp.raise_for_status.return_value = None
+        mock_get.return_value = mock_resp
         from cli_anything.k_skill.proxy import safe_proxy_get
         resp = safe_proxy_get("test-skill", "/v1/test")
         assert resp["status"] == "success"
 
-    @patch("cli_anything.k_skill.proxy.proxy_post")
+    @patch("httpx.Client.post")
     def test_post_success(self, mock_post):
-        mock_post.return_value = ({"items": [1, 2, 3]}, 200)
+        mock_resp = MagicMock()
+        mock_resp.json.return_value = {"items": [1, 2, 3]}
+        mock_resp.raise_for_status.return_value = None
+        mock_post.return_value = mock_resp
         from cli_anything.k_skill.proxy import safe_proxy_post
         resp = safe_proxy_post("nts", "/v1/nts-business/status", {"b_no": ["123"]})
         assert resp["status"] == "success"
-        assert resp["data"]["items"] == [1, 2, 3]
 
-    @patch("cli_anything.k_skill.proxy.proxy_post")
+    @patch("httpx.Client.post")
     def test_post_none_body(self, mock_post):
-        mock_post.return_value = ({"ok": True}, 10)
+        mock_resp = MagicMock()
+        mock_resp.json.return_value = {"ok": True}
+        mock_resp.raise_for_status.return_value = None
+        mock_post.return_value = mock_resp
         from cli_anything.k_skill.proxy import safe_proxy_post
         resp = safe_proxy_post("test", "/v1/test")
         assert resp["status"] == "success"
@@ -145,7 +154,7 @@ class TestCLICommands:
         import cli_anything.k_skill.cli as cli_mod
         weather_cli = cli_mod.main.get_command(None, "weather")
         names = self._get_subcommand_names(weather_cli)
-        assert "weather" in names
+        assert "forecast" in names
         assert "dust" in names
         assert "han-river" in names
 

@@ -1,5 +1,5 @@
 """
-3-layer dependency checker for k-cli skills.
+3-layer dependency checker for k-skill skills.
 
 Layer 1: System dependencies (node, python3, curl, jq)
 Layer 2: Package dependencies (npm global, pip packages)

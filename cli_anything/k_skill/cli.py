@@ -10,9 +10,10 @@ Usage:
 
 Commands:
     weather     날씨/환경 (미세먼지, 한강수위, 날씨, 혼잡도)
+    map         지도/길찾기 (카카오맵 장소/길찾기, 네이버 길찾기/지오코딩)
     finance     법률/금융 (주식, DART, 법령, 코시스, 사업자등록)
     transit     교통/이동 (SRT, KTX, 지하철, 버스, 항공)
-    shopping    쇼핑 (쿠팡, 올리브영, 마켓컬리, 다이소, 당근)
+    shopping    쇼핑 (쿠팡, 올리브영, 오늘의집, 다이소, 당근)
     realestate  부동산 (실거래가, 공시가, 감정평가, 공고문)
     sports      스포츠/엔터 (KBO, KBL, K리그, LCK, 영화관, 로또)
     market      중고거래 (당근중고, 번개장터, 중고차)
@@ -40,7 +41,7 @@ from typing import Optional
 import click
 
 from . import __version__
-from .loader import discover_cli_groups, list_all_skills
+from .loader import discover_cli_groups, list_all_skills, discover_domains
 
 
 @click.group(invoke_without_command=True)
@@ -53,7 +54,7 @@ from .loader import discover_cli_groups, list_all_skills
 @click.version_option(__version__, prog_name="k-skill")
 @click.pass_context
 def main(ctx: click.Context, as_json: bool):
-    """k-skill — 한국인을 위한 CLI 스킬 모음 (86개 스킬)
+    """k-skill — 한국인을 위한 CLI 스킬 모음 (90개 스킬)
 
     다양한 한국 특화 유틸리티를 단일 CLI로 제공합니다.
     프록시 기반 스킬은 추가 설치 없이 즉시 사용 가능합니다.
@@ -66,8 +67,14 @@ def main(ctx: click.Context, as_json: bool):
 
     날씨/환경:
       k-skill weather dust "서울 강남구" -j
-      k-skill weather forecast "서울" -j
+      k-skill weather forecast --lat 37.5665 --lon 126.9780 -j
       k-skill weather han-river -j
+
+    지도/길찾기:
+      k-skill map kakao-search "강남역" -j
+      k-skill map kakao-directions --origin "127.1101,37.3947" --destination "127.1082,37.4020" -j
+      k-skill map naver-directions --start "127.1101,37.3947" --goal "127.1082,37.4020" -j
+      k-skill map naver-geocode "서울특별시 강남구 테헤란로" -j
 
     금융/법률:
       k-skill finance stock "삼성전자" -j
@@ -199,13 +206,16 @@ def list(ctx: click.Context, list_all: bool, domain: Optional[str], category: Op
         # 기본: 도메인별 요약
         domains_seen: set[str] = set()
         domain_list: list[dict] = []
+        domain_manifests = discover_domains()
         for s in skills:
             if s["domain"] not in domains_seen:
                 domains_seen.add(s["domain"])
                 domain_skills = [sk for sk in skills if sk["domain"] == s["domain"]]
+                manifest = domain_manifests.get(s["domain"])
+                domain_desc = manifest.description if manifest else ""
                 domain_list.append({
                     "domain": s["domain"],
-                    "description": s.get("description", ""),
+                    "description": domain_desc,
                     "count": len(domain_skills),
                 })
 

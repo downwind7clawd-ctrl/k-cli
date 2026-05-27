@@ -1,7 +1,7 @@
 """
-k-cli — CLI-Anything harness for k-skill.
+k-skill — CLI-Anything harness for k-skill.
 
-86 Korean utility skills accessible from any AI agent.
+80+ Korean utility skills accessible from any AI agent.
 Zero-config for proxy-based skills; auto dependency detection for others.
 
 Quick start:
@@ -14,4 +14,8 @@ Environment variables:
                            (default: https://k-skill-proxy.nomadamas.org)
 """
 
-__version__ = "2026.05.23.1"
+import importlib.metadata
+try:
+    __version__ = importlib.metadata.version("k-skill-cli")
+except importlib.metadata.PackageNotFoundError:
+    __version__ = "unknown"

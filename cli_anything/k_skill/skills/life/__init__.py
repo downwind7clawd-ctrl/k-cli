@@ -31,8 +31,8 @@ def gas(lat, lon, radius, prodcd, as_json):
     좌표 기준으로 근처 주유소를 가격순으로 검색합니다.
     
     예시:
-      k-cli life gas --lat 37.5665 --lon 126.9780
-      k-cli life gas --lat 37.5665 --lon 126.9780 --product D047 --radius 2000 -j
+      k-skill life gas --lat 37.5665 --lon 126.9780
+      k-skill life gas --lat 37.5665 --lon 126.9780 --product D047 --radius 2000 -j
     """
     params = {
         "lat": lat, "lon": lon,
@@ -52,8 +52,8 @@ def waste(region, as_json):
     시군구명으로 생활쓰레기 배출 요일/시간/장소를 조회합니다.
     
     예시:
-      k-cli life waste "강남구"
-      k-cli life waste "수원시 영통구" -j
+      k-skill life waste "강남구"
+      k-skill life waste "수원시 영통구" -j
     """
     if not region or not region.strip():
         emit({"skill": "household-waste", "status": "error",
@@ -80,8 +80,8 @@ def parking(lat, lon, radius, as_json):
     좌표 기준으로 근처 공영주차장을 검색합니다.
     
     예시:
-      k-cli life parking --lat 37.5665 --lon 126.9780
-      k-cli life parking --lat 37.5665 --lon 126.9780 --radius 500 -j
+      k-skill life parking --lat 37.5665 --lon 126.9780
+      k-skill life parking --lat 37.5665 --lon 126.9780 --radius 500 -j
     """
     params = {"lat": lat, "lon": lon, "radius": min(max(radius, 100), 5000)}
     resp = safe_proxy_get("parking-lot", "/v1/parking-lots/search", params)
@@ -99,8 +99,8 @@ def library(keyword, page, page_size, as_json):
     키워드로 도서관 정보나루 도서를 검색합니다.
     
     예시:
-      k-cli life library "역사"
-      k-cli life library "파이썬 프로그래밍" --page-size 20 -j
+      k-skill life library "역사"
+      k-skill life library "파이썬 프로그래밍" --page-size 20 -j
     """
     if not keyword or not keyword.strip():
         emit({"skill": "library-book", "status": "error",
@@ -123,8 +123,8 @@ def lunch(edu_office, school_name, meal_date, as_json):
     교육청명과 학교명으로 급식 식단을 조회합니다 (2단계: 학교검색→식단조회).
     
     예시:
-      k-cli life lunch --edu-office "서울특별시교육청" --school "미래초등학교"
-      k-cli life lunch --edu-office "서울특별시교육청" --school "미래초등학교" --date 20260521 -j
+      k-skill life lunch --edu-office "서울특별시교육청" --school "미래초등학교"
+      k-skill life lunch --edu-office "서울특별시교육청" --school "미래초등학교" --date 20260521 -j
     """
     # Step 1: Search school
     school_resp = asyncio.run(safe_proxy_get("school-lunch", "/v1/neis/school-search", {"educationOffice": edu_office, "schoolName": school_name}))
@@ -169,8 +169,8 @@ def drug(drug_name, as_json):
     약품명으로 식약처 e약은요 정보를 조회합니다.
     
     예시:
-      k-cli life drug "타이레놀"
-      k-cli life drug "판콜" -j
+      k-skill life drug "타이레놀"
+      k-skill life drug "판콜" -j
     """
     if not drug_name or not drug_name.strip():
         emit({"skill": "mfds-drug", "status": "error",
@@ -191,8 +191,8 @@ def food(query, as_json):
     검색어로 식약처 건강기능식품/부적합/회수 정보를 조회합니다.
     
     예시:
-      k-cli life food "차전자피"
-      k-cli life food "홍삼" -j
+      k-skill life food "차전자피"
+      k-skill life food "홍삼" -j
     """
     if not query or not query.strip():
         emit({"skill": "mfds-food", "status": "error",
@@ -249,8 +249,8 @@ def emergency_room(query, limit, radius, as_json, timeout):
     위치 기준 근처 응급실과 E-Gen 운영 플래그를 조회합니다.
 
     예시:
-      k-cli life emergency-room "광화문"
-      k-cli life emergency-room "강남역" --limit 5 --radius 10 -j
+      k-skill life emergency-room "광화문"
+      k-skill life emergency-room "강남역" --limit 5 --radius 10 -j
     """
     import shlex
     args = [query, f"--limit", str(min(max(limit, 1), 10)), f"--radius", str(min(max(radius, 1), 20))]
@@ -273,8 +273,8 @@ def election(query, election_type, election_date, election_region, limit, includ
     중앙선거관리위원회 공개 통합검색으로 후보자 정보를 조회합니다.
 
     예시:
-      k-cli life election "오세훈" --election 시도지사
-      k-cli life election "김동연" --date 2014 --region 동작 -j
+      k-skill life election "오세훈" --election 시도지사
+      k-skill life election "김동연" --date 2014 --region 동작 -j
     """
     args = [query]
     if election_type:

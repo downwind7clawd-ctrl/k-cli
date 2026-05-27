@@ -1,5 +1,5 @@
 """
-Output formatter for k-cli.
+Output formatter for k-skill.
 Supports JSON and human-readable output with consistent error handling.
 
 All skill commands output through this module for uniform format.

@@ -88,16 +88,24 @@ def safe_proxy_get(
     params: Optional[dict] = None,
     timeout: float = DEFAULT_TIMEOUT,
 ):
-    """Synchronous wrapper: run proxy_get in event loop with full error handling.
+    """Synchronous wrapper: run proxy_get synchronously with full error handling.
 
     Returns a response envelope dict (success or error).
     Use this from Click commands to avoid boilerplate try/except.
     """
     from .output import success_response, error_response
+    import time
+    import httpx
 
     try:
-        data, elapsed = asyncio.run(proxy_get(path, params, timeout))
-        return success_response(skill, data, response_time_ms=elapsed)
+        base = get_proxy_base()
+        url = f"{base}{path}"
+        start = time.monotonic()
+        with httpx.Client() as client:
+            resp = client.get(url, params=params, timeout=timeout)
+            resp.raise_for_status()
+        elapsed = (time.monotonic() - start) * 1000
+        return success_response(skill, resp.json(), response_time_ms=elapsed)
     except httpx.ConnectError:
         return error_response(
             skill, "PROXY_DOWN",
@@ -129,15 +137,23 @@ def safe_proxy_post(
     json_body: Optional[dict] = None,
     timeout: float = DEFAULT_TIMEOUT,
 ):
-    """Synchronous wrapper: run proxy_post in event loop with full error handling.
+    """Synchronous wrapper: run proxy_post synchronously with full error handling.
 
     Returns a response envelope dict (success or error).
     """
     from .output import success_response, error_response
+    import time
+    import httpx
 
     try:
-        data, elapsed = asyncio.run(proxy_post(path, json_body, timeout))
-        return success_response(skill, data, response_time_ms=elapsed)
+        base = get_proxy_base()
+        url = f"{base}{path}"
+        start = time.monotonic()
+        with httpx.Client() as client:
+            resp = client.post(url, json=json_body, timeout=timeout)
+            resp.raise_for_status()
+        elapsed = (time.monotonic() - start) * 1000
+        return success_response(skill, resp.json(), response_time_ms=elapsed)
     except httpx.ConnectError:
         return error_response(
             skill, "PROXY_DOWN",

@@ -1,14 +1,14 @@
 ---
 name: k-skill
 display_name: K-Skill CLI
-description: 한국인을 위한 CLI 스킬 모음 86개 — 날씨, 교통, 금융, 부동산, 쇼핑, 스포츠, 생활 유틸리티를 단일 명령어로
-version: 0.1.0
+description: 한국인을 위한 CLI 스킬 모음 90개 — 날씨, 교통, 금융, 부동산, 쇼핑, 스포츠, 생활 유틸리티를 단일 명령어로
+version: 2026.05.27.1
 dependencies: []
 ---
 
 # K-Skill CLI — 한국인을 위한 CLI 스킬 모음
 
-에이전트가 `pip install cli-anything-k-skill` 후 즉시 사용 가능한 86개 한국 특화 CLI 스킬.
+에이전트가 `pip install cli-anything-k-skill` 후 즉시 사용 가능한 90개 한국 특화 CLI 스킬.
 모든 명령에 `-j` (`--json`) 플래그로 구조화된 JSON 응답을 받을 수 있습니다.
 
 ## 설치
@@ -20,7 +20,7 @@ pip install cli-anything-k-skill
 ## 빠른 시작
 
 ```bash
-k-skill weather forecast "서울" -j
+k-skill weather forecast --lat 37.5665 --lon 126.9780 -j
 k-skill transit subway "강남" -j
 k-skill finance stock "삼성전자" -j
 k-skill sports kbo --date 2025-06-01 -j
@@ -30,11 +30,12 @@ k-skill search naver-news "AI" -j
 k-skill setup check -j
 ```
 
-## 도메인 목록 (13개 도메인, 86개 스킬)
+## 도메인 목록 (14개 도메인, 90개 스킬)
 
 | 도메인 | 스킬 수 | 설명 |
 |--------|--------|------|
 | weather | 3 | 날씨/환경 조회 (기상청, 미세먼지, 한강수위) |
+| map | 4 | 지도/길찾기 (카카오맵 장소/길찾기, 네이버 길찾기/지오코딩) |
 | transit | 8 | 대중교통 (지하철, 버스, 기차, 항공편) |
 | life | 23 | 생활/편의 (주유소, 쓰레기, 주차장, 맛집 등) |
 | finance | 9 | 금융/공공 (사업자등록, 주식, 법률, 통계) |
@@ -47,7 +48,7 @@ k-skill setup check -j
 | travel | 3 | 여행지, 숙소 검색 |
 | delivery | 1 | 택배 송장 조회 |
 | other | 4 | 기타 유틸리티 |
-| **합계** | **86** | |
+| **합계** | **90** | |
 
 ## JSON 응답 형식
 
@@ -80,12 +81,12 @@ k-skill setup check -j
 ## 유틸리티
 
 ```bash
-k-cli list                   # 도메인별 요약
-k-cli -j list --all          # 전체 스킬 JSON (전역 -j 사용)
-k-cli list -d weather        # 도메인별
-k-cli -j setup check         # 의존성 상태 (JSON)
-k-cli -j setup proxy         # 프록시 연결 (JSON)
-k-cli setup install          # 설치 가이드
+k-skill list                   # 도메인별 요약
+k-skill -j list --all          # 전체 스킬 JSON (전역 -j 사용)
+k-skill list -d weather        # 도메인별
+k-skill -j setup check         # 의존성 상태 (JSON)
+k-skill -j setup proxy         # 프록시 연결 (JSON)
+k-skill setup install          # 설치 가이드
 ```
 
 ---
@@ -391,7 +392,7 @@ Commands:
 <details><summary>nts --help</summary>
 
 ```
-Usage: k-cli finance nts [OPTIONS] COMMAND [ARGS]...
+Usage: k-skill finance nts [OPTIONS] COMMAND [ARGS]...
 
   국세청 사업자등록 진위확인.
 

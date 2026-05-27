@@ -12,8 +12,9 @@ Usage:
     result = await client.call_tool("searchDomesticFlights", {"origin": "GMP"})
 """
 
+import contextlib
 import ipaddress
-import re
+import json
 import socket
 import time
 from typing import Any, Optional
@@ -155,17 +156,39 @@ class RemoteMCPClient:
             "id": self._next_id(),
         }
 
-        async with httpx.AsyncClient(timeout=self.timeout) as client:
-            resp = await client.post(
-                self.endpoint,
-                json=payload,
-                headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
-            resp.raise_for_status()
-            data = resp.json()
+        @contextlib.contextmanager
+        def prevent_dns_rebinding():
+            original = socket.getaddrinfo
+            def safe_getaddrinfo(*args, **kwargs):
+                res = original(*args, **kwargs)
+                for family, type_, proto, canonname, sockaddr in res:
+                    if family in (socket.AF_INET, socket.AF_INET6):
+                        ip = ipaddress.ip_address(sockaddr[0])
+                        for network in _PRIVATE_NETWORKS:
+                            if ip in network:
+                                raise MCPError(
+                                    code="INVALID_ENDPOINT",
+                                    message=f"DNS Rebinding detected! Resolved to private IP: {sockaddr[0]}"
+                                )
+                return res
+            socket.getaddrinfo = safe_getaddrinfo
+            try:
+                yield
+            finally:
+                socket.getaddrinfo = original
+
+        with prevent_dns_rebinding():
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                resp = await client.post(
+                    self.endpoint,
+                    json=payload,
+                    headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                    },
+                )
+                resp.raise_for_status()
+                data = resp.json()
 
         if "error" in data:
             err = data["error"]

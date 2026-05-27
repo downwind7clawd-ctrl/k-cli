@@ -35,8 +35,8 @@ def nts_status(b_nos, as_json):
     사업자등록번호로 계속사업자/휴업자/폐업자 상태를 조회합니다.
     
     예시:
-      k-cli finance nts status --b-no 1234567890
-      k-cli finance nts status --b-no 1234567890 --b-no 9876543210 -j
+      k-skill finance nts status --b-no 1234567890
+      k-skill finance nts status --b-no 1234567890 --b-no 9876543210 -j
     """
     # Normalize: strip hyphens, keep only digits
     cleaned = []
@@ -65,7 +65,7 @@ def nts_validate(b_no, p_nm, start_dt, b_nm, as_json):
     사업자등록번호+개업일자+대표자명으로 진위확인합니다.
     
     예시:
-      k-cli finance nts validate --b-no 1234567890 --p-nm "홍길동" --start-dt 20200101 -j
+      k-skill finance nts validate --b-no 1234567890 --p-nm "홍길동" --start-dt 20200101 -j
     """
     b_no_clean = re.sub(r"[^0-9]", "", b_no)
     start_dt_clean = re.sub(r"[^0-9]", "", start_dt)
@@ -94,8 +94,8 @@ def stock(query, bas_dd, limit, as_json):
     종목명 또는 종목코드로 KRX 상장종목을 검색합니다.
     
     예시:
-      k-cli finance stock "삼성전자"
-      k-cli finance stock "005930" --date 20260501 -j
+      k-skill finance stock "삼성전자"
+      k-skill finance stock "005930" --date 20260501 -j
     """
     if not query or not query.strip():
         emit(error_response("korean-stock", "INVALID_INPUT", "종목명 또는 종목코드를 입력하세요"),
@@ -141,8 +141,8 @@ def kstartup_announcements(supt_regin, rcrt_prgs_yn, pan_nm, supt_biz_clsfc,
     창업지원사업 공고를 공고명/지역/대상/모집상태 등으로 검색합니다.
     
     예시:
-      k-cli finance kstartup announcements --region "서울특별시" --open Y
-      k-cli finance kstartup announcements --keyword "청년" --target "예비창업자" -j
+      k-skill finance kstartup announcements --region "서울특별시" --open Y
+      k-skill finance kstartup announcements --keyword "청년" --target "예비창업자" -j
     """
     params = {"page": max(page, 1), "perPage": min(max(per_page, 1), 100)}
     if supt_regin:
@@ -180,7 +180,7 @@ def kstartup_business_info(biz_yr, biz_category_cd, supt_biz_titl_nm, page, per_
     통합공고 지원사업 정보(예산, 규모, 수행기관, 사업소개)를 조회합니다.
     
     예시:
-      k-cli finance kstartup business-info --biz-yr 2024 --biz-category-cd cmrczn_Tab3 -j
+      k-skill finance kstartup business-info --biz-yr 2024 --biz-category-cd cmrczn_Tab3 -j
     """
     params = {"page": max(page, 1), "perPage": min(max(per_page, 1), 100)}
     if biz_yr:
@@ -205,8 +205,8 @@ def kstartup_contents(clss_cd, titl_nm, page, per_page, as_json):
     창업관련 콘텐츠(공지, 뉴스, 우수사례)를 조회합니다.
     
     예시:
-      k-cli finance kstartup contents --clss-cd notice_matr -j
-      k-cli finance kstartup contents --keyword "공모전" -j
+      k-skill finance kstartup contents --clss-cd notice_matr -j
+      k-skill finance kstartup contents --keyword "공모전" -j
     """
     params = {"page": max(page, 1), "perPage": min(max(per_page, 1), 100)}
     if clss_cd:
@@ -229,7 +229,7 @@ def kstartup_statistics(titl_nm, file_nm, page, per_page, as_json):
     창업관련 통계보고서를 조회합니다.
     
     예시:
-      k-cli finance kstartup statistics --keyword "창업기업 실태조사" -j
+      k-skill finance kstartup statistics --keyword "창업기업 실태조사" -j
     """
     params = {"page": max(page, 1), "perPage": min(max(per_page, 1), 100)}
     if titl_nm:

@@ -30,8 +30,8 @@ def naver_news(query, display, start, sort, as_json):
     검색어로 최신 뉴스 기사를 조회합니다.
 
     예시:
-      k-cli search naver-news "삼성전자 실적"
-      k-cli search naver-news "AI 규제" --sort date --display 5 -j
+      k-skill search naver-news "삼성전자 실적"
+      k-skill search naver-news "AI 규제" --sort date --display 5 -j
     """
     if not query or not query.strip() or len(query.strip()) < 2:
         emit({"skill": "naver-news", "status": "error",

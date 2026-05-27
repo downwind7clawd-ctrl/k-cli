@@ -116,6 +116,7 @@ k-skill의 `metadata.category`를 k-cli 도메인 디렉토리에 매핑:
 | k-skill category | k-cli 도메인 |
 |-----------------|-------------|
 | weather, environment | `skills/weather/` |
+| map, location | `skills/map/` |
 | sports, entertainment | `skills/sports/` |
 | finance, law, business | `skills/finance/` |
 | transit, transportation | `skills/transit/` |

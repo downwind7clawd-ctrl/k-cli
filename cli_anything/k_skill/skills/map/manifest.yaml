@@ -1,0 +1,24 @@
+domain: map
+description: 지도/길찾기 (카카오맵, 네이버맵)
+dependencies:
+  proxy: true
+  npm: []
+  python: []
+  env_keys: []
+skills:
+  kakao-search:
+    name: kakao-map
+    display_name: 카카오맵 장소 검색
+    description: 키워드로 장소를 검색합니다
+  kakao-directions:
+    name: kakao-map
+    display_name: 카카오 모빌리티 길찾기
+    description: 자동차 길찾기 경로 및 소요 시간을 안내합니다
+  naver-directions:
+    name: naver-map-route
+    display_name: 네이버 지도 길찾기
+    description: NCP 기반 자동차 길찾기 경로를 안내합니다
+  naver-geocode:
+    name: naver-map-route
+    display_name: 네이버 지도 지오코딩
+    description: 도로명/지번 주소를 좌표로 변환합니다

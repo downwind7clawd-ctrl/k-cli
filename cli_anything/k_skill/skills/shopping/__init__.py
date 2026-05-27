@@ -31,8 +31,8 @@ def naver_shop(query, limit, sort, page, as_json, timeout):
     상품명/검색어로 네이버 쇼핑 후보를 검색합니다.
 
     예시:
-      k-cli shopping naver-shop "에어팟 프로 2세대"
-      k-cli shopping naver-shop "커피머신" --sort price_asc --limit 5 -j
+      k-skill shopping naver-shop "에어팟 프로 2세대"
+      k-skill shopping naver-shop "커피머신" --sort price_asc --limit 5 -j
     """
     if not query or not query.strip():
         emit({"skill": "naver-shopping", "status": "error",
@@ -101,8 +101,8 @@ def ohou_deal(search_query, min_discount, free_delivery, sort_by, limit, as_json
     오늘의집 공개 오늘의딜 페이지에서 특가 상품을 조회합니다.
 
     예시:
-      k-cli shopping ohou-deal
-      k-cli shopping ohou-deal --query 러그 --min-discount 30 --free-delivery --limit 5 -j
+      k-skill shopping ohou-deal
+      k-skill shopping ohou-deal --query 러그 --min-discount 30 --free-delivery --limit 5 -j
     """
     args = ["list"]
     if search_query:

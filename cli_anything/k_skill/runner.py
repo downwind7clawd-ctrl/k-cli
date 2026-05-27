@@ -103,7 +103,9 @@ def _filter_env(additional: dict[str, str] | None = None) -> dict[str, str]:
         if k in _SUBPROCESS_ENV_ALLOWLIST or any(k.startswith(p) for p in _SUBPROCESS_ENV_ALLOWLIST_PREFIXES):
             env[k] = v
     if additional:
-        env.update(additional)
+        for k, v in additional.items():
+            if k in _SUBPROCESS_ENV_ALLOWLIST or any(k.startswith(p) for p in _SUBPROCESS_ENV_ALLOWLIST_PREFIXES):
+                env[k] = v
     return env
 
 
@@ -156,7 +158,7 @@ async def run_npm(
         cmd = [PYTHON_BIN, bin_cmd] if bin_cmd.endswith(".py") else [NODE_BIN, bin_cmd]
         cmd.extend(args)
     elif npx or not global_install:
-        cmd = [NPX_BIN, "--yes", package] + args
+        cmd = [NPX_BIN, "--no-install", package] + args
     else:
         cmd = [package] + args
 
@@ -304,6 +306,10 @@ async def run_pip_import(
 
     _SAFE_MODULE = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)*$")
     _SAFE_FUNCTION = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*$")
+
+    _ALLOWED_PIP_MODULE_PREFIXES = ("cli_anything.", "datetime", "json", "math", "urllib", "time", "requests", "bs4", "pytz", "dateutil", "pandas")
+    if not any(module_name == p or module_name.startswith(p + ".") for p in _ALLOWED_PIP_MODULE_PREFIXES):
+        return error_response(module_name, "ACCESS_DENIED", f"보안 정책에 의해 허용되지 않은 모듈입니다: {module_name}")
 
     if not _SAFE_MODULE.match(module_name):
         return error_response(module_name, "INVALID_INPUT", f"잘못된 모듈명: {module_name}")

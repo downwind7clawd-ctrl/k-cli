@@ -170,7 +170,7 @@ def discover_cli_groups() -> dict[str, Any]:
 def list_all_skills() -> list[dict]:
     """Return a flat list of all registered skills across all domains.
 
-    Useful for `k-cli list --all` command.
+    Useful for `k-skill list --all` command.
 
     Returns:
         List of skill info dicts.
@@ -181,6 +181,7 @@ def list_all_skills() -> list[dict]:
         for skill_id, skill_data in manifest.skills.items():
             all_skills.append({
                 "domain": domain,
+                "domain_description": manifest.description,
                 "skill_id": skill_id,
                 "name": skill_data.get("name", skill_id),
                 "display_name": skill_data.get(
