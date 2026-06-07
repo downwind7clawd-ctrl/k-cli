@@ -11,13 +11,13 @@ Last updated: 2026-06-07
 
 # K-Skill CLI — 한국인을 위한 CLI 스킬 모음
 
-에이전트가 `pip install cli-anything-k-skill` 후 즉시 사용 가능한 89개 한국 특화 CLI 스킬.
+에이전트가 `pip install k-skill-cli` 후 즉시 사용 가능한 89개 한국 특화 CLI 스킬.
 모든 명령에 `-j` (`--json`) 플래그로 구조화된 JSON 응답을 받을 수 있습니다.
 
 ## 설치
 
 ```bash
-pip install cli-anything-k-skill
+pip install k-skill-cli
 ```
 
 ## 빠른 시작
