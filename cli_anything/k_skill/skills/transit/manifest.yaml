@@ -38,3 +38,18 @@ skills:
     name: korean-transit-route
     display_name: 대중교통 길찾기
     description: ODSay 대중교통 길찾기
+  seoul-bike:
+    name: seoul-bike
+    display_name: 서울 따릉이
+    description: 따릉이(서울 공공자전거) 대여소 위치/잔여 대수 조회
+    proxy: seoul-bike
+    endpoints:
+      nearby: /v1/seoul-bike/nearby
+      info: /v1/seoul-bike/info
+      availability: /v1/seoul-bike/availability
+    required_env: []
+    auth_note: 프록시 경유, 별도 API 키 불필요
+    examples:
+      - "k-skill transit seoul-bike nearby --lat 37.5665 --lon 126.9780 -j"
+      - "k-skill transit seoul-bike info --station-id ST-1001 -j"
+      - "k-skill transit seoul-bike availability --lat 37.5665 --lon 126.9780 -j"
