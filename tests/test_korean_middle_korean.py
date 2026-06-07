@@ -1,7 +1,6 @@
 """Tests for korean-middle-korean command in document domain."""
 
-import json
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from click.testing import CliRunner
 

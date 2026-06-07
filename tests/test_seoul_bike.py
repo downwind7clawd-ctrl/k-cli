@@ -1,6 +1,5 @@
 """Tests for seoul-bike commands in transit domain."""
 
-import json
 from unittest.mock import patch
 
 from click.testing import CliRunner
