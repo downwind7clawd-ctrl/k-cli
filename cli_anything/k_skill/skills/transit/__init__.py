@@ -139,3 +139,55 @@ def transit_route(query, as_json, timeout):
     args = [query] if query else []
     result = asyncio.run(run_script('transit_route.py', args, env_vars=env_vars, timeout=timeout))
     emit(result, as_json=as_json)
+
+
+@cli.group(name='seoul-bike', help='서울 따릉이(공공자전거) 대여소 조회')
+def seoul_bike():
+    """따릉이 대여소 위치, 정보, 잔여 자전거 수를 조회합니다.
+
+    upstream NomaDamas/k-skill의 seoul-bike 스킬을 래핑합니다.
+    모든 호출은 k-skill-proxy를 경유하므로 별도 API 키가 필요 없습니다.
+
+    예시:
+      k-skill transit seoul-bike nearby --lat 37.5665 --lon 126.9780 -j
+      k-skill transit seoul-bike info --station-id ST-1001 -j
+      k-skill transit seoul-bike availability --lat 37.5665 --lon 126.9780 -j
+    """
+    pass
+
+
+@seoul_bike.command(name='nearby', help='좌표 주변 대여소 조회')
+@click.option('--lat', required=True, type=float, help='위도 (WGS84)')
+@click.option('--lon', required=True, type=float, help='경도 (WGS84)')
+@click.option('--radius', default=500, type=int, help='검색 반경(미터, 기본 500)')
+@click.option('--limit', default=20, type=int, help='결과 개수 (1~50, 기본 20)')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+def seoul_bike_nearby(lat, lon, radius, limit, as_json):
+    """좌표 주변의 따릉이 대여소 목록을 조회합니다."""
+    radius = max(50, min(radius, 2000))
+    limit = max(1, min(limit, 50))
+    params = {"lat": lat, "lon": lon, "radius": radius, "limit": limit}
+    resp = safe_proxy_get("seoul-bike", "/v1/seoul-bike/nearby", params)
+    emit(resp, as_json=as_json)
+
+
+@seoul_bike.command(name='info', help='대여소 상세 정보 조회')
+@click.option('--station-id', required=True, help='대여소 ID')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+def seoul_bike_info(station_id, as_json):
+    """특정 대여소의 상세 정보(주소, 거치대 수 등)를 조회합니다."""
+    resp = safe_proxy_get("seoul-bike", "/v1/seoul-bike/info", {"stationId": station_id})
+    emit(resp, as_json=as_json)
+
+
+@seoul_bike.command(name='availability', help='좌표 주변 잔여 자전거 수 조회')
+@click.option('--lat', required=True, type=float, help='위도 (WGS84)')
+@click.option('--lon', required=True, type=float, help='경도 (WGS84)')
+@click.option('--radius', default=500, type=int, help='검색 반경(미터, 기본 500)')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+def seoul_bike_availability(lat, lon, radius, as_json):
+    """좌표 주변 대여소들의 잔여 자전거 수를 조회합니다."""
+    radius = max(50, min(radius, 2000))
+    params = {"lat": lat, "lon": lon, "radius": radius}
+    resp = safe_proxy_get("seoul-bike", "/v1/seoul-bike/availability", params)
+    emit(resp, as_json=as_json)
