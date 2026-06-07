@@ -10,7 +10,7 @@ Usage:
 
 Commands:
     weather     날씨/환경 (미세먼지, 한강수위, 날씨, 혼잡도)
-    map         지도/길찾기 (카카오맵 장소/길찾기, 네이버 길찾기/지오코딩)
+    map         지도/길찾기 (카카오맵 장소/길찾기)
     finance     법률/금융 (주식, DART, 법령, 코시스, 사업자등록)
     transit     교통/이동 (SRT, KTX, 지하철, 버스, 항공)
     shopping    쇼핑 (쿠팡, 올리브영, 오늘의집, 다이소, 당근)
@@ -73,8 +73,6 @@ def main(ctx: click.Context, as_json: bool):
     지도/길찾기:
       k-skill map kakao-search "강남역" -j
       k-skill map kakao-directions --origin "127.1101,37.3947" --destination "127.1082,37.4020" -j
-      k-skill map naver-directions --start "127.1101,37.3947" --goal "127.1082,37.4020" -j
-      k-skill map naver-geocode "서울특별시 강남구 테헤란로" -j
 
     금융/법률:
       k-skill finance stock "삼성전자" -j
