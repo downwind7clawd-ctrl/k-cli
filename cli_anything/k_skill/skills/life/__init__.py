@@ -215,17 +215,6 @@ def plastic_surgery(query, as_json, timeout):
     emit(result, as_json=as_json)
 
 
-@cli.command(name='blue-ribbon', help='블루리본 인증 맛집 검색')
-@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
-@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
-@click.argument('query', required=False)
-def blue_ribbon(query, as_json, timeout):
-    """블루리본 맛집."""
-    args = [query] if query else []
-    result = asyncio.run(run_npm('blue-ribbon-nearby', args, timeout=timeout))
-    emit(result, as_json=as_json)
-
-
 @cli.command(name='public-restroom', help='근처 공중화장실 검색')
 @click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
 @click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
