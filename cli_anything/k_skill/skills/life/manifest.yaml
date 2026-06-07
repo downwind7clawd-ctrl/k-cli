@@ -38,10 +38,6 @@ skills:
     name: gangnamunni-clinic-search
     display_name: 강남유니 성형외과
     description: 강남유니 성형외과 정보 검색
-  blue-ribbon:
-    name: blue-ribbon-nearby
-    display_name: 블루리본 맛집
-    description: 블루리본 인증 맛집 검색
   public-restroom:
     name: public-restroom-nearby
     display_name: 공중화장실
