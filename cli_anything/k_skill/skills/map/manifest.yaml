@@ -1,5 +1,5 @@
 domain: map
-description: 지도/길찾기 (카카오맵, 네이버맵)
+description: 지도/길찾기 (카카오맵 키워드 검색, 카카오모빌리티 길찾기)
 dependencies:
   proxy: true
   npm: []
