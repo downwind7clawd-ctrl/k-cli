@@ -111,7 +111,7 @@ def ktx(from_station, to_station, date, start_time, train_type, limit, include_n
     필요 환경변수: KSKILL_KTX_ID, KSKILL_KTX_PASSWORD
 
     예시:
-      k-skill transit ktx 서울 부산 --date 20260607 090000
+      k-skill transit ktx 서울 부산 --date 20260607 --time 090000
       k-skill transit ktx 서울 부산 --date 20260607 --train-type ktx --limit 10 -j
     """
     import os
