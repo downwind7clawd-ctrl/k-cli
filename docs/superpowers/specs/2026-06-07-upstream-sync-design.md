@@ -95,7 +95,7 @@ k-cli는 upstream NomaDamas/k-skill을 Click 기반 CLI 래퍼로 재구성한 �
 - [ ] `k-skill map kakao-search "강남역" -j` 정상 응답 (200)
 - [ ] `k-skill map kakao-directions --origin ... --destination ... -j` 정상 응답 (200)
 - [ ] `k-skill transit seoul-bike --lat 37.5665 --lon 126.9780 -j` 200 응답
-- [ ] `k-skill list --all -j | jq 'length'` ≥ 90 (90 = 92 - 2개 제거 + 2개 추가 = 90)
+- [ ] `k-skill list --all -j | jq 'length'` == 89 (90 - 3 제거 + 2 추가 = 89)
 - [ ] `pytest tests/ -v` 모든 테스트 통과
 - [ ] `pyproject.toml` 버전이 `2026.06.07.1`
 - [ ] git 커밋은 작은 단위로 7~8개 (제거 1, 재구현 2, 신규 2, 메타 1, 테스트 1)
