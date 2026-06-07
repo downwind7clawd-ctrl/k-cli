@@ -11,14 +11,14 @@ from cli_anything.k_skill.loader import SKILLS_DIR, load_manifest, discover_doma
 # Phase 2 (proxy) + Phase 3 (non-proxy) 스킬 합산
 DOMAINS = [
     ("weather", 3),
-    ("transit", 8),
+    ("transit", 9),
     ("life", 22),
     ("finance", 9),
     ("realestate", 5),
     ("shopping", 7),
     ("search", 6),
     ("market", 4),
-    ("document", 5),
+    ("document", 6),
     ("sports", 8),
     ("travel", 3),
     ("delivery", 1),
