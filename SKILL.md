@@ -1,14 +1,17 @@
 ---
 name: k-skill
 display_name: K-Skill CLI
-description: 한국인을 위한 CLI 스킬 모음 90개 — 날씨, 교통, 금융, 부동산, 쇼핑, 스포츠, 생활 유틸리티를 단일 명령어로
-version: 2026.05.27.1
+description: 한국인을 위한 CLI 스킬 모음 89개 — 날씨, 교통, 금융, 부동산, 쇼핑, 스포츠, 생활 유틸리티를 단일 명령어로
+version: 2026.06.07.1
 dependencies: []
+---
+
+Last updated: 2026-06-07
 ---
 
 # K-Skill CLI — 한국인을 위한 CLI 스킬 모음
 
-에이전트가 `pip install cli-anything-k-skill` 후 즉시 사용 가능한 90개 한국 특화 CLI 스킬.
+에이전트가 `pip install cli-anything-k-skill` 후 즉시 사용 가능한 89개 한국 특화 CLI 스킬.
 모든 명령에 `-j` (`--json`) 플래그로 구조화된 JSON 응답을 받을 수 있습니다.
 
 ## 설치
@@ -30,25 +33,25 @@ k-skill search naver-news "AI" -j
 k-skill setup check -j
 ```
 
-## 도메인 목록 (14개 도메인, 90개 스킬)
+## 도메인 목록 (14개 도메인, 89개 스킬)
 
 | 도메인 | 스킬 수 | 설명 |
 |--------|--------|------|
 | weather | 3 | 날씨/환경 조회 (기상청, 미세먼지, 한강수위) |
-| map | 4 | 지도/길찾기 (카카오맵 장소/길찾기, 네이버 길찾기/지오코딩) |
-| transit | 8 | 대중교통 (지하철, 버스, 기차, 항공편) |
-| life | 23 | 생활/편의 (주유소, 쓰레기, 주차장, 맛집 등) |
+| map | 2 | 지도/길찾기 (카카오맵 장소/길찾기) |
+| transit | 9 | 대중교통 (지하철, 버스, 기차, 항공편, 따릉이) |
+| life | 22 | 생활/편의 (주유소, 쓰레기, 주차장, 맛집 등) |
 | finance | 9 | 금융/공공 (사업자등록, 주식, 법률, 통계) |
 | realestate | 5 | 부동산 (실거래가, LH, 경매) |
 | shopping | 7 | 쇼핑 검색 (네이버, 올리브영, 다이소 등) |
 | market | 4 | 당근마켓, 번개장터 등 |
 | search | 6 | 검색/조사 (뉴스, 블로그, 특허, 실록) |
-| document | 5 | HWP, 맞춤법, 글자수 |
+| document | 6 | HWP, 맞춤법, 글자수, 중세 한국어 |
 | sports | 8 | 스포츠 경기, 로또, 영화관 |
 | travel | 3 | 여행지, 숙소 검색 |
 | delivery | 1 | 택배 송장 조회 |
 | other | 4 | 기타 유틸리티 |
-| **합계** | **90** | |
+| **합계** | **89** | |
 
 ## JSON 응답 형식
 
@@ -130,6 +133,7 @@ Commands:
   flight-search  Google Flights 항공권 가격/일정 검색
   intercity-bus  Tmoney 시외버스 시간표/잔여석 조회
   ktx            KTX/코레일 열차 조회/예매
+  seoul-bike     서울 따릉이 대여소/잔여 대수 조회
   srt            SRT 열차 조회/예매
   subway         서울 지하철 실시간 도착정보.
   subway-lost    서울교통공사 지하철 분실물 검색
@@ -151,7 +155,6 @@ Options:
   --help  Show this message and exit.
 
 Commands:
-  blue-ribbon        블루리본 인증 맛집 검색
   catchtable         캐치테이블 예약 자동 캡처
   cleaner            k-skill 사용량 정리
   corp-registration  법인설립 서류 작성 자동화
@@ -309,6 +312,7 @@ Commands:
   rhwp-debug   rhwp Rust CLI로 HWP 레이아웃 디버깅
   rhwp-edit    HWP 문서 편집 (k-skill-rhwp)
   spell-check  한국어 맞춤법/문법 검사
+  korean-middle-korean  중세 한국어 5가지 검색 (word/spelling/origin/example/translation)
 ```
 
 </details>
@@ -405,3 +409,14 @@ Commands:
 ```
 
 </details>
+
+## Recently Removed (2026-06-07 sync)
+
+Upstream NomaDamas/k-skill이 3개 스킬을 `legacy/unsupported-skills/`로 이동하여 프록시 호출 시 404가 반환됩니다. 후속 동기화에서 제외했습니다.
+
+| 도메인 | 스킬 | 사유 |
+|--------|------|------|
+| map | `naver-directions` | 프록시 404 (upstream `legacy/unsupported-skills/`) |
+| map | `naver-geocode` | 프록시 404 (upstream `legacy/unsupported-skills/`) |
+| life | `blue-ribbon` | 프록시 404 (upstream `legacy/unsupported-skills/`) |
+
