@@ -43,5 +43,8 @@ LOG/
 .coverage
 htmlcov/
 
+# Worktrees
+.worktrees/
+
 # Credentials
 .pypirc
