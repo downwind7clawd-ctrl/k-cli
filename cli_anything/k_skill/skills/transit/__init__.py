@@ -93,11 +93,38 @@ def srt(query, as_json, timeout):
 
 @cli.command(name='ktx', help='KTX/코레일 열차 조회/예매')
 @click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
-@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
-@click.argument('query', required=False)
-def ktx(query, as_json, timeout):
-    """KTX 예매."""
-    result = asyncio.run(run_pip_import('korail2', 'search_train', packages=["korail2-ncard", "pycryptodome"], timeout=timeout))
+@click.option('--timeout', '-t', default=60, type=int, help='타임아웃(초)')
+@click.argument('from_station')
+@click.argument('to_station')
+@click.option('--date', required=True, help='출발일 (YYYYMMDD)')
+@click.option('--time', 'start_time', default='000000', help='희망 시작 시각 (HHMMSS, 기본 000000)')
+@click.option('--train-type', 'train_type', default='ktx', help='열차 종류 (ktx/itx-saemaeul/mugunghwa/nuriro/tonggeun/itx-cheongchun/airport/all)')
+@click.option('--limit', default=5, type=int, help='결과 개수 (기본 5)')
+@click.option('--include-no-seats', 'include_no_seats', is_flag=True, help='좌석 없는 열차도 포함')
+@click.option('--include-waiting-list', 'include_waiting_list', is_flag=True, help='예약 대기 가능 열차도 포함')
+def ktx(from_station, to_station, date, start_time, train_type, limit, include_no_seats, include_waiting_list, as_json, timeout):
+    """KTX 예매.
+
+    KTX/Korail 열차 조회, 호차별 좌석번호 확인, 예약 흐름을 처리합니다.
+    upstream k-skill/scripts/ktx_booking.py helper를 호출합니다.
+
+    필요 환경변수: KSKILL_KTX_ID, KSKILL_KTX_PASSWORD
+
+    예시:
+      k-skill transit ktx 서울 부산 --date 20260607 090000
+      k-skill transit ktx 서울 부산 --date 20260607 --train-type ktx --limit 10 -j
+    """
+    import os
+    env_vars = {k: os.environ[k] for k in ["KSKILL_KTX_ID", "KSKILL_KTX_PASSWORD"] if k in os.environ}
+    args = [from_station, to_station, date, start_time,
+            "--train-type", train_type,
+            "--limit", str(min(max(limit, 1), 30))
+            ]
+    if include_no_seats:
+        args.append("--include-no-seats")
+    if include_waiting_list:
+        args.append("--include-waiting-list")
+    result = asyncio.run(run_script('ktx_booking.py', args, env_vars=env_vars, timeout=timeout))
     emit(result, as_json=as_json)
 
 
