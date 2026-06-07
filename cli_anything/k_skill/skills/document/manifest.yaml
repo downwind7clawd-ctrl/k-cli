@@ -30,3 +30,16 @@ skills:
     display_name: "글자 수 세기"
     description: "한국어 글자/어절/문단 수 카운트"
     npm: ["korean-character-count"]
+  korean-middle-korean:
+    name: korean-middle-korean
+    display_name: 중세 한국어 검색
+    description: 중세 한국어 형태/원형/예문 검색 (scripts/korean_middle_korean_search.js 래핑)
+    runner: node
+    script: scripts/korean_middle_korean_search.js
+    required_env: []
+    required_system: [node, npm]
+    auth_note: 사전 빌드된 node 모듈 사용, API 키 불필요
+    examples:
+      - "k-skill document korean-middle-korean word '가다' -j"
+      - "k-skill document korean-middle-korean origin '나아가다' -j"
+      - "k-skill document korean-middle-korean example '사랑' -j"
