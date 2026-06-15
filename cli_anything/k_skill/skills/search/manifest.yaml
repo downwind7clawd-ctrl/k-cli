@@ -1,7 +1,7 @@
 domain: search
 description: 검색/조사 (뉴스, 블로그, 특허, 실록)
 dependencies:
-  proxy: false
+  proxy: true
   npm: []
   python: []
   env_keys: []

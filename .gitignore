@@ -47,3 +47,6 @@ htmlcov/
 
 # Credentials
 .pypirc
+
+# Temp files
+tmp/

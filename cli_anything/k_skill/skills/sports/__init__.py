@@ -3,7 +3,7 @@
 import asyncio
 import click
 
-from cli_anything.k_skill.runner import run_npm, run_script, run_pip_import, run_mcp, K_SKILL_ROOT
+from cli_anything.k_skill.runner import run_npm, run_script, K_SKILL_ROOT
 from cli_anything.k_skill.output import emit
 
 
@@ -66,7 +66,7 @@ def cinema():
 def cinema_theaters(chain, keyword, limit, as_json, timeout):
     """영화관 검색."""
     args = ["get", f"/api/{chain}/theaters", "--keyword", keyword, "--limit", str(limit), "--json"]
-    result = asyncio.run(run_npm('daiso', args, npx=True, timeout=timeout))
+    result = asyncio.run(run_npm('korean-cinema-search', args, npx=True, timeout=timeout))
     emit(result, as_json=as_json)
 
 
@@ -81,7 +81,7 @@ def cinema_movies(chain, keyword, play_date, as_json, timeout):
     args = ["get", f"/api/{chain}/movies", "--keyword", keyword, "--json"]
     if play_date:
         args.extend(["--playDate", play_date])
-    result = asyncio.run(run_npm('daiso', args, npx=True, timeout=timeout))
+    result = asyncio.run(run_npm('korean-cinema-search', args, npx=True, timeout=timeout))
     emit(result, as_json=as_json)
 
 
@@ -96,7 +96,7 @@ def cinema_timetable(chain, keyword, play_date, as_json, timeout):
     args = ["get", f"/api/{chain}/timetable", "--keyword", keyword, "--json"]
     if play_date:
         args.extend(["--playDate", play_date])
-    result = asyncio.run(run_npm('daiso', args, npx=True, timeout=timeout))
+    result = asyncio.run(run_npm('korean-cinema-search', args, npx=True, timeout=timeout))
     emit(result, as_json=as_json)
 
 
@@ -112,7 +112,7 @@ def cinema_seats(chain, keyword, play_date, limit, as_json, timeout):
     args = ["get", f"/api/{chain}/seats", "--keyword", keyword, "--limit", str(limit), "--json"]
     if play_date:
         args.extend(["--playDate", play_date])
-    result = asyncio.run(run_npm('daiso', args, npx=True, timeout=timeout))
+    result = asyncio.run(run_npm('korean-cinema-search', args, npx=True, timeout=timeout))
     emit(result, as_json=as_json)
 
 @cli.command(name='lotto', help='로또 당첨번호 조회')

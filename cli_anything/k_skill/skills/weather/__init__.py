@@ -3,7 +3,7 @@
 import click
 
 from cli_anything.k_skill.proxy import safe_proxy_get
-from cli_anything.k_skill.output import emit
+from cli_anything.k_skill.output import emit, error_response
 
 
 @click.group()
@@ -53,8 +53,7 @@ def dust(region, station_name, as_json):
     if station_name:
         params["stationName"] = station_name
     if not params:
-        emit({"skill": "fine-dust", "status": "error",
-              "error": {"code": "INVALID_INPUT", "message": "지역명 또는 측정소명을 입력하세요"}},
+        emit(error_response("fine-dust", "INVALID_INPUT", "지역명 또는 측정소명을 입력하세요"),
              as_json=as_json)
         return
     resp = safe_proxy_get("fine-dust", "/v1/fine-dust/report", params)
@@ -80,8 +79,7 @@ def han_river(query, station_code, as_json):
     if station_code:
         params["stationCode"] = station_code
     if not params:
-        emit({"skill": "han-river", "status": "error",
-              "error": {"code": "INVALID_INPUT", "message": "관측소명 또는 관측소코드를 입력하세요"}},
+        emit(error_response("han-river", "INVALID_INPUT", "관측소명 또는 관측소코드를 입력하세요"),
              as_json=as_json)
         return
     resp = safe_proxy_get("han-river", "/v1/han-river/water-level", params)

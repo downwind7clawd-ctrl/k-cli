@@ -1,7 +1,7 @@
 [project]
 name = "k-skill-cli"
-version = "2026.06.07.1"
-description = "K-Skill CLI: CLI-Anything wrapper for NomaDamas/k-skill — 89 Korean utility skills for all AI agents"
+version = "2026.06.15.1"
+description = "K-Skill CLI: CLI-Anything wrapper for NomaDamas/k-skill — 95 Korean utility skills for all AI agents"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"

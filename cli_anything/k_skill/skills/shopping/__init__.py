@@ -4,8 +4,8 @@ import asyncio
 import click
 
 from cli_anything.k_skill.proxy import safe_proxy_get
-from cli_anything.k_skill.runner import run_npm, run_script, run_pip_import, run_mcp
-from cli_anything.k_skill.output import emit
+from cli_anything.k_skill.runner import run_npm, run_script, run_mcp
+from cli_anything.k_skill.output import emit, error_response
 
 
 @click.group()
@@ -35,8 +35,7 @@ def naver_shop(query, limit, sort, page, as_json, timeout):
       k-skill shopping naver-shop "커피머신" --sort price_asc --limit 5 -j
     """
     if not query or not query.strip():
-        emit({"skill": "naver-shopping", "status": "error",
-              "error": {"code": "INVALID_INPUT", "message": "검색어를 입력하세요 (2글자 이상)"}},
+        emit(error_response("naver-shopping", "INVALID_INPUT", "검색어를 입력하세요 (2글자 이상)"),
              as_json=as_json)
         return
     params = {"q": query, "limit": min(max(limit, 1), 40), "sort": sort, "page": max(page, 1)}
@@ -111,8 +110,7 @@ def ohou_deal(search_query, min_discount, free_delivery, sort_by, limit, as_json
         args.extend(["--min-discount", str(min_discount)])
     if free_delivery:
         args.append("--free-delivery")
-    if sort_by:
-        args.extend(["--sort", sort_by])
+    args.extend(["--sort", sort_by])
     args.extend(["--limit", str(limit)])
     result = asyncio.run(run_script('ohou_today_deal.py', args, timeout=timeout))
     emit(result, as_json=as_json)

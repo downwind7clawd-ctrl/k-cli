@@ -1,7 +1,7 @@
 domain: shopping
 description: 쇼핑 검색 (네이버, 올리브영, 다이소 등)
 dependencies:
-  proxy: false
+  proxy: true
   npm: []
   python: []
   env_keys: []

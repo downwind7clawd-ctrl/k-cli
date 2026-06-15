@@ -12,13 +12,13 @@ from cli_anything.k_skill.loader import SKILLS_DIR, load_manifest, discover_doma
 DOMAINS = [
     ("weather", 3),
     ("transit", 9),
-    ("life", 22),
-    ("finance", 9),
+    ("life", 23),
+    ("finance", 13),
     ("realestate", 5),
     ("shopping", 7),
     ("search", 6),
     ("market", 4),
-    ("document", 6),
+    ("document", 7),
     ("sports", 8),
     ("travel", 3),
     ("delivery", 1),
@@ -257,6 +257,6 @@ class TestDiscoverDomainsIntegration:
 
     def test_total_skill_count(self):
         all_skills = list_all_skills()
-        # Phase 2 (16) + Phase 3 (71) = 87개
+        # Phase 2 (16) + Phase 3 (77) = 93개
         # (3 skills removed in 2026-06-07 sync: map/naver-directions, map/naver-geocode, life/blue-ribbon)
-        assert len(all_skills) >= 87
+        assert len(all_skills) >= 93

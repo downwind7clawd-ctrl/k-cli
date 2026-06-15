@@ -1,17 +1,17 @@
 ---
 name: k-skill
 display_name: K-Skill CLI
-description: 한국인을 위한 CLI 스킬 모음 89개 — 날씨, 교통, 금융, 부동산, 쇼핑, 스포츠, 생활 유틸리티를 단일 명령어로
-version: 2026.06.07.1
+description: 한국인을 위한 CLI 스킬 모음 95개 — 날씨, 교통, 금융, 부동산, 쇼핑, 스포츠, 생활 유틸리티를 단일 명령어로
+version: 2026.06.15.1
 dependencies: []
 ---
 
-Last updated: 2026-06-07
+Last updated: 2026-06-15
 ---
 
 # K-Skill CLI — 한국인을 위한 CLI 스킬 모음
 
-에이전트가 `pip install k-skill-cli` 후 즉시 사용 가능한 89개 한국 특화 CLI 스킬.
+에이전트가 `pip install k-skill-cli` 후 즉시 사용 가능한 95개 한국 특화 CLI 스킬.
 모든 명령에 `-j` (`--json`) 플래그로 구조화된 JSON 응답을 받을 수 있습니다.
 
 ## 설치
@@ -33,25 +33,25 @@ k-skill search naver-news "AI" -j
 k-skill setup check -j
 ```
 
-## 도메인 목록 (14개 도메인, 89개 스킬)
+## 도메인 목록 (14개 도메인, 95개 스킬)
 
 | 도메인 | 스킬 수 | 설명 |
 |--------|--------|------|
 | weather | 3 | 날씨/환경 조회 (기상청, 미세먼지, 한강수위) |
 | map | 2 | 지도/길찾기 (카카오맵 장소/길찾기) |
 | transit | 9 | 대중교통 (지하철, 버스, 기차, 항공편, 따릉이) |
-| life | 22 | 생활/편의 (주유소, 쓰레기, 주차장, 맛집 등) |
-| finance | 9 | 금융/공공 (사업자등록, 주식, 법률, 통계) |
+| life | 23 | 생활/편의 (주유소, 쓰레기, 주차장, 맛집, 인허가 조회 등) |
+| finance | 13 | 금융/공공 (사업자등록, 주식, 법률, 통계, 국민연금, 금융위, 부정당, 체납) |
 | realestate | 5 | 부동산 (실거래가, LH, 경매) |
 | shopping | 7 | 쇼핑 검색 (네이버, 올리브영, 다이소 등) |
 | market | 4 | 당근마켓, 번개장터 등 |
 | search | 6 | 검색/조사 (뉴스, 블로그, 특허, 실록) |
-| document | 6 | HWP, 맞춤법, 글자수, 중세 한국어 |
+| document | 7 | HWP, 맞춤법, 글자수, 중세 한국어, AI 윤문 |
 | sports | 8 | 스포츠 경기, 로또, 영화관 |
 | travel | 3 | 여행지, 숙소 검색 |
 | delivery | 1 | 택배 송장 조회 |
 | other | 4 | 기타 유틸리티 |
-| **합계** | **89** | |
+| **합계** | **95** | |
 
 ## JSON 응답 형식
 
@@ -194,15 +194,19 @@ Options:
   --help  Show this message and exit.
 
 Commands:
-  daishin-report  대신증권 리서치 리포트 검색
-  dart            금융감독원 DART 전자공시 조회
-  gongsijiga      개별공시지가(토지가격) 조회
-  korean-law      대한민국 법령/판례/유권해석 검색
-  kosis           KOSIS 국가통계포털 통계 조회
-  kstartup        K-Startup 창업공고 검색.
-  nts             국세청 사업자등록 진위확인.
-  stock           한국 주식 조회 (KRX).
-  toss-stock      토스증권 주식 시세/정보 조회
+  daishin-report    대신증권 리서치 리포트 검색
+  dart              금융감독원 DART 전자공시 조회
+  fsc-corp          금융위원회 법인 개요 조회
+  g2b-sanction      조달청 부정당제재업체 조회
+  gongsijiga        개별공시지가(토지가격) 조회
+  korean-law        대한민국 법령/판례/유권해석 검색
+  kosis             KOSIS 국가통계포털 통계 조회
+  kstartup          K-Startup 창업공고/사업정보/콘텐츠/통계 조회.
+  national-pension  국민연금 가입 사업장 조회
+  nts               국세청 사업자등록 진위확인.
+  nts-delinquency   국세 체납 명단공개 검색
+  stock             한국 주식 조회 (KRX).
+  toss-stock        토스증권 주식 시세/정보 조회
 ```
 
 </details>
@@ -301,18 +305,19 @@ Commands:
 ```
 Usage: python -m cli_anything.k_skill.cli document [OPTIONS] COMMAND [ARGS]...
 
-  문서: HWP, 맞춤법, 글자수
+  문서: HWP, 맞춤법, 글자수, 윤문
 
 Options:
   --help  Show this message and exit.
 
 Commands:
-  char-count   한국어 글자/어절/문단 수 카운트
-  hwp-convert  HWP/HWPX 문서를 PDF 등으로 변환
-  rhwp-debug   rhwp Rust CLI로 HWP 레이아웃 디버깅
-  rhwp-edit    HWP 문서 편집 (k-skill-rhwp)
-  spell-check  한국어 맞춤법/문법 검사
-  korean-middle-korean  중세 한국어 5가지 검색 (word/spelling/origin/example/translation)
+  char-count            한국어 글자/어절/문단 수 카운트
+  humanizer             AI 한국어 글 윤문 (번역체/AI 상투어 제거)
+  hwp-convert           HWP/HWPX 문서를 PDF 등으로 변환
+  korean-middle-korean  중세 한국어 형태/원형/예문/번역 검색
+  rhwp-debug            rhwp Rust CLI로 HWP 레이아웃 디버깅
+  rhwp-edit             HWP 문서 편집 (k-skill-rhwp)
+  spell-check           한국어 맞춤법/문법 검사
 ```
 
 </details>

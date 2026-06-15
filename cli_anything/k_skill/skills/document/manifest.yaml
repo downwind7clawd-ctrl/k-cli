@@ -1,6 +1,6 @@
 domain: document
 label: "문서"
-description: "HWP, 맞춤법, 글자수"
+description: "HWP, 맞춤법, 글자수, 윤문"
 dependencies:
   proxy: false
   npm: []
@@ -33,7 +33,7 @@ skills:
   korean-middle-korean:
     name: korean-middle-korean
     display_name: 중세 한국어 검색
-    description: 중세 한국어 형태/원형/예문 검색 (scripts/korean_middle_korean_search.js 래핑)
+    description: 중세 한국어 형태/원형/예문 검색
     runner: node
     script: scripts/korean_middle_korean_search.js
     required_env: []
@@ -43,3 +43,15 @@ skills:
       - "k-skill document korean-middle-korean word '가다' -j"
       - "k-skill document korean-middle-korean origin '나아가다' -j"
       - "k-skill document korean-middle-korean example '사랑' -j"
+  humanizer:
+    name: korean-humanizer
+    display_name: AI 글 윤문
+    description: AI가 쓴 한국어 글을 자연스러운 사람 글로 윤문
+    category: writing
+    phase: v2
+    runner: prompt
+    required_env: []
+    auth_note: 프롬프트 기반 스킬, API 키 불필요
+    examples:
+      - "k-skill document humanizer 'AI가 작성한 자연스럽지 않은 글'"
+      - "k-skill document humanizer --length 1000 '수정할 텍스트'"

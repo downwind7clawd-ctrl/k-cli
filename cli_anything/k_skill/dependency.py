@@ -9,7 +9,6 @@ Dependencies are declared in manifest.yaml files per domain.
 Skills never install packages silently — they report what is missing.
 """
 
-import json
 import os
 import shutil
 import subprocess

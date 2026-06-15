@@ -42,16 +42,15 @@ def hola_poke(query, as_json, timeout):
 def foresttrip(dates, all_forests, forest_id, forest_name, categories, as_json, as_text, timeout):
     """숲나들예약 빈 객실 조회.
 
-    산림청 숲나들e에서 자연휴양림 예약 가능 객실을 날짜 기준으로 조회합니다.
-    upstream k-skill/scripts/run_foresttrip_vacancy.py helper를 호출합니다.
+    Playwright를 사용하여 숲나들e 웹사이트에서 자연휴양림 예약 정보를 조회합니다.
 
     필요 환경변수: KSKILL_FORESTTRIP_ID, KSKILL_FORESTTRIP_PASSWORD
     필요 의존성: playwright, chromium browser
 
     예시:
+      k-skill travel foresttrip --forest-name "복주산" --dates 20260717,20260718,20260719 -j
       k-skill travel foresttrip --all --dates 20260607 -j
       k-skill travel foresttrip --forest-name "가야" --dates 20260607,20260608 -j
-      k-skill travel foresttrip --all --categories 02 --dates 20260607
     """
     import os
     env_vars = {k: os.environ[k] for k in ["KSKILL_FORESTTRIP_ID", "KSKILL_FORESTTRIP_PASSWORD"] if k in os.environ}
@@ -70,5 +69,8 @@ def foresttrip(dates, all_forests, forest_id, forest_name, categories, as_json, 
         args.append("--json")
     else:
         args.append("--text")
-    result = asyncio.run(run_script('run_foresttrip_vacancy.py', args, env_vars=env_vars, timeout=timeout))
+    args.extend(["--timeout", str(timeout)])
+    from pathlib import Path
+    script_dirs = [Path(__file__).resolve().parent.parent.parent / "scripts"]
+    result = asyncio.run(run_script('run_foresttrip_vacancy.py', args, env_vars=env_vars, timeout=timeout, script_dirs=script_dirs))
     emit(result, as_json=as_json)

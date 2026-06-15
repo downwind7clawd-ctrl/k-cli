@@ -11,9 +11,10 @@ Usage from skill commands:
 """
 
 import asyncio
+import json
 import os
 import time
-from typing import Any, Optional
+from typing import Optional
 
 import httpx
 
@@ -61,7 +62,10 @@ async def proxy_get(
         resp.raise_for_status()
         elapsed_ms = (time.monotonic() - start) * 1000
 
-    return resp.json(), elapsed_ms
+    try:
+        return resp.json(), elapsed_ms
+    except json.JSONDecodeError:
+        raise ValueError(f"Invalid JSON response from proxy: {resp.text[:200]}")
 
 
 async def proxy_post(
@@ -79,7 +83,10 @@ async def proxy_post(
         resp.raise_for_status()
         elapsed_ms = (time.monotonic() - start) * 1000
 
-    return resp.json(), elapsed_ms
+    try:
+        return resp.json(), elapsed_ms
+    except json.JSONDecodeError:
+        raise ValueError(f"Invalid JSON response from proxy: {resp.text[:200]}")
 
 
 def safe_proxy_get(
@@ -94,8 +101,6 @@ def safe_proxy_get(
     Use this from Click commands to avoid boilerplate try/except.
     """
     from .output import success_response, error_response
-    import time
-    import httpx
 
     try:
         base = get_proxy_base()
@@ -142,8 +147,6 @@ def safe_proxy_post(
     Returns a response envelope dict (success or error).
     """
     from .output import success_response, error_response
-    import time
-    import httpx
 
     try:
         base = get_proxy_base()

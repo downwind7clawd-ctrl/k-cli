@@ -7,9 +7,9 @@ dependencies:
   env_keys: []
 skills:
   gas:
-    name: cheap-gas-nearby
+    name: cheap-gas
     display_name: 주유소
-    description: 근처 저렴한 주유소
+    description: 근처 주유소 가격 조회
   waste:
     name: household-waste
     display_name: 쓰레기 배출
@@ -94,3 +94,7 @@ skills:
     name: k-skill-cleaner
     display_name: 스킬 정리
     description: k-skill 사용량 정리
+  localdata-biz:
+    name: localdata-business-status
+    display_name: 인허가 영업상태
+    description: 지방행정 인허가 영업상태 조회

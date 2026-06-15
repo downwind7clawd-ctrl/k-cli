@@ -56,8 +56,7 @@ def waste(region, as_json):
       k-skill life waste "수원시 영통구" -j
     """
     if not region or not region.strip():
-        emit({"skill": "household-waste", "status": "error",
-              "error": {"code": "INVALID_INPUT", "message": "시군구명을 입력하세요"}},
+        emit(error_response("household-waste", "INVALID_INPUT", "시군구명을 입력하세요"),
              as_json=as_json)
         return
     params = {
@@ -103,8 +102,7 @@ def library(keyword, page, page_size, as_json):
       k-skill life library "파이썬 프로그래밍" --page-size 20 -j
     """
     if not keyword or not keyword.strip():
-        emit({"skill": "library-book", "status": "error",
-              "error": {"code": "INVALID_INPUT", "message": "검색 키워드를 입력하세요"}},
+        emit(error_response("library-book", "INVALID_INPUT", "검색 키워드를 입력하세요"),
              as_json=as_json)
         return
     params = {"keyword": keyword, "pageNo": max(page, 1), "pageSize": min(max(page_size, 1), 100)}
@@ -127,7 +125,7 @@ def lunch(edu_office, school_name, meal_date, as_json):
       k-skill life lunch --edu-office "서울특별시교육청" --school "미래초등학교" --date 20260521 -j
     """
     # Step 1: Search school
-    school_resp = asyncio.run(safe_proxy_get("school-lunch", "/v1/neis/school-search", {"educationOffice": edu_office, "schoolName": school_name}))
+    school_resp = safe_proxy_get("school-lunch", "/v1/neis/school-search", {"educationOffice": edu_office, "schoolName": school_name})
     if school_resp.get("status") == "error":
         emit(school_resp, as_json=as_json)
         return
@@ -156,8 +154,13 @@ def lunch(edu_office, school_name, meal_date, as_json):
     meal_params = {"ATPT_OFCDC_SC_CODE": atpt_code, "SD_SCHUL_CODE": sd_code}
     if meal_date:
         meal_params["MLSV_YMD"] = meal_date
-    resp = asyncio.run(safe_proxy_get("school-lunch", "/v1/neis/school-meal", meal_params))
-    emit(resp, as_json=as_json)
+    try:
+        resp = safe_proxy_get("school-lunch", "/v1/neis/school-meal", meal_params)
+        emit(resp, as_json=as_json)
+    except Exception as e:
+        emit(error_response("school-lunch", "NETWORK_ERROR",
+                            f"급식 정보 조회 중 오류 발생: {str(e)}"),
+             as_json=as_json)
 
 
 @cli.command()
@@ -173,8 +176,7 @@ def drug(drug_name, as_json):
       k-skill life drug "판콜" -j
     """
     if not drug_name or not drug_name.strip():
-        emit({"skill": "mfds-drug", "status": "error",
-              "error": {"code": "INVALID_INPUT", "message": "약품명을 입력하세요"}},
+        emit(error_response("mfds-drug", "INVALID_INPUT", "약품명을 입력하세요"),
              as_json=as_json)
         return
     params = {"item_name": drug_name}
@@ -195,8 +197,7 @@ def food(query, as_json):
       k-skill life food "홍삼" -j
     """
     if not query or not query.strip():
-        emit({"skill": "mfds-food", "status": "error",
-              "error": {"code": "INVALID_INPUT", "message": "검색어를 입력하세요"}},
+        emit(error_response("mfds-food", "INVALID_INPUT", "검색어를 입력하세요"),
              as_json=as_json)
         return
     params = {"searchText": query}
@@ -241,7 +242,6 @@ def emergency_room(query, limit, radius, as_json, timeout):
       k-skill life emergency-room "광화문"
       k-skill life emergency-room "강남역" --limit 5 --radius 10 -j
     """
-    import shlex
     args = [query, f"--limit", str(min(max(limit, 1), 10)), f"--radius", str(min(max(radius, 1), 20))]
     result = asyncio.run(run_npm('emergency-room-beds', args, timeout=timeout))
     emit(result, as_json=as_json)
@@ -396,5 +396,29 @@ def cleaner(query, as_json, timeout):
     """스킬 정리."""
     args = [query] if query else []
     result = asyncio.run(run_script('k_skill_cleaner.py', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+# ── 인허가 영업상태 조회 ──────────────────────────────────────
+
+@cli.command(name='localdata-biz', help='지방행정 인허가 영업상태 조회')
+@click.option('--name', required=True, help='상호/사업장명')
+@click.option('--region', required=True, help='시군구 (예: 서울종로구, 제주제주시)')
+@click.option('--industry', multiple=True, help='업종 (기본: 음식점+휴게음식점+숙박업)')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=60, type=int, help='타임아웃(초)')
+def localdata_biz(name, region, industry, as_json, timeout):
+    """인허가 영업상태 조회.
+
+    지방행정 인허가데이터로 동네 사업장의 영업/휴업/폐업 상태를 조회합니다.
+
+    예시:
+      k-skill life localdata-biz --name "호텔샬롬" --region 제주제주시
+      k-skill life localdata-biz --name "카페" --region 서울종로구 --industry 음식점 -j
+    """
+    args = ["--name", name, "--region", region]
+    for ind in industry:
+        args.extend(["--industry", ind])
+    result = asyncio.run(run_script("localdata_business_status.py", args, timeout=timeout))
     emit(result, as_json=as_json)
 

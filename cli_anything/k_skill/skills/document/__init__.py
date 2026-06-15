@@ -3,11 +3,11 @@
 import asyncio
 import click
 
-from cli_anything.k_skill.runner import run_npm, run_script, run_pip_import
-from cli_anything.k_skill.output import emit
+from cli_anything.k_skill.runner import run_npm, run_script
+from cli_anything.k_skill.output import emit, error_response
 
 
-@click.group(name='document', help='문서: HWP, 맞춤법, 글자수')
+@click.group(name='document', help='문서: HWP, 맞춤법, 글자수, 윤문')
 def cli():
     pass
 
@@ -85,4 +85,50 @@ def korean_middle_korean(search_type, query, limit, as_json, timeout):
     limit = max(1, min(limit, 50))
     args = [search_type, query, "--limit", str(limit), "--json"]
     result = asyncio.run(run_script('korean_middle_korean_search.js', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='humanizer', help='AI 한국어 글 윤문 (번역체/AI 상투어 제거)')
+@click.option('--length', type=int, help='목표 글자수')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.argument('text', required=False)
+def humanizer(length, as_json, text):
+    """AI 한국어 글 윤문.
+
+    AI가 쓴 티가 나는 한국어 글을 자연스러운 사람 글로 고칩니다.
+    프롬프트 기반 스킬로, 에이전트가 SKILL.md를 읽고 작업을 수행합니다.
+
+    예시:
+      k-skill document humanizer "AI가 작성한 글을 자연스럽게 고쳐주세요"
+      k-skill document humanizer --length 1000 "수정할 텍스트"
+    """
+    result = {
+        "skill": "korean-humanizer",
+        "status": "success",
+        "data": {
+            "type": "prompt-based",
+            "description": "AI 한국어 글 윤문 스킬입니다.",
+            "usage": "이 스킬은 프롬프트 기반으로, 에이전트가 SKILL.md를 읽고 번역체/AI 상투어를 감지하여 수정합니다.",
+            "input_text": text,
+            "target_length": length,
+            "instructions": [
+                "1. 입력 텍스트에서 AI 흔적(A~J 카테고리)을 감지합니다",
+                "2. 심각도(S1/S2/S3)로 분류합니다",
+                "3. 의미를 보존하면서 다시 씁니다",
+                "4. 목표 글자수가 있으면 그에 맞춰 조절합니다"
+            ],
+            "detection_categories": {
+                "A": "번역체",
+                "B": "영어 인용",
+                "C": "구조적",
+                "D": "관용구",
+                "E": "리듬",
+                "F": "수식",
+                "G": "hedging",
+                "H": "접속사",
+                "I": "형식명사",
+                "J": "시각 장식"
+            }
+        }
+    }
     emit(result, as_json=as_json)

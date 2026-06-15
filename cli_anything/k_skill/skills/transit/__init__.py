@@ -1,11 +1,12 @@
 """대중교통 스킬 — 서울 지하철 실시간 도착정보."""
 
 import asyncio
+import os
 import click
 
 from cli_anything.k_skill.proxy import safe_proxy_get
 from cli_anything.k_skill.runner import run_script, run_pip_import
-from cli_anything.k_skill.output import emit
+from cli_anything.k_skill.output import emit, error_response
 
 
 @click.group()
@@ -30,8 +31,7 @@ def subway(station_name, as_json):
       k-skill transit subway "서울역" -j
     """
     if not station_name or not station_name.strip():
-        emit({"skill": "seoul-subway", "status": "error",
-              "error": {"code": "INVALID_INPUT", "message": "역명을 입력하세요"}},
+        emit(error_response("seoul-subway", "INVALID_INPUT", "역명을 입력하세요"),
              as_json=as_json)
         return
     params = {"stationName": station_name}
@@ -77,7 +77,8 @@ def express_bus(query, as_json, timeout):
 @click.argument('query', required=False)
 def flight_search(query, as_json, timeout):
     """항공권 검색."""
-    result = asyncio.run(run_pip_import('fast_flights', 'search_flights', packages=["fast-flights"], timeout=timeout))
+    args = [query] if query else []
+    result = asyncio.run(run_pip_import('fast_flights', 'search_flights', args=args, packages=["fast-flights"], timeout=timeout))
     emit(result, as_json=as_json)
 
 
@@ -87,7 +88,8 @@ def flight_search(query, as_json, timeout):
 @click.argument('query', required=False)
 def srt(query, as_json, timeout):
     """SRT 예매."""
-    result = asyncio.run(run_pip_import('SRTrain', 'search_train', packages=["SRTrain"], timeout=timeout))
+    args = [query] if query else []
+    result = asyncio.run(run_pip_import('SRTrain', 'search_train', args=args, packages=["SRTrain"], timeout=timeout))
     emit(result, as_json=as_json)
 
 
@@ -114,7 +116,6 @@ def ktx(from_station, to_station, date, start_time, train_type, limit, include_n
       k-skill transit ktx 서울 부산 --date 20260607 --time 090000
       k-skill transit ktx 서울 부산 --date 20260607 --train-type ktx --limit 10 -j
     """
-    import os
     env_vars = {k: os.environ[k] for k in ["KSKILL_KTX_ID", "KSKILL_KTX_PASSWORD"] if k in os.environ}
     args = [from_station, to_station, date, start_time,
             "--train-type", train_type,
@@ -134,7 +135,6 @@ def ktx(from_station, to_station, date, start_time, train_type, limit, include_n
 @click.argument('query', required=False)
 def transit_route(query, as_json, timeout):
     """대중교통 길찾기."""
-    import os
     env_vars = {k: os.environ[k] for k in ["ODSAY_API_KEY"] if k in os.environ}
     args = [query] if query else []
     result = asyncio.run(run_script('transit_route.py', args, env_vars=env_vars, timeout=timeout))

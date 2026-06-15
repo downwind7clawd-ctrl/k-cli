@@ -3,7 +3,7 @@
 import click
 
 from cli_anything.k_skill.proxy import safe_proxy_get
-from cli_anything.k_skill.output import emit
+from cli_anything.k_skill.output import emit, error_response
 
 
 @click.group()
@@ -21,8 +21,7 @@ def cli():
 def kakao_search(keyword, as_json):
     """카카오맵 키워드 장소 검색."""
     if not keyword or not keyword.strip():
-        emit({"skill": "kakao-map", "status": "error",
-              "error": {"code": "INVALID_INPUT", "message": "검색어를 입력하세요"}},
+        emit(error_response("kakao-map", "INVALID_INPUT", "검색어를 입력하세요"),
              as_json=as_json)
         return
     params = {"query": keyword}

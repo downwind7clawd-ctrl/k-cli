@@ -60,6 +60,9 @@ _SUBPROCESS_ENV_ALLOWLIST = frozenset({
     "COUPANG_SECRET_KEY",
     "DART_API_KEY",
     "KOSIS_API_KEY",
+    "KSKILL_FORESTTRIP_ID",
+    "KSKILL_FORESTTRIP_PASSWORD",
+    "KSKILL_FORESTTRIP_API_KEY",
 })
 _SUBPROCESS_ENV_ALLOWLIST_PREFIXES = ("LC_", "XDG_")
 
@@ -423,3 +426,25 @@ async def run_mcp(
     except Exception:
         elapsed_ms = int((time.monotonic() - start) * 1000)
         return error_response(skill_name, "MCP_ERROR", f"MCP '{skill_name}' 호출 중 예기치 않은 오류가 발생했습니다.")
+
+
+# ── 동기 래퍼 ────────────────────────────────────────────
+
+def run_npm_sync(package: str, args: list[str] | None = None, **kwargs) -> dict[str, Any]:
+    """run_npm의 동기 래퍼."""
+    return asyncio.run(run_npm(package, args, **kwargs))
+
+
+def run_script_sync(script_name: str, args: list[str] | None = None, **kwargs) -> dict[str, Any]:
+    """run_script의 동기 래퍼."""
+    return asyncio.run(run_script(script_name, args, **kwargs))
+
+
+def run_mcp_sync(skill_name: str, **kwargs) -> dict[str, Any]:
+    """run_mcp의 동기 래퍼."""
+    return asyncio.run(run_mcp(skill_name, **kwargs))
+
+
+def run_pip_import_sync(module_name: str, function_name: str, args=None, **kwargs) -> dict[str, Any]:
+    """run_pip_import의 동기 래퍼."""
+    return asyncio.run(run_pip_import(module_name, function_name, args, **kwargs))

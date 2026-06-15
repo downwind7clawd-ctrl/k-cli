@@ -6,7 +6,8 @@ import click
 
 from cli_anything.k_skill.proxy import safe_proxy_get, safe_proxy_post
 from cli_anything.k_skill.output import emit, error_response
-from cli_anything.k_skill.runner import run_mcp, run_npm, run_script
+from cli_anything.k_skill.runner import run_npm, run_script
+from cli_anything.k_skill.validators import clean_business_number, clean_date
 
 
 @click.group()
@@ -41,8 +42,8 @@ def nts_status(b_nos, as_json):
     # Normalize: strip hyphens, keep only digits
     cleaned = []
     for b_no in b_nos:
-        digits = re.sub(r"[^0-9]", "", b_no)
-        if len(digits) == 10:
+        digits = clean_business_number(b_no)
+        if digits:
             cleaned.append(digits)
     if not cleaned:
         emit(error_response("nts-business", "INVALID_INPUT",
@@ -67,9 +68,9 @@ def nts_validate(b_no, p_nm, start_dt, b_nm, as_json):
     예시:
       k-skill finance nts validate --b-no 1234567890 --p-nm "홍길동" --start-dt 20200101 -j
     """
-    b_no_clean = re.sub(r"[^0-9]", "", b_no)
-    start_dt_clean = re.sub(r"[^0-9]", "", start_dt)
-    if len(b_no_clean) != 10 or len(start_dt_clean) != 8:
+    b_no_clean = clean_business_number(b_no)
+    start_dt_clean = clean_date(start_dt)
+    if not b_no_clean or not start_dt_clean:
         emit(error_response("nts-business", "INVALID_INPUT",
                              "사업자등록번호(10자리)와 개업일자(YYYYMMDD)를 확인하세요"),
              as_json=as_json)
@@ -264,13 +265,23 @@ def kosis(query, as_json, timeout):
 
 @cli.command(name='korean-law', help='대한민국 법령/판례/유권해석 검색')
 @click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
-@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
 @click.argument('query', required=False)
-def korean_law(query, as_json, timeout):
-    """법령/판례 검색."""
-    args = {"query": query} if query else {}
-    result = asyncio.run(run_mcp('korean-law', server_url='local://korean-law-mcp', tool_name='search', arguments=args, timeout=timeout))
-    emit(result, as_json=as_json)
+def korean_law(query, as_json):
+    """법령/판례 검색.
+
+    대한민국 법령/판례/유권해석을 검색합니다 (k-skill-proxy 경유).
+
+    예시:
+      k-skill finance korean-law "근로기준법"
+      k-skill finance korean-law "부동산실권리자명의등기에 관한 법률" -j
+    """
+    if not query or not query.strip():
+        emit(error_response("korean-law", "INVALID_INPUT", "검색어를 입력하세요"),
+             as_json=as_json)
+        return
+    params = {"query": query}
+    resp = safe_proxy_get("korean-law", "/v1/korean-law/search", params)
+    emit(resp, as_json=as_json)
 
 
 @cli.command(name='gongsijiga', help='개별공시지가(토지가격) 조회')
@@ -303,5 +314,96 @@ def daishin_report(query, as_json, timeout):
     """대신 리포트."""
     args = [query] if query else []
     result = asyncio.run(run_npm('daishin-report-search', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+# ── 국민연금 가입 사업장 ──────────────────────────────────────
+
+@cli.command(name='national-pension', help='국민연금 가입 사업장 조회')
+@click.option('--name', required=True, help='사업장명')
+@click.option('--b-no', help='사업자등록번호 (10자리, 하이픈 허용)')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+def national_pension(name, b_no, as_json):
+    """국민연금 가입 사업장 조회.
+
+    사업장명으로 가입자수·당월 고지금액·월별 취득/상실 추이를 확인합니다.
+
+    예시:
+      k-skill finance national-pension --name "삼성전자(주)"
+      k-skill finance national-pension --name "삼성전자(주)" --b-no 124-81-00998 -j
+    """
+    params = {"name": name}
+    if b_no:
+        b_no_clean = clean_business_number(b_no)
+        if b_no_clean:
+            params["bNo"] = b_no_clean
+    resp = safe_proxy_get("national-pension", "/v1/national-pension/workplace", params)
+    emit(resp, as_json=as_json)
+
+
+# ── 금융위 법인 개요 ──────────────────────────────────────────
+
+@cli.command(name='fsc-corp', help='금융위원회 법인 개요 조회')
+@click.option('--name', required=True, help='법인명')
+@click.option('--b-no', help='사업자등록번호 (교차검증용)')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+def fsc_corp(name, b_no, as_json):
+    """금융위원회 법인 개요 조회.
+
+    법인명으로 대표자·설립일·업종 등 법인 개요를 확인합니다.
+
+    예시:
+      k-skill finance fsc-corp --name "삼성전자"
+      k-skill finance fsc-corp --name "삼성전자" --b-no 124-81-00998 -j
+    """
+    params = {"corpNm": name}
+    if b_no:
+        b_no_clean = clean_business_number(b_no)
+        if b_no_clean:
+            params["bzno"] = b_no_clean
+    resp = safe_proxy_get("fsc-corp", "/v1/fsc/corp-outline", params)
+    emit(resp, as_json=as_json)
+
+
+# ── 부정당제재업체 ──────────────────────────────────────────
+
+@cli.command(name='g2b-sanction', help='조달청 부정당제재업체 조회')
+@click.option('--bizno', required=True, help='사업자등록번호 (10자리)')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+def g2b_sanction(bizno, as_json):
+    """부정당제재업체 조회.
+
+    사업자등록번호로 현재 유효한 입찰참가자격 제한(부정당제재) 정보를 조회합니다.
+
+    예시:
+      k-skill finance g2b-sanction --bizno 124-81-00998
+      k-skill finance g2b-sanction --bizno 1248100998 -j
+    """
+    bizno_clean = clean_business_number(bizno)
+    if not bizno_clean:
+        emit(error_response("g2b-sanction", "INVALID_INPUT", "사업자등록번호(10자리)를 입력하세요"),
+             as_json=as_json)
+        return
+    resp = safe_proxy_get("g2b-sanction", "/v1/g2b/sanctioned-supplier", {"bizno": bizno_clean})
+    emit(resp, as_json=as_json)
+
+
+# ── 국세 체납 명단공개 ──────────────────────────────────────
+
+@cli.command(name='nts-delinquency', help='국세 체납 명단공개 검색')
+@click.option('--name', required=True, help='상호/법인명')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+def nts_delinquency(name, as_json, timeout):
+    """국세 체납 명단공개 검색.
+
+    국세청 고액·상습체납자 명단공개를 검색합니다.
+
+    예시:
+      k-skill finance nts-delinquency --name "OO건설"
+      k-skill finance nts-delinquency --name "삼성전자" -j
+    """
+    args = ["--name", name]
+    result = asyncio.run(run_script("nts_tax_delinquency.py", args, timeout=timeout))
     emit(result, as_json=as_json)
 

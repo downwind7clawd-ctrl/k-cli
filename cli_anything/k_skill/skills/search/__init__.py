@@ -4,7 +4,7 @@ import asyncio
 import click
 
 from cli_anything.k_skill.proxy import safe_proxy_get
-from cli_anything.k_skill.output import emit
+from cli_anything.k_skill.output import emit, error_response
 from cli_anything.k_skill.runner import run_script
 
 
@@ -34,8 +34,7 @@ def naver_news(query, display, start, sort, as_json):
       k-skill search naver-news "AI 규제" --sort date --display 5 -j
     """
     if not query or not query.strip() or len(query.strip()) < 2:
-        emit({"skill": "naver-news", "status": "error",
-              "error": {"code": "INVALID_INPUT", "message": "검색어를 입력하세요 (2글자 이상)"}},
+        emit(error_response("naver-news", "INVALID_INPUT", "검색어를 입력하세요 (2글자 이상)"),
              as_json=as_json)
         return
     # Naver API constraint: start + display - 1 <= 1000

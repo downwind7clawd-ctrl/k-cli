@@ -54,7 +54,7 @@ from .loader import discover_cli_groups, list_all_skills, discover_domains
 @click.version_option(__version__, prog_name="k-skill")
 @click.pass_context
 def main(ctx: click.Context, as_json: bool):
-    """k-skill — 한국인을 위한 CLI 스킬 모음 (89개 스킬)
+    """k-skill — 한국인을 위한 CLI 스킬 모음 (95개 스킬)
 
     다양한 한국 특화 유틸리티를 단일 CLI로 제공합니다.
     프록시 기반 스킬은 추가 설치 없이 즉시 사용 가능합니다.
