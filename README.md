@@ -1,6 +1,6 @@
 <p align="center">
   <strong>k-skill</strong><br>
-  [NomaDamas/k-skill](https://github.com/NomaDamas/k-skill)의 CLI 래퍼<br>
+  <a href="https://github.com/NomaDamas/k-skill">NomaDamas/k-skill</a>의 CLI 래퍼<br>
   95개 한국 특화 스킬을 모든 AI 에이전트에서 단일 명령어로
 </p>
 
