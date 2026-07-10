@@ -1,4 +1,4 @@
-domain: recruitting
+domain: recruiting
 description: 채용 (이력서 매칭, 잡코리아/사람인 인재검색)
 dependencies:
   proxy: false
@@ -10,14 +10,14 @@ skills:
     name: job-posting-match
     display_name: 이력서 매칭
     description: 이력서 기반 채용공고 매칭
-    category: recruitting
+    category: recruiting
   jobkorea_talent:
     name: jobkorea-talent-search
     display_name: 잡코리아 인재
     description: 잡코리아 인재검색
-    category: recruitting
+    category: recruiting
   saramin_talent:
     name: saramin-talent-search
     display_name: 사람인 인재
     description: 사람인 인재검색
-    category: recruitting
+    category: recruiting
