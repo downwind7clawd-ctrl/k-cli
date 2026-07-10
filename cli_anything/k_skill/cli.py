@@ -22,6 +22,10 @@ Commands:
     delivery    배송 (택배송장 추적)
     life        생활 (쓰레기배출, 응급실, 주유소, 공중화장실, 기부처)
     travel      여행 (마이리얼트립 항공권/숙소/투어)
+    fortune     사주/작명 (사주 운세, 작명소)
+    business    비즈니스/법무/조달 (사업체건강, 법원진행, 나라장터, 사업자등록)
+    recruiting  채용 (이력서 매칭, 잡코리아/사람인 인재검색)
+    messaging   메시징 (카카오톡 macOS 아카이브)
     list        설치된 스킬 목록 조회
     setup       의존성 확인 및 설치
 
@@ -54,7 +58,7 @@ from .loader import discover_cli_groups, list_all_skills, discover_domains
 @click.version_option(__version__, prog_name="k-skill")
 @click.pass_context
 def main(ctx: click.Context, as_json: bool):
-    """k-skill — 한국인을 위한 CLI 스킬 모음 (95개 스킬)
+    """    k-skill — 한국인을 위한 CLI 스킬 모음 (111개 스킬)
 
     다양한 한국 특화 유틸리티를 단일 CLI로 제공합니다.
     프록시 기반 스킬은 추가 설치 없이 즉시 사용 가능합니다.
@@ -142,6 +146,32 @@ def main(ctx: click.Context, as_json: bool):
       k-skill list -d weather -j           # 도메인별 스킬
       k-skill setup check -j               # 의존성 상태
       k-skill setup proxy -j               # 프록시 연결 상태
+
+    사주/작명:
+      k-skill fortune saju-fortune "1990-05-15 14:30" --sex M -j
+      k-skill fortune naming-house "김철수" --birth "1990-05-15" -j
+
+    비즈니스/법무/조달:
+      k-skill business biz-health-check --b-no 1248100998 --name "삼성전자" -j
+      k-skill business court-payment --case-no "2024가단12345" -j
+      k-skill business d2b-notice --keyword "소프트웨어" --limit 10 -j
+      k-skill business g2b-order-plan --instNm "조달청" --limit 10 -j
+      k-skill business localdata-status --biz-name "커피월드" -j
+      k-skill business popbill config-check -j
+      k-skill business s2b-notice --keyword "AI" --limit 10 -j
+
+    채용:
+      k-skill recruiting job-posting-match --resume-file resume.txt --location 서울 -j
+      k-skill recruiting jobkorea-talent --keyword "퍼포먼스 마케터" --work-area 서울 -j
+      k-skill recruiting saramin-talent --keyword "백엔드" --location 서울 -j
+
+    메시징:
+      k-skill messaging kakaotalk-mac index --query "회의록" -j
+
+    생활(추가):
+      k-skill life kakao-bar --query "강남" -j
+      k-skill life lovebug-report search --query "중랑" -j
+      k-skill life yebigun-training training-info -j
 
     ─────────────────────────────────────────────
     🔧 환경변수
