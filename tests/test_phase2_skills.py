@@ -12,7 +12,11 @@ from cli_anything.k_skill.loader import SKILLS_DIR, load_manifest, discover_doma
 DOMAINS = [
     ("weather", 3),
     ("transit", 9),
-    ("life", 23),
+    ("life", 25),   # was 23; +2 (lovebug-report, yebigun-training); kakao-bar already existed
+    ("fortune", 2),
+    ("business", 7),
+    ("recruiting", 3),
+    ("messaging", 1),
     ("finance", 13),
     ("realestate", 5),
     ("shopping", 7),
@@ -257,6 +261,5 @@ class TestDiscoverDomainsIntegration:
 
     def test_total_skill_count(self):
         all_skills = list_all_skills()
-        # Phase 2 (16) + Phase 3 (77) = 93개
-        # (3 skills removed in 2026-06-07 sync: map/naver-directions, map/naver-geocode, life/blue-ribbon)
-        assert len(all_skills) >= 93
+        # 95 (original) + 15 (new: fortune 2, business 7, recruiting 3, messaging 1, life +2) = 110
+        assert len(all_skills) >= 110
