@@ -3,7 +3,7 @@ description: 비즈니스/법무/조달 (사업체건강, 법원진행, 나라�
 dependencies:
   proxy: true
   npm:
-    - court-payment-order-assitant
+    - court-payment-order-assistant
     - d2b-notice-search
     - s2b-notice-search
   python: []
@@ -18,7 +18,7 @@ skills:
     description: 국세청/국민연금/금융위/부정당 집계 조회
     category: business
   court_payment:
-    name: court-payment-order-assitat
+    name: court-payment-order-assistant
     display_name: 법원 진행조회
     description: 법원 경매/지급명령 진행내역 조회
     category: business

@@ -9,8 +9,8 @@
 ### Added (upstream sync, 2026-07-10)
 - 신규 도메인 4개 생성: fortune, business, recruitng, messaging
 - fortune(2): saju-fortune, naming-house
-- business(7): biz-health-check, court-payment-order-assitant, d2b-notice-search, g2b-order-plan-search, localdata-business-status, popbill(stub), s2b-notice-search
-- recruitng(3): job-posting-match, jobkorea-talent-search, saramin-talent-search
+- business(7): biz-health-check, court-payment-order-assistant, d2b-notice-search, g2b-order-plan-search, localdata-business-status, popbill(stub), s2b-notice-search
+- recruitng(3): job-posting-match, jobkorea-talent, saramin-talent-search
 - messaging(1): kakaotalk-mac
 - life 확장(+2): lovebug-report, yebigun-training (kakao-bar는 기존 존재)
 - 합계: 95 → 110 스킬 (+15, kakao-bar는 이미 포팅됨)

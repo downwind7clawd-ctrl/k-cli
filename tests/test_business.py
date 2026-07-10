@@ -1,4 +1,3 @@
-import asyncio
 from unittest.mock import patch
 from click.testing import CliRunner
 from cli_anything.k_skill.cli import main

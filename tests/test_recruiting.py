@@ -1,4 +1,3 @@
-import asyncio
 from unittest.mock import patch
 from click.testing import CliRunner
 from cli_anything.k_skill.cli import main
@@ -6,7 +5,6 @@ from cli_anything.k_skill.cli import main
 class TestRecruiting:
     @patch("cli_anything.k_skill.skills.recruiting.httpx.Client")
     def test_job_posting_inline(self, mock_client):
-        import cli_anything.k_skill.skills.recruiting as m
         resp = type("R", (), {"raise_for_status": lambda self: None,
                       "json": lambda self: {"status": "success", "data": {}}})()
         mock_client.return_value.__enter__.return_value.get.return_value = resp
@@ -17,7 +15,6 @@ class TestRecruiting:
 
     @patch("cli_anything.k_skill.skills.recruiting.httpx.Client")
     def test_jobkorea_inline(self, mock_client):
-        import cli_anything.k_skill.skills.recruiting as m
         resp = type("R", (), {"raise_for_status": lambda self: None,
                       "json": lambda self: {"status": "success", "data": {}}})()
         mock_client.return_value.__enter__.return_value.get.return_value = resp
