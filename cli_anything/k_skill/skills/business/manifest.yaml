@@ -1,0 +1,49 @@
+domain: business
+description: 비즈니스/법무/조달 (사업체건강, 법원진행, 나라장터, 사업자등록)
+dependencies:
+  proxy: true
+  npm:
+    - court-payment-order-assitant
+    - d2b-notice-search
+    - s2b-notice-search
+  python: []
+  env_keys:
+    - POPBILL_LinkID
+    - POPBILL_SECRET_KEY
+    - POPBILL_CORP_NUM
+skills:
+  biz_health_check:
+    name: biz-health-check
+    display_name: 사업체 건강진단
+    description: 국세청/국민연금/금융위/부정당 집계 조회
+    category: business
+  court_payment:
+    name: court-payment-order-assitat
+    display_name: 법원 진행조회
+    description: 법원 경매/지급명령 진행내역 조회
+    category: business
+  d2b_notice:
+    name: d2b-notice-search
+    display_name: D2B 공고검색
+    description: 나라장터 D2B 입찰공고 검색
+    category: business
+  g2b_order_plan:
+    name: g2b-order-plan-search
+    display_name: 조달 발주계획
+    description: 조달청 나라장터 발주계획현황 조회
+    category: business
+  localdata_status:
+    name: localdata-business-status
+    display_name: 지역사업체 상태
+    description: 통합데이터지도 지역사업체 영업상태 조회
+    category: business
+  popbill:
+    name: popbill
+    display_name: 팝빌
+    description: 팝빌 전자세금계산서/문서 조회 (API 키 필요)
+    category: business
+  s2b_notice:
+    name: s2b-notice-search
+    display_name: S2B 검색
+    description: 나라장터 S2B 판로/사업 검색
+    category: business
