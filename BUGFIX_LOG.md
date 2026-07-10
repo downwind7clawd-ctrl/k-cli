@@ -17,6 +17,12 @@
 - 설계/계획: docs/superpowers/specs/2026-07-10-upstream-sync-design.md, docs/superpowers/plans/2026-07-10-upstream-sync.md
 - 참고: popbill/saramin-talent-search/court-payment npm 패키지·API 키는 런타임에 K_SKILL_ROOT 설치 필요(미설치 시 MISSING_DEPENDENCY 반환)
 
+### Fixed (packaging, 2026-07-10)
+- PyPI 휠에 `manifest.yaml`(비Python 데이터파일) 미포함 버그 수정: `pyproject.toml`에 `[tool.setuptools.package-data] "*" = ["*.yaml","*.yml"]` 추가
+- 영향: 기존 배포(2026.7.10.1 및 이전 전체)는 `pip install` 후 `k-skill list`가 0 스킬 표시(loader가 manifest.yaml 못 찾음) — 명령은 동작하나 메타/카운트 누락
+- 재배포: **2026.7.10.2** (yaml 18개 포함, 게시 휠에서 110 스킬 / 18 도메인 로드 검증 완료)
+- 버전 범프 사유: PyPI는 동일 버전 재업로드 불가 → 2026.7.10.1(결함) → 2026.7.10.2(수정)
+
 ## 2026-06-15 — 코드 리뷰 반영 (1-3라운드)
 
 **리뷰어**: 15년차 개발자 + 15년차 보완 전문가

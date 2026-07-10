@@ -1,6 +1,6 @@
 [project]
 name = "k-skill-cli"
-version = "2026.07.10.1"
+version = "2026.07.10.2"
 description = "K-Skill CLI: CLI-Anything wrapper for NomaDamas/k-skill — 110 Korean utility skills for all AI agents"
 readme = "README.md"
 license = {text = "MIT"}
@@ -26,6 +26,9 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 include = ["cli_anything*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.yaml", "*.yml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
