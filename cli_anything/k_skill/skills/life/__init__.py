@@ -301,10 +301,10 @@ def donation(query, as_json, timeout):
     emit(result, as_json=as_json)
 
 
-@cli.command(name='kakao-bar', help='카카오맵 근처 술집 검색')
+@cli.command(name='kakao-bar', help='주변 카카오 맥주/술집 검색')
 @click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
 @click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
-@click.argument('query', required=False)
+@click.option('--query', help='지역명/키워드')
 def kakao_bar(query, as_json, timeout):
     """근처 술집."""
     args = [query] if query else []
@@ -420,5 +420,42 @@ def localdata_biz(name, region, industry, as_json, timeout):
     for ind in industry:
         args.extend(["--industry", ind])
     result = asyncio.run(run_script("localdata_business_status.py", args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='lovebug-report', help='lovebug.com 모기 지수/제보 검색')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=30, type=int, help='타임아웃(초)')
+@click.option('--query', help='지역명/키워드')
+@click.argument('action', required=False)
+def lovebug_report(action, query, as_json, timeout):
+    """러브버그 출몰 지수/제보 검색.
+
+    예시:
+      k-skill life lovebug-report search --query 중랑
+      k-skill life lovebug-report list --query 강남 -j
+    """
+    args = []
+    if action:
+        args.append(action)
+    if query:
+        args += ['--query', query]
+    result = asyncio.run(run_npm('lovebug-report', args, timeout=timeout))
+    emit(result, as_json=as_json)
+
+
+@cli.command(name='yebigun-training', help='예비군 훈련일정/메뉴 조회 (playwright 필요)')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=60, type=int, help='타임아웃(초)')
+@click.argument('query', required=False)
+def yebigun_training(query, as_json, timeout):
+    """예비군 훈련정보 조회.
+
+    예시:
+      k-skill life yebigun-training training-info
+      k-skill life yebigun-training view -j
+    """
+    args = [query] if query else []
+    result = asyncio.run(run_npm('yebigun-training', args, timeout=timeout))
     emit(result, as_json=as_json)
 

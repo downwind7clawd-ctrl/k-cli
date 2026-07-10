@@ -2,7 +2,9 @@ domain: life
 description: 생활/편의 (주유소, 쓰레기, 주차장, 맛집 등)
 dependencies:
   proxy: true
-  npm: []
+  npm:
+    - lovebug-report
+    - yebigun-training
   python: []
   env_keys: []
 skills:
@@ -98,3 +100,13 @@ skills:
     name: localdata-business-status
     display_name: 인허가 영업상태
     description: 지방행정 인허가 영업상태 조회
+  lovebug_report:
+    name: lovebug-report
+    display_name: 모기 제보
+    description: lovebug.com 모기 지수/제보 검색
+    category: life
+  yebigun_training:
+    name: yebigun-training
+    display_name: 예비군 훈련
+    description: 예비군 훈련일정/메뉴 조회
+    category: life
