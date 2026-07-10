@@ -1,0 +1,13 @@
+domain: messaging
+description: 메시징 (카카오톡 macOS 아카이브)
+dependencies:
+  proxy: false
+  npm: []
+  python: []
+  env_keys: []
+skills:
+  kakaotalk_mac:
+    name: kakaotalk-mac
+    display_name: 카카오톡 macOS
+    description: 카카오톡 macOS 대화 아카이브 검색 (macOS 전용)
+    category: messaging
