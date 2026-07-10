@@ -1,13 +1,13 @@
 <p align="center">
   <strong>k-skill</strong><br>
   <a href="https://github.com/NomaDamas/k-skill">NomaDamas/k-skill</a>의 CLI 래퍼<br>
-  95개 한국 특화 스킬을 모든 AI 에이전트에서 단일 명령어로
+  110개 한국 특화 스킬을 모든 AI 에이전트에서 단일 명령어로
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/skills-95-blue" alt="95 skills">
-  <img src="https://img.shields.io/badge/domains-14-green" alt="14 domains">
-  <img src="https://img.shields.io/badge/tests-133 passed-success" alt="133 tests">
+  <img src="https://img.shields.io/badge/skills-110-blue" alt="110 skills">
+  <img src="https://img.shields.io/badge/domains-18-green" alt="18 domains">
+  <img src="https://img.shields.io/badge/tests-143 passed-success" alt="143 tests">
   <img src="https://img.shields.io/badge/license-MIT-yellow" alt="MIT">
   <img src="https://img.shields.io/badge/python-3.10+-blue" alt="Python 3.10+">
 </p>
@@ -141,7 +141,7 @@ k-skill setup check -j
 
 ---
 
-## 스킬 목록 (14개 도메인, 95개 스킬)
+## 스킬 목록 (18개 도메인, 110개 스킬)
 
 | 도메인 | 스킬 수 | 설명 |
 |--------|--------|------|
@@ -159,6 +159,10 @@ k-skill setup check -j
 | travel | 3 | 여행 (여행지, 숙소, 마이리얼트립) |
 | delivery | 1 | 택배 송장 조회 |
 | other | 4 | 기타 유틸리티 |
+| fortune | 2 | 사주/작명 (사주풀이, 집이름 작명) |
+| business | 7 | 비즈니스/법무/조달 (사업체건강, 법원진행, 나라장터, 사업자등록) |
+| recruiting | 3 | 채용 (이력서 매칭, 잡코리아/사람인 인재검색) |
+| messaging | 1 | 메시징 (카카오톡 Mac) |
 
 ## Self-host 프록시
 
@@ -178,7 +182,7 @@ cd cli-anything-k-skill
 # 설치 (dev)
 pip install -e ".[dev]"
 
-# 테스트 (133개)
+# 테스트 (143개 통과 / 155개 수행)
 pytest tests/ -v
 
 # 스킬 추가 방법
@@ -186,6 +190,26 @@ pytest tests/ -v
 # 2. skills/<domain>/manifest.yaml에 스킬 엔트리 추가
 # ※ loader.py가 manifest.yaml을 자동 발견하므로 cli.py 수정 불필요
 ```
+
+---
+
+## PyPI 배포
+
+버전은 CalVer + patch(`YYYY.MM.DD.P`)를 사용하며, k-skill과 동기화한 날짜를 기준으로 합니다.
+
+```bash
+# 1. 패키지 빌드 (sdist + wheel)
+python -m build
+
+# 2. 업로드 (twine 필요)
+pip install twine
+TWINE_USERNAME=__token__ TWINE_PASSWORD="$PYPI_API_TOKEN" twine upload dist/*
+
+# 3. (선택) TestPyPI에서 먼저 검증
+TWINE_USERNAME=__token__ TWINE_PASSWORD="$TEST_PYPI_API_TOKEN" twine upload --repository testpypi dist/*
+```
+
+주의: PyPI API 토큰은 하드코딩하지 마세요. `.env` 또는 셸 환경변수(`PYPI_API_TOKEN`, `TEST_PYPI_API_TOKEN`)로 주입하세요.
 
 ---
 
