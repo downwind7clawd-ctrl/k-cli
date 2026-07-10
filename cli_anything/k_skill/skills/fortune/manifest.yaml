@@ -1,0 +1,18 @@
+domain: fortune
+description: 사주/작명 (사주 운세, 작명소)
+dependencies:
+  proxy: false
+  npm: ["saju-fortune", "naming-house"]
+  python: []
+  env_keys: []
+skills:
+  saju_fortune:
+    name: saju-fortune
+    display_name: 사주 운세
+    description: 사주 기반 운세 조회 (npm saju-fortune)
+    category: fortune
+  naming_house:
+    name: naming-house
+    display_name: 작명소
+    description: 성명학 기반 이름 추천 (npm naming-house)
+    category: fortune
