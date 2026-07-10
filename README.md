@@ -47,9 +47,13 @@
 
 ## 설치
 
+`k-skill-cli`는 **PyPI에 배포**되어 있어 한 줄로 설치됩니다:
+
 ```bash
 pip install k-skill-cli
 ```
+
+설치 후 `k-skill --help` 로 CLI 진입점이 생성되는지 확인하세요.
 
 의존성: Python 3.10+, curl
 
@@ -195,6 +199,8 @@ pytest tests/ -v
 
 ## PyPI 배포
 
+> **일반 사용자**: 별도 빌드/업로드 불필요 — `pip install k-skill-cli` 만으로 PyPI 최신 버전(현재 **2026.7.10.2**)이 설치됩니다. 아래는 **메인테이너용** 배포 절차입니다.
+
 버전은 CalVer + patch(`YYYY.MM.DD.P`)를 사용하며, k-skill과 동기화한 날짜를 기준으로 합니다.
 
 ```bash
@@ -204,6 +210,9 @@ python -m build
 # 2. 업로드 (twine 필요)
 pip install twine
 TWINE_USERNAME=__token__ TWINE_PASSWORD="$PYPI_API_TOKEN" twine upload dist/*
+
+# 2-대안. uv publish (UV_PUBLISH_TOKEN 사용, twine 불필요)
+UV_PUBLISH_TOKEN="$PYPI_API_TOKEN" uv publish dist/*
 
 # 3. (선택) TestPyPI에서 먼저 검증
 TWINE_USERNAME=__token__ TWINE_PASSWORD="$TEST_PYPI_API_TOKEN" twine upload --repository testpypi dist/*
