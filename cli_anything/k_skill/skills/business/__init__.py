@@ -2,7 +2,6 @@
 
 import asyncio
 import click
-import httpx
 
 from cli_anything.k_skill.proxy import safe_proxy_get
 from cli_anything.k_skill.runner import run_npm, run_script
@@ -25,7 +24,7 @@ def court_payment(case_no, query, as_json, timeout):
     args = [query] if query else []
     if case_no:
         args += ['--case-no', case_no]
-    result = asyncio.run(run_npm('court-payment-order-assitant', args, timeout=timeout))
+    result = asyncio.run(run_npm('court-payment-order-assistant', args, timeout=timeout))
     emit(result, as_json=as_json)
 
 
@@ -71,26 +70,19 @@ def g2b_order_plan(query, instnm, limit, as_json):
     emit(resp, as_json=as_json)
 
 
-# direct httpx-based: localdata-business-status
-@cli.command(name='localdata-status', help='통합데이터지도 지역사업체 영업상태 조회')
-@click.option('--json', '-j', 'as_json', is_flag=True)
-@click.option('--biz-name', required=True, help='사업체명')
-@click.option('--biz-type', help='업종명')
-def localdata_status(biz_name, biz_type, as_json):
-    params = {"bizNm": biz_name}
-    if biz_type: params["bizType"] = biz_type
-    try:
-        with httpx.Client(timeout=15) as client:
-            resp = client.get(
-                "https://localdata.go.kr/platform/rest/congruentBussEnlarge/getBBBList.json",
-                params=params,
-            )
-            resp.raise_for_status()
-            emit({"status": "success", "data": resp.json()}, as_json=as_json)
-    except httpx.HTTPStatusError as e:
-        emit(error_response("localdata-business-status", "HTTP_ERROR", f"HTTP {e.response.status_code}"), as_json=as_json)
-    except Exception as e:
-        emit(error_response("localdata-business-status", "UNKNOWN", str(e)), as_json=as_json)
+# script-based: localdata-business-status (downloads LOCALDATA CSV via file.localdata.go.kr)
+@cli.command(name='localdata-status', help='지방행정 인허가데이터(LOCALDATA) 지역사업체 영업상태 조회')
+@click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
+@click.option('--timeout', '-t', default=60, type=int, help='타임아웃(초)')
+@click.option('--name', required=True, help='상호(사업장명)')
+@click.option('--region', required=True, help='시군구 (예: 제주제주시, 서울종로구)')
+@click.option('--industry', help='업종 (반복 지정 가능)')
+def localdata_status(name, region, industry, as_json, timeout):
+    args = ['--name', name, '--region', region]
+    if industry:
+        args += ['--industry', industry]
+    result = asyncio.run(run_script('localdata-business-status', args, timeout=timeout))
+    emit(result, as_json=as_json)
 
 
 # proxy aggregate: biz-health-check (reuses existing finance routes, no key)
