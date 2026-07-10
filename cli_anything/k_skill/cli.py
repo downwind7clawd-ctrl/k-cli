@@ -157,7 +157,7 @@ def main(ctx: click.Context, as_json: bool):
       k-skill business d2b-notice --keyword "소프트웨어" --limit 10 -j
       k-skill business g2b-order-plan --instNm "조달청" --limit 10 -j
       k-skill business localdata-status --biz-name "커피월드" -j
-      k-skill business popbill config-check -j
+      k-skill business popbill -j
       k-skill business s2b-notice --keyword "AI" --limit 10 -j
 
     채용:

@@ -9,7 +9,7 @@ class TestBusiness:
         mock_run.return_value = {"status": "success", "data": {}}
         r = CliRunner()
         res = r.invoke(main, ["business", "court-payment", "--case-no", "2024가단12345", "-j"])
-        assert res.exit_code == 0 and mock_run.call_args[0][0] == "court-payment-order-assitat"
+        assert res.exit_code == 0 and mock_run.call_args[0][0] == "court-payment-order-assitant"
 
     @patch("cli_anything.k_skill.skills.business.run_npm")
     def test_d2b_calls_npm(self, mock_run):

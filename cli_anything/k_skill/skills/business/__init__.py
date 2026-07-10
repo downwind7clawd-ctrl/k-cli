@@ -25,7 +25,7 @@ def court_payment(case_no, query, as_json, timeout):
     args = [query] if query else []
     if case_no:
         args += ['--case-no', case_no]
-    result = asyncio.run(run_npm('court-payment-order-assitat', args, timeout=timeout))
+    result = asyncio.run(run_npm('court-payment-order-assitant', args, timeout=timeout))
     emit(result, as_json=as_json)
 
 
