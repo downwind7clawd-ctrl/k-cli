@@ -4,6 +4,19 @@
 
 ---
 
+## 2026-07-10 — upstream sync (110 skills, +15 new)
+
+### Added (upstream sync, 2026-07-10)
+- 신규 도메인 4개 생성: fortune, business, recruitng, messaging
+- fortune(2): saju-fortune, naming-house
+- business(7): biz-health-check, court-payment-order-assitant, d2b-notice-search, g2b-order-plan-search, localdata-business-status, popbill(stub), s2b-notice-search
+- recruitng(3): job-posting-match, jobkorea-talent-search, saramin-talent-search
+- messaging(1): kakaotalk-mac
+- life 확장(+2): lovebug-report, yebigun-training (kakao-bar는 기존 존재)
+- 합계: 95 → 110 스킬 (+15, kakao-bar는 이미 포팅됨)
+- 설계/계획: docs/superpowers/specs/2026-07-10-upstream-sync-design.md, docs/superpowers/plans/2026-07-10-upstream-sync.md
+- 참고: popbill/saramin-talent-search/court-payment npm 패키지·API 키는 런타임에 K_SKILL_ROOT 설치 필요(미설치 시 MISSING_DEPENDENCY 반환)
+
 ## 2026-06-15 — 코드 리뷰 반영 (1-3라운드)
 
 **리뷰어**: 15년차 개발자 + 15년차 보완 전문가
