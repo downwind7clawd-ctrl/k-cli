@@ -160,13 +160,28 @@
 - transit: seoul-subway → seoul-subway-arrival
 - recruiting: jobkorea-talent → jobkorea-talent-search
 
-### Added (21)
+### Added (21) — k-cli에 없던 신규 스킬 전체
 - life: assembly-bill-vote-search
+- life: k-schoollunch-menu
+- life: korean-holiday-calendar
+- life: nhis-care-checkup-search
+- life: library-book-search
 - sports: kopis-performance-search
 - other: kr-whois-lookup
 - other: gov-overseas-trip-report
 - other: naver-ad-performance
-- (기타 신규 스킬 16종은 upstream 동기화로 추가)
+- weather: fine-dust-location
+- weather: han-river-water-level
+- finance: korean-stock-search
+- finance: nts-business-registration
+- search: naver-news-search
+- shopping: naver-shopping-search
+- realestate: real-estate-search
+- realestate: lh-notice-search
+- transit: seoul-subway-arrival
+- life: cheap-gas-nearby
+- life: household-waste-info
+- recruiting: jobkorea-talent-search
 
 ### Reimplemented
 - none
