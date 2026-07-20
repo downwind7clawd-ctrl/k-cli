@@ -23,3 +23,18 @@ skills:
     name: "korean-privacy-terms"
     display_name: "개인정보처리방침"
     description: "개인정보처리방침 생성"
+  whois:
+    name: "kr-whois-lookup"
+    display_name: "KR WHOIS 조회"
+    description: "KR 도메인/AS/IP WHOIS 조회"
+    category: other
+  gov-overseas:
+    name: "gov-overseas-trip-report"
+    display_name: "국외출장 보고서"
+    description: "국외출장 보고서 조회 (스크립트 기반)"
+    category: other
+  naver-ad:
+    name: "naver-ad-performance"
+    display_name: "네이버 검색광고 성과"
+    description: "네이버 검색광고 성과 조회 (스크립트 기반)"
+    category: other
