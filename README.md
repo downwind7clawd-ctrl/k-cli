@@ -197,28 +197,15 @@ pytest tests/ -v
 
 ---
 
-## PyPI 배포
-
-> **일반 사용자**: 별도 빌드/업로드 불필요 — `pip install k-skill-cli` 만으로 PyPI 최신 버전(현재 **2026.07.10.2**)이 설치됩니다. 아래는 **메인테이너용** 배포 절차입니다.
-
-버전은 CalVer + patch(`YYYY.MM.DD.P`)를 사용하며, k-skill과 동기화한 날짜를 기준으로 합니다.
+## 설치
 
 ```bash
-# 1. 패키지 빌드 (sdist + wheel)
-python -m build
-
-# 2. 업로드 (twine 필요)
-pip install twine
-TWINE_USERNAME=__token__ TWINE_PASSWORD="$PYPI_API_TOKEN" twine upload dist/*
-
-# 2-대안. uv publish (UV_PUBLISH_TOKEN 사용, twine 불필요)
-UV_PUBLISH_TOKEN="$PYPI_API_TOKEN" uv publish dist/*
-
-# 3. (선택) TestPyPI에서 먼저 검증
-TWINE_USERNAME=__token__ TWINE_PASSWORD="$TEST_PYPI_API_TOKEN" twine upload --repository testpypi dist/*
+pip install k-skill-cli
 ```
 
-주의: PyPI API 토큰은 하드코딩하지 마세요. `.env` 또는 셸 환경변수(`PYPI_API_TOKEN`, `TEST_PYPI_API_TOKEN`)로 주입하세요.
+PyPI 최신 버전(현재 **2026.07.10.2**)이 설치됩니다. 별도 빌드/업로드 불필요합니다.
+
+> 메인테이너용 배포 절차(`build`/`twine`/`uv publish`, 버전 규칙 등)는 [docs/publishing.md](docs/publishing.md)를 참고하세요.
 
 ---
 
@@ -238,7 +225,6 @@ Upstream NomaDamas/k-skill이 3개 스킬을 `legacy/unsupported-skills/`로 이
 
 MIT License
 
-버전 관리는 CalVer + patch 방식(`YYYY.MM.DD.P`)을 사용합니다. 버전 번호는 k-skill과 동기화한 날짜를 기준으로 합니다.
 
 이 프로젝트는 [NomaDamas/k-skill](https://github.com/NomaDamas/k-skill)의 스킬 커리큘럼과 [HKUDS/CLI-Anything](https://github.com/HKUDS/CLI-Anything) 프레임워크를 기반으로 만들어졌습니다. 두 원작 프로젝트의 라이선스를 존중합니다.
 
