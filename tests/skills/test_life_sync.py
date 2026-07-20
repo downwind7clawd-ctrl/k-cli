@@ -6,6 +6,17 @@ from click.testing import CliRunner
 from cli_anything.k_skill.skills.life import cli as life_cli
 
 
+def test_help_aliases():
+    for name in [
+        "cheap-gas-nearby", "gas",
+        "household-waste-info", "waste",
+        "library-book-search", "library",
+        "k-schoollunch-menu", "lunch",
+        "korean-holiday-calendar", "holiday",
+        "nhis-care-checkup-search", "nhis",
+    ]:
+        result = CliRunner().invoke(life_cli, [name, "--help"])
+        assert result.exit_code == 0, (name, result.output)
 def _make_capture():
     calls = []
 
@@ -17,75 +28,81 @@ def _make_capture():
 
 
 def test_gas_rename():
-    calls, fake = _make_capture()
-    with mock.patch(
-        "cli_anything.k_skill.skills.life.safe_proxy_get", side_effect=fake
-    ):
-        result = CliRunner().invoke(
-            life_cli, ["gas", "--lat", "37.5", "--lon", "127.0", "-j"]
-        )
-    assert result.exit_code == 0
-    assert calls[0][0] == "cheap-gas-nearby"
-    assert calls[0][1] == "/v1/opinet/around"
+    for name in ["cheap-gas-nearby", "gas"]:
+        calls, fake = _make_capture()
+        with mock.patch(
+            "cli_anything.k_skill.skills.life.safe_proxy_get", side_effect=fake
+        ):
+            result = CliRunner().invoke(
+                life_cli, [name, "--lat", "37.5", "--lon", "127.0", "-j"]
+            )
+        assert result.exit_code == 0, result.output
+        assert calls[0][0] == "cheap-gas-nearby"
+        assert calls[0][1] == "/v1/opinet/around"
 
 
 def test_waste_rename():
-    calls, fake = _make_capture()
-    with mock.patch(
-        "cli_anything.k_skill.skills.life.safe_proxy_get", side_effect=fake
-    ):
-        result = CliRunner().invoke(life_cli, ["waste", "강남구", "-j"])
-    assert result.exit_code == 0
-    assert calls[0][0] == "household-waste-info"
-    assert calls[0][1] == "/v1/household-waste/info"
+    for name in ["household-waste-info", "waste"]:
+        calls, fake = _make_capture()
+        with mock.patch(
+            "cli_anything.k_skill.skills.life.safe_proxy_get", side_effect=fake
+        ):
+            result = CliRunner().invoke(life_cli, [name, "강남구", "-j"])
+        assert result.exit_code == 0, result.output
+        assert calls[0][0] == "household-waste-info"
+        assert calls[0][1] == "/v1/household-waste/info"
 
 
 def test_library_rename():
-    calls, fake = _make_capture()
-    with mock.patch(
-        "cli_anything.k_skill.skills.life.safe_proxy_get", side_effect=fake
-    ):
-        result = CliRunner().invoke(life_cli, ["library", "역사", "-j"])
-    assert result.exit_code == 0
-    assert calls[0][0] == "library-book-search"
-    assert calls[0][1] == "/v1/data4library/book-search"
+    for name in ["library-book-search", "library"]:
+        calls, fake = _make_capture()
+        with mock.patch(
+            "cli_anything.k_skill.skills.life.safe_proxy_get", side_effect=fake
+        ):
+            result = CliRunner().invoke(life_cli, [name, "역사", "-j"])
+        assert result.exit_code == 0, result.output
+        assert calls[0][0] == "library-book-search"
+        assert calls[0][1] == "/v1/data4library/book-search"
 
 
 def test_lunch_rename_first_call():
-    calls, fake = _make_capture()
-    with mock.patch(
-        "cli_anything.k_skill.skills.life.safe_proxy_get", side_effect=fake
-    ):
-        result = CliRunner().invoke(
-            life_cli, ["lunch", "--edu-office", "x", "--school", "y", "-j"]
-        )
-    assert result.exit_code == 0
-    assert calls[0][0] == "k-schoollunch-menu"
-    assert calls[0][1] == "/v1/neis/school-search"
+    for name in ["k-schoollunch-menu", "lunch"]:
+        calls, fake = _make_capture()
+        with mock.patch(
+            "cli_anything.k_skill.skills.life.safe_proxy_get", side_effect=fake
+        ):
+            result = CliRunner().invoke(
+                life_cli, [name, "--edu-office", "x", "--school", "y", "-j"]
+            )
+        assert result.exit_code == 0, result.output
+        assert calls[0][0] == "k-schoollunch-menu"
+        assert calls[0][1] == "/v1/neis/school-search"
 
 
 def test_holiday_new():
-    calls, fake = _make_capture()
-    with mock.patch(
-        "cli_anything.k_skill.skills.life.safe_proxy_get", side_effect=fake
-    ):
-        result = CliRunner().invoke(life_cli, ["holiday", "--year", "2026", "-j"])
-    assert result.exit_code == 0
-    assert calls[0][0] == "korean-holiday-calendar"
-    assert calls[0][1] == "/v1/korean-holiday/calendar"
+    for name in ["korean-holiday-calendar", "holiday"]:
+        calls, fake = _make_capture()
+        with mock.patch(
+            "cli_anything.k_skill.skills.life.safe_proxy_get", side_effect=fake
+        ):
+            result = CliRunner().invoke(life_cli, [name, "--year", "2026", "-j"])
+        assert result.exit_code == 0, result.output
+        assert calls[0][0] == "korean-holiday-calendar"
+        assert calls[0][1] == "/v1/korean-holiday/calendar"
 
 
 def test_nhis_checkup_new():
-    calls, fake = _make_capture()
-    with mock.patch(
-        "cli_anything.k_skill.skills.life.safe_proxy_get", side_effect=fake
-    ):
-        result = CliRunner().invoke(
-            life_cli, ["nhis", "checkup", "--operation", "list", "-j"]
-        )
-    assert result.exit_code == 0
-    assert calls[0][0] == "nhis-care-checkup-search"
-    assert calls[0][1] == "/v1/nhis/checkup/list"
+    for name in ["nhis-care-checkup-search", "nhis"]:
+        calls, fake = _make_capture()
+        with mock.patch(
+            "cli_anything.k_skill.skills.life.safe_proxy_get", side_effect=fake
+        ):
+            result = CliRunner().invoke(
+                life_cli, [name, "checkup", "--operation", "list", "-j"]
+            )
+        assert result.exit_code == 0, result.output
+        assert calls[0][0] == "nhis-care-checkup-search"
+        assert calls[0][1] == "/v1/nhis/checkup/list"
 
 
 def test_assembly_bills(monkeypatch):

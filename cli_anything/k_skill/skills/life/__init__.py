@@ -17,7 +17,7 @@ def cli():
     pass
 
 
-@cli.command()
+@cli.command(name='cheap-gas-nearby', help='최저가 주유소 조회 (cheap-gas-nearby)')
 @click.option("--lat", type=float, required=True, help="위도 (KATEC 또는 WGS84)")
 @click.option("--lon", type=float, required=True, help="경도 (KATEC 또는 WGS84)")
 @click.option("--radius", default=1000, help="반경(m, 최대 5000, 기본 1000)")
@@ -43,7 +43,10 @@ def gas(lat, lon, radius, prodcd, as_json):
     emit(resp, as_json=as_json)
 
 
-@cli.command()
+cli.add_command(gas, name='gas')
+
+
+@cli.command(name='household-waste-info', help='분리배출/생활폐기물 안내 (household-waste-info)')
 @click.argument("region")
 @click.option("--json", "-j", "as_json", is_flag=True, help="JSON 출력")
 def waste(region, as_json):
@@ -68,6 +71,9 @@ def waste(region, as_json):
     emit(resp, as_json=as_json)
 
 
+cli.add_command(waste, name='waste')
+
+
 @cli.command()
 @click.option("--lat", type=float, required=True, help="위도")
 @click.option("--lon", type=float, required=True, help="경도")
@@ -87,7 +93,7 @@ def parking(lat, lon, radius, as_json):
     emit(resp, as_json=as_json)
 
 
-@cli.command()
+@cli.command(name='library-book-search', help='도서관 도서/정보 조회 (library-book-search)')
 @click.argument("keyword")
 @click.option("--page", default=1, help="페이지 (기본 1)")
 @click.option("--page-size", "page_size", default=10, help="페이지당 건수 (기본 10)")
@@ -110,7 +116,10 @@ def library(keyword, page, page_size, as_json):
     emit(resp, as_json=as_json)
 
 
-@cli.command()
+cli.add_command(library, name='library')
+
+
+@cli.command(name='k-schoollunch-menu', help='학교 급식 메뉴 조회 (k-schoollunch-menu)')
 @click.option("--edu-office", required=True, help="교육청명 (예: 서울특별시교육청)")
 @click.option("--school", "school_name", required=True, help="학교명")
 @click.option("--date", "meal_date", help="급식일자 (YYYYMMDD, 기본: 오늘)")
@@ -163,6 +172,9 @@ def lunch(edu_office, school_name, meal_date, as_json):
              as_json=as_json)
 
 
+cli.add_command(lunch, name='lunch')
+
+
 @cli.command()
 @click.argument("drug_name")
 @click.option("--json", "-j", "as_json", is_flag=True, help="JSON 출력")
@@ -205,13 +217,16 @@ def food(query, as_json):
     emit(resp, as_json=as_json)
 
 
-@cli.command(name="holiday")
+@cli.command(name="korean-holiday-calendar", help="한국 공휴일 달력 조회 (korean-holiday-calendar)")
 @click.option("--year", required=True, type=int, help="연도(YYYY)")
 @click.option("--json", "-j", "as_json", is_flag=True, help="JSON 출력")
 def holiday(year, as_json):
     """한국 공휴일 조회 (korean-holiday-calendar)."""
     resp = safe_proxy_get("korean-holiday-calendar", "/v1/korean-holiday/calendar", {"year": year})
     emit(resp, as_json=as_json)
+
+
+cli.add_command(holiday, name='holiday')
 
 
 @cli.command(name='plastic-surgery', help='강남유니 성형외과 정보 검색')
@@ -469,10 +484,13 @@ def yebigun_training(query, as_json, timeout):
     emit(result, as_json=as_json)
 
 
-@cli.group(name="nhis")
+@cli.group(name="nhis-care-checkup-search", help="국민건강보험 건강검진/보험료 조회 (nhis-care-checkup-search)")
 def nhis():
     """국민건강보험 조회 (nhis-care-checkup-search)."""
     pass
+
+
+cli.add_command(nhis, name='nhis')
 
 
 @nhis.command(name="checkup")
