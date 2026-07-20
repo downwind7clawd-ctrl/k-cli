@@ -21,10 +21,14 @@ def cli():
 
 # ── NTS 사업자등록 ──────────────────────────────────────────
 
-@cli.group()
+@cli.group(name="nts-business", help="국세청 사업자 정보 조회 (nts-business-registration)")
 def nts():
     """국세청 사업자등록 진위확인."""
     pass
+
+
+# 기존 명령어 호환 별칭
+cli.add_command(nts, name="nts")
 
 
 @nts.command("status")
@@ -84,7 +88,7 @@ def nts_validate(b_no, p_nm, start_dt, b_nm, as_json):
 
 # ── 주식 ──────────────────────────────────────────────────
 
-@cli.command("stock")
+@cli.command(name="korean-stock", help="한국 주식 시세/정보 조회 (korean-stock-search)")
 @click.argument("query")
 @click.option("--date", "bas_dd", help="기준일 YYYYMMDD (기본: 오늘)")
 @click.option("--limit", default=10, help="검색결과 수 (기본 10, 최대 20)")
@@ -107,6 +111,10 @@ def stock(query, bas_dd, limit, as_json):
         params["bas_dd"] = bas_dd
     resp = safe_proxy_get("korean-stock-search", "/v1/korean-stock/search", params)
     emit(resp, as_json=as_json)
+
+
+# 기존 명령어 호환 별칭
+cli.add_command(stock, name="stock")
 
 
 # ── K-Startup ─────────────────────────────────────────────

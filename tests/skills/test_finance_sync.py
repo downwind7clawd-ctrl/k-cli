@@ -24,11 +24,30 @@ def test_nts_status_rename(monkeypatch):
     assert captured[0] == ("nts-business-registration", "/v1/nts-business/status")
 
 
+def test_nts_status_primary_name(monkeypatch):
+    captured = _capture(monkeypatch)
+    runner = CliRunner()
+    res = runner.invoke(finance_cli, ["nts-business", "status", "--b-no", "1234567890", "-j"])
+    assert res.exit_code == 0, res.output
+    assert captured[0] == ("nts-business-registration", "/v1/nts-business/status")
+
+
 def test_nts_validate_rename(monkeypatch):
     captured = _capture(monkeypatch)
     runner = CliRunner()
     res = runner.invoke(finance_cli, [
         "nts", "validate", "--b-no", "1234567890", "--p-nm", "홍길동",
+        "--start-dt", "20200101", "-j",
+    ])
+    assert res.exit_code == 0, res.output
+    assert captured[0] == ("nts-business-registration", "/v1/nts-business/validate")
+
+
+def test_nts_validate_primary_name(monkeypatch):
+    captured = _capture(monkeypatch)
+    runner = CliRunner()
+    res = runner.invoke(finance_cli, [
+        "nts-business", "validate", "--b-no", "1234567890", "--p-nm", "홍길동",
         "--start-dt", "20200101", "-j",
     ])
     assert res.exit_code == 0, res.output
@@ -41,3 +60,19 @@ def test_stock_rename(monkeypatch):
     res = runner.invoke(finance_cli, ["stock", "삼성전자", "-j"])
     assert res.exit_code == 0, res.output
     assert captured[0] == ("korean-stock-search", "/v1/korean-stock/search")
+
+
+def test_stock_primary_name(monkeypatch):
+    captured = _capture(monkeypatch)
+    runner = CliRunner()
+    res = runner.invoke(finance_cli, ["korean-stock", "삼성전자", "-j"])
+    assert res.exit_code == 0, res.output
+    assert captured[0] == ("korean-stock-search", "/v1/korean-stock/search")
+
+
+def test_help_names(monkeypatch):
+    runner = CliRunner()
+    for args in (["korean-stock", "--help"], ["stock", "--help"],
+                 ["nts-business", "status", "--help"], ["nts", "status", "--help"]):
+        res = runner.invoke(finance_cli, args)
+        assert res.exit_code == 0, (args, res.output)
