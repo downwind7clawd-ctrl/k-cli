@@ -203,10 +203,6 @@ pytest tests/ -v
 pip install k-skill-cli
 ```
 
-PyPI 최신 버전(현재 **2026.07.10.2**)이 설치됩니다. 별도 빌드/업로드 불필요합니다.
-
-> 메인테이너용 배포 절차(`build`/`twine`/`uv publish`, 버전 규칙 등)는 [docs/publishing.md](docs/publishing.md)를 참고하세요.
-
 ---
 
 ## Recently Removed (2026-06-07 sync)
