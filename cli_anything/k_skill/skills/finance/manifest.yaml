@@ -7,11 +7,11 @@ dependencies:
   env_keys: []
 skills:
   nts:
-    name: nts-business
+    name: nts-business-registration
     display_name: 사업자등록
     description: 국세청 사업자등록
   stock:
-    name: korean-stock
+    name: korean-stock-search
     display_name: 한국 주식
     description: 한국 주식 검색
   kstartup:

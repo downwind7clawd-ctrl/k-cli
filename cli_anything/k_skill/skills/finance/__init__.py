@@ -46,11 +46,11 @@ def nts_status(b_nos, as_json):
         if digits:
             cleaned.append(digits)
     if not cleaned:
-        emit(error_response("nts-business", "INVALID_INPUT",
+        emit(error_response("nts-business-registration", "INVALID_INPUT",
                              "유효한 사업자등록번호(10자리)를 입력하세요"),
              as_json=as_json)
         return
-    resp = safe_proxy_post("nts-business", "/v1/nts-business/status", {"b_no": cleaned})
+    resp = safe_proxy_post("nts-business-registration", "/v1/nts-business/status", {"b_no": cleaned})
     emit(resp, as_json=as_json)
 
 
@@ -71,14 +71,14 @@ def nts_validate(b_no, p_nm, start_dt, b_nm, as_json):
     b_no_clean = clean_business_number(b_no)
     start_dt_clean = clean_date(start_dt)
     if not b_no_clean or not start_dt_clean:
-        emit(error_response("nts-business", "INVALID_INPUT",
+        emit(error_response("nts-business-registration", "INVALID_INPUT",
                              "사업자등록번호(10자리)와 개업일자(YYYYMMDD)를 확인하세요"),
              as_json=as_json)
         return
     body = {"b_no": b_no_clean, "p_nm": p_nm, "start_dt": start_dt_clean}
     if b_nm:
         body["b_nm"] = b_nm
-    resp = safe_proxy_post("nts-business", "/v1/nts-business/validate", body)
+    resp = safe_proxy_post("nts-business-registration", "/v1/nts-business/validate", body)
     emit(resp, as_json=as_json)
 
 
@@ -99,13 +99,13 @@ def stock(query, bas_dd, limit, as_json):
       k-skill finance stock "005930" --date 20260501 -j
     """
     if not query or not query.strip():
-        emit(error_response("korean-stock", "INVALID_INPUT", "종목명 또는 종목코드를 입력하세요"),
+        emit(error_response("korean-stock-search", "INVALID_INPUT", "종목명 또는 종목코드를 입력하세요"),
              as_json=as_json)
         return
     params = {"q": query, "limit": min(max(limit, 1), 20)}
     if bas_dd:
         params["bas_dd"] = bas_dd
-    resp = safe_proxy_get("korean-stock", "/v1/korean-stock/search", params)
+    resp = safe_proxy_get("korean-stock-search", "/v1/korean-stock/search", params)
     emit(resp, as_json=as_json)
 
 
