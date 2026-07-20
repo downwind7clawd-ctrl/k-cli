@@ -53,10 +53,10 @@ def dust(region, station_name, as_json):
     if station_name:
         params["stationName"] = station_name
     if not params:
-        emit(error_response("fine-dust", "INVALID_INPUT", "지역명 또는 측정소명을 입력하세요"),
+        emit(error_response("fine-dust-location", "INVALID_INPUT", "지역명 또는 측정소명을 입력하세요"),
              as_json=as_json)
         return
-    resp = safe_proxy_get("fine-dust", "/v1/fine-dust/report", params)
+    resp = safe_proxy_get("fine-dust-location", "/v1/fine-dust/report", params)
     emit(resp, as_json=as_json)
 
 
@@ -79,8 +79,8 @@ def han_river(query, station_code, as_json):
     if station_code:
         params["stationCode"] = station_code
     if not params:
-        emit(error_response("han-river", "INVALID_INPUT", "관측소명 또는 관측소코드를 입력하세요"),
+        emit(error_response("han-river-water-level", "INVALID_INPUT", "관측소명 또는 관측소코드를 입력하세요"),
              as_json=as_json)
         return
-    resp = safe_proxy_get("han-river", "/v1/han-river/water-level", params)
+    resp = safe_proxy_get("han-river-water-level", "/v1/han-river/water-level", params)
     emit(resp, as_json=as_json)
