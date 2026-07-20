@@ -5,6 +5,7 @@ import click
 
 from cli_anything.k_skill.runner import run_npm, run_script, K_SKILL_ROOT
 from cli_anything.k_skill.output import emit
+from cli_anything.k_skill.proxy import safe_proxy_get
 
 
 @click.group(name='sports', help='스포츠/레저: 스포츠 경기, 로또, 영화관')
@@ -144,3 +145,27 @@ def ticket(query, as_json, timeout):
     args = [query] if query else []
     result = asyncio.run(run_script('ticket_availability.py', args, timeout=timeout, script_dirs=[K_SKILL_ROOT / "ticket-availability"]))
     emit(result, as_json=as_json)
+
+
+@cli.group(name="kopis")
+def kopis():
+    """KOPIS 공연예술통합전산망 조회 (kopis-performance-search)."""
+    pass
+
+
+@kopis.command(name="performances")
+@click.option("--keyword", help="공연명 키워드")
+@click.option("--json", "-j", "as_json", is_flag=True, help="JSON 출력")
+def kopis_performances(keyword, as_json):
+    """공연 목록 조회."""
+    params = {"keyword": keyword} if keyword else {}
+    resp = safe_proxy_get("kopis-performance-search", "/v1/kopis/performances", params)
+    emit(resp, as_json=as_json)
+
+
+@kopis.command(name="facilities")
+@click.option("--json", "-j", "as_json", is_flag=True, help="JSON 출력")
+def kopis_facilities(as_json):
+    """공연시설 조회."""
+    resp = safe_proxy_get("kopis-performance-search", "/v1/kopis/facilities", {})
+    emit(resp, as_json=as_json)

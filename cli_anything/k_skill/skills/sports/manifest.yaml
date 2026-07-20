@@ -46,3 +46,8 @@ skills:
     name: "ticket-availability"
     display_name: "공연 잔여석"
     description: "공연/전시 티켓 잔여석 조회"
+  kopis:
+    name: "kopis-performance-search"
+    display_name: "KOPIS 공연"
+    description: "KOPIS 공연예술통합전산망 공연/시설 조회"
+    category: sports
