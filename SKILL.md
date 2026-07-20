@@ -2,7 +2,7 @@
 name: k-skill
 display_name: K-Skill CLI
 description: 한국인을 위한 CLI 스킬 모음 114개 — 날씨, 교통, 금융, 부동산, 쇼핑, 스포츠, 생활 유틸리티를 단일 명령어로
-version: 2026.7.10.2
+version: 2026.07.10.2
 dependencies: []
 ---
 
