@@ -19,7 +19,7 @@ class TestRecruiting:
                       "json": lambda self: {"status": "success", "data": {}}})()
         mock_client.return_value.__enter__.return_value.get.return_value = resp
         r = CliRunner()
-        res = r.invoke(main, ["recruiting", "jobkorea-talent",
+        res = r.invoke(main, ["recruiting", "jobkorea-talent-search",
                                "--keyword", "마케터", "--work-area", "서울", "-j"])
         assert res.exit_code == 0
 

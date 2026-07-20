@@ -16,6 +16,6 @@ def test_jobkorea_talent_renamed(monkeypatch):
         raise httpx.HTTPStatusError("x", request=None, response=FakeResp())
     monkeypatch.setattr(httpx.Client, "get", lambda self, *a, **k: fake_get())
 
-    res = CliRunner().invoke(recruiting_cli, ["jobkorea-talent", "--keyword", "x", "-j"])
+    res = CliRunner().invoke(recruiting_cli, ["jobkorea-talent-search", "--keyword", "x", "-j"])
     assert res.exit_code == 0, res.output
     assert captured.get("code") == "jobkorea-talent-search"

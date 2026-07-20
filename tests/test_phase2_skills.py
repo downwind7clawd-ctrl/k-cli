@@ -12,7 +12,7 @@ from cli_anything.k_skill.loader import SKILLS_DIR, load_manifest, discover_doma
 DOMAINS = [
     ("weather", 3),
     ("transit", 9),
-    ("life", 25),   # was 23; +2 (lovebug-report, yebigun-training); kakao-bar already existed
+    ("life", 28),   # +7 (cheap-gas-nearby, household-waste-info, library-book-search, k-schoollunch-menu, korean-holiday-calendar, nhis-care-checkup-search, assembly-bill-vote-search)
     ("fortune", 2),
     ("business", 7),
     ("recruiting", 3),
@@ -23,10 +23,10 @@ DOMAINS = [
     ("search", 6),
     ("market", 4),
     ("document", 7),
-    ("sports", 8),
+    ("sports", 9),   # +1 (kopis-performance-search)
     ("travel", 3),
     ("delivery", 1),
-    ("other", 4),
+    ("other", 7),   # +3 (kr-whois-lookup, gov-overseas-trip-report, naver-ad-performance)
 ]
 
 
@@ -221,7 +221,7 @@ class TestCLICommands:
         import cli_anything.k_skill.cli as cli_mod
         search_cli = cli_mod.main.get_command(None, "search")
         names = self._get_subcommand_names(search_cli)
-        assert "naver-news" in names
+        assert "naver-news-search" in names
 
 
 # ── discover_domains 통합 테스트 ────────────────────────

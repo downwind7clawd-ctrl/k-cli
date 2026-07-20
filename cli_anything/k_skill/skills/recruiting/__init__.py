@@ -61,7 +61,7 @@ def job_posting_match(resume_file, resume_text, keyword, location, negative, lim
 # direct httpx-based: jobkorea-talent-search (기업회원 인재검색, no-login 공개 검색)
 # upstream SKILL.md no-login fallback: 잡코리아 공개 검색 결과 페이지
 #   https://www.jobkorea.co.kr/Search/?stext=<검색어>
-@cli.command(name='jobkorea-talent', help='잡코리아 인재검색')
+@cli.command(name='jobkorea-talent-search', help='잡코리아 인재검색')
 @click.option('--json', '-j', 'as_json', is_flag=True)
 @click.option('--timeout', '-t', default=30, type=int)
 @click.option('--keyword', help='검색 키워드')

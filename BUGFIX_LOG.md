@@ -134,3 +134,47 @@
 - `.env` 파일에 환경변수 저장 (`.gitignore`에 포함되어 깃 푸시 시 제외)
 - Playwright chromium 브라우저 필요 (`playwright install chromium`)
 - 타임아웃 기본 60초, 대량 조회 시 `-t 120` 권장
+
+---
+
+## 2026-07-20 · k-skill sync (110 skills) + 14 renames
+
+### Upstream
+- https://github.com/NomaDamas/k-skill (110 skills)
+
+### Renamed (14)
+- weather: fine-dust → fine-dust-location
+- weather: han-river → han-river-water-level
+- life: gas → cheap-gas-nearby
+- life: waste → household-waste-info
+- life: library → library-book-search
+- life: lunch → k-schoollunch-menu
+- life: holiday → korean-holiday-calendar
+- life: nhis → nhis-care-checkup-search
+- finance: korean-stock → korean-stock-search
+- finance: nts-business → nts-business-registration
+- search: naver-news → naver-news-search
+- shopping: naver-shopping → naver-shopping-search
+- realestate: real-estate → real-estate-search
+- realestate: lh-notice → lh-notice-search
+- transit: seoul-subway → seoul-subway-arrival
+- recruiting: jobkorea-talent → jobkorea-talent-search
+
+### Added (21)
+- life: assembly-bill-vote-search
+- sports: kopis-performance-search
+- other: kr-whois-lookup
+- other: gov-overseas-trip-report
+- other: naver-ad-performance
+- (기타 신규 스킬 16종은 upstream 동기화로 추가)
+
+### Reimplemented
+- none
+
+### Verification fixes (this session)
+- `recruiting` 명령어 등록명 `jobkorea-talent` → `jobkorea-talent-search` 로 정정
+- `search` 명령어 등록명 `naver-news` → `naver-news-search` 로 정정 (+ docstring 예시 갱신)
+- `weather` docstring 예시 `han-river` → `han-river-water-level` 로 갱신
+- `python -m cli_anything.k_skill` 동작을 위해 `cli_anything/k_skill/__main__.py` 추가
+- 누락된 테스트 기대값 갱신: life 25→28, sports 8→9, other 4→7, stale 명령명 단언 4건 수정
+

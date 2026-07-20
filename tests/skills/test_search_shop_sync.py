@@ -23,7 +23,7 @@ def test_search_naver_news_rename():
         pytest.MonkeyPatch().context() as mp,
     ):
         mp.setattr(search, "safe_proxy_get", cap)
-        result = runner.invoke(search.cli, ["naver-news", "AI 규제", "-j"])
+        result = runner.invoke(search.cli, ["naver-news-search", "AI 규제", "-j"])
     assert result.exit_code == 0, result.output
     assert cap.calls, "safe_proxy_get was not called"
     args, _ = cap.calls[0]

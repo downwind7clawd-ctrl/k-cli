@@ -70,8 +70,8 @@ def han_river(query, station_code, as_json):
     관측소명(교량명) 또는 관측소코드로 현재 수위를 조회합니다.
 
     예시:
-      k-skill weather han-river "한강대교"
-      k-skill weather han-river --code 1018683 -j
+      k-skill weather han-river-water-level "한강대교"
+      k-skill weather han-river-water-level --code 1018683 -j
     """
     params = {}
     if query:
