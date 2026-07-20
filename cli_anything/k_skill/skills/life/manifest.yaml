@@ -120,3 +120,8 @@ skills:
     display_name: 건강보험 조회
     description: 국민건강보험 검진/장기요양 조회
     category: life
+  assembly:
+    name: assembly-bill-vote-search
+    display_name: 의안/표결 조회
+    description: 열린국회 의안 검색/상세와 본회의 표결정보 조회
+    category: life

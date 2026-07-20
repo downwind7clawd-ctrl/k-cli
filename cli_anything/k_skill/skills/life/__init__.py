@@ -491,3 +491,37 @@ def nhis_ltc(as_json):
     resp = safe_proxy_get("nhis-care-checkup-search", "/v1/nhis/long-term-care", {})
     emit(resp, as_json=as_json)
 
+
+@cli.group(name="assembly")
+def assembly():
+    """열린국회 의안/표결 조회 (assembly-bill-vote-search)."""
+    pass
+
+
+@assembly.command(name="bills")
+@click.option("--query", help="의안 검색어")
+@click.option("--json", "-j", "as_json", is_flag=True, help="JSON 출력")
+def asm_bills(query, as_json):
+    """의안 검색."""
+    params = {"query": query} if query else {}
+    resp = safe_proxy_get("assembly-bill-vote-search", "/v1/assembly/bills", params)
+    emit(resp, as_json=as_json)
+
+
+@assembly.command(name="votes")
+@click.option("--bill-id", required=True, help="의안 ID")
+@click.option("--json", "-j", "as_json", is_flag=True, help="JSON 출력")
+def asm_votes(bill_id, as_json):
+    """본회의 표결정보 조회."""
+    resp = safe_proxy_get("assembly-bill-vote-search", "/v1/assembly/votes", {"billId": bill_id})
+    emit(resp, as_json=as_json)
+
+
+@assembly.command(name="bill-detail")
+@click.option("--bill-id", required=True, help="의안 ID")
+@click.option("--json", "-j", "as_json", is_flag=True, help="JSON 출력")
+def asm_bill_detail(bill_id, as_json):
+    """의안 상세 조회."""
+    resp = safe_proxy_get("assembly-bill-vote-search", "/v1/assembly/bill-detail", {"billId": bill_id})
+    emit(resp, as_json=as_json)
+

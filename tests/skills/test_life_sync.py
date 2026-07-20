@@ -86,3 +86,31 @@ def test_nhis_checkup_new():
     assert result.exit_code == 0
     assert calls[0][0] == "nhis-care-checkup-search"
     assert calls[0][1] == "/v1/nhis/checkup/list"
+
+
+def test_assembly_bills(monkeypatch):
+    captured = {}
+    def fake(name, path, params=None, timeout=None):
+        captured["name"] = name; captured["path"] = path
+        return {"status": "success", "data": {}}
+    monkeypatch.setattr("cli_anything.k_skill.skills.life.safe_proxy_get", fake)
+    from cli_anything.k_skill.skills.life import cli as life_cli
+    from click.testing import CliRunner
+    r = CliRunner().invoke(life_cli, ["assembly", "bills", "--query", "기후", "-j"])
+    assert r.exit_code == 0, r.output
+    assert captured["name"] == "assembly-bill-vote-search"
+    assert captured["path"] == "/v1/assembly/bills"
+
+
+def test_assembly_votes(monkeypatch):
+    captured = {}
+    def fake(name, path, params=None, timeout=None):
+        captured["name"] = name; captured["path"] = path
+        return {"status": "success", "data": {}}
+    monkeypatch.setattr("cli_anything.k_skill.skills.life.safe_proxy_get", fake)
+    from cli_anything.k_skill.skills.life import cli as life_cli
+    from click.testing import CliRunner
+    r = CliRunner().invoke(life_cli, ["assembly", "votes", "--bill-id", "ABC123", "-j"])
+    assert r.exit_code == 0, r.output
+    assert captured["name"] == "assembly-bill-vote-search"
+    assert captured["path"] == "/v1/assembly/votes"
