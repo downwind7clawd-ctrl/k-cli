@@ -39,7 +39,7 @@ def gas(lat, lon, radius, prodcd, as_json):
         "radius": min(max(radius, 100), 5000),
         "prodcd": prodcd,
     }
-    resp = safe_proxy_get("cheap-gas", "/v1/opinet/around", params)
+    resp = safe_proxy_get("cheap-gas-nearby", "/v1/opinet/around", params)
     emit(resp, as_json=as_json)
 
 
@@ -56,7 +56,7 @@ def waste(region, as_json):
       k-skill life waste "수원시 영통구" -j
     """
     if not region or not region.strip():
-        emit(error_response("household-waste", "INVALID_INPUT", "시군구명을 입력하세요"),
+        emit(error_response("household-waste-info", "INVALID_INPUT", "시군구명을 입력하세요"),
              as_json=as_json)
         return
     params = {
@@ -64,7 +64,7 @@ def waste(region, as_json):
         "pageNo": 1,
         "numOfRows": 100,
     }
-    resp = safe_proxy_get("household-waste", "/v1/household-waste/info", params)
+    resp = safe_proxy_get("household-waste-info", "/v1/household-waste/info", params)
     emit(resp, as_json=as_json)
 
 
@@ -102,11 +102,11 @@ def library(keyword, page, page_size, as_json):
       k-skill life library "파이썬 프로그래밍" --page-size 20 -j
     """
     if not keyword or not keyword.strip():
-        emit(error_response("library-book", "INVALID_INPUT", "검색 키워드를 입력하세요"),
+        emit(error_response("library-book-search", "INVALID_INPUT", "검색 키워드를 입력하세요"),
              as_json=as_json)
         return
     params = {"keyword": keyword, "pageNo": max(page, 1), "pageSize": min(max(page_size, 1), 100)}
-    resp = safe_proxy_get("library-book", "/v1/data4library/book-search", params)
+    resp = safe_proxy_get("library-book-search", "/v1/data4library/book-search", params)
     emit(resp, as_json=as_json)
 
 
@@ -125,7 +125,7 @@ def lunch(edu_office, school_name, meal_date, as_json):
       k-skill life lunch --edu-office "서울특별시교육청" --school "미래초등학교" --date 20260521 -j
     """
     # Step 1: Search school
-    school_resp = safe_proxy_get("school-lunch", "/v1/neis/school-search", {"educationOffice": edu_office, "schoolName": school_name})
+    school_resp = safe_proxy_get("k-schoollunch-menu", "/v1/neis/school-search", {"educationOffice": edu_office, "schoolName": school_name})
     if school_resp.get("status") == "error":
         emit(school_resp, as_json=as_json)
         return
@@ -136,7 +136,7 @@ def lunch(edu_office, school_name, meal_date, as_json):
         rows = rows.get("row", rows.get("items", []))
 
     if not rows or (isinstance(rows, list) and len(rows) == 0):
-        emit(error_response("school-lunch", "INVALID_INPUT",
+        emit(error_response("k-schoollunch-menu", "INVALID_INPUT",
                             f"학교를 찾을 수 없습니다: {edu_office} {school_name}"),
              as_json=as_json)
         return
@@ -146,7 +146,7 @@ def lunch(edu_office, school_name, meal_date, as_json):
     sd_code = school.get("SD_SCHUL_CODE", school.get("sd_schul_code", ""))
 
     if not atpt_code or not sd_code:
-        emit(error_response("school-lunch", "UNKNOWN", "학교 코드를 추출할 수 없습니다"),
+        emit(error_response("k-schoollunch-menu", "UNKNOWN", "학교 코드를 추출할 수 없습니다"),
              as_json=as_json)
         return
 
@@ -155,10 +155,10 @@ def lunch(edu_office, school_name, meal_date, as_json):
     if meal_date:
         meal_params["MLSV_YMD"] = meal_date
     try:
-        resp = safe_proxy_get("school-lunch", "/v1/neis/school-meal", meal_params)
+        resp = safe_proxy_get("k-schoollunch-menu", "/v1/neis/school-meal", meal_params)
         emit(resp, as_json=as_json)
     except Exception as e:
-        emit(error_response("school-lunch", "NETWORK_ERROR",
+        emit(error_response("k-schoollunch-menu", "NETWORK_ERROR",
                             f"급식 정보 조회 중 오류 발생: {str(e)}"),
              as_json=as_json)
 
@@ -202,6 +202,15 @@ def food(query, as_json):
         return
     params = {"searchText": query}
     resp = safe_proxy_get("mfds-food", "/v1/mfds/food-safety/search", params)
+    emit(resp, as_json=as_json)
+
+
+@cli.command(name="holiday")
+@click.option("--year", required=True, type=int, help="연도(YYYY)")
+@click.option("--json", "-j", "as_json", is_flag=True, help="JSON 출력")
+def holiday(year, as_json):
+    """한국 공휴일 조회 (korean-holiday-calendar)."""
+    resp = safe_proxy_get("korean-holiday-calendar", "/v1/korean-holiday/calendar", {"year": year})
     emit(resp, as_json=as_json)
 
 
@@ -458,4 +467,27 @@ def yebigun_training(query, as_json, timeout):
     args = [query] if query else []
     result = asyncio.run(run_npm('yebigun-training', args, timeout=timeout))
     emit(result, as_json=as_json)
+
+
+@cli.group(name="nhis")
+def nhis():
+    """국민건강보험 조회 (nhis-care-checkup-search)."""
+    pass
+
+
+@nhis.command(name="checkup")
+@click.option("--operation", required=True, help="조회 작업 (예: list)")
+@click.option("--json", "-j", "as_json", is_flag=True, help="JSON 출력")
+def nhis_checkup(operation, as_json):
+    """건강검진 정보 조회."""
+    resp = safe_proxy_get("nhis-care-checkup-search", "/v1/nhis/checkup/%s" % operation, {})
+    emit(resp, as_json=as_json)
+
+
+@nhis.command(name="long-term-care")
+@click.option("--json", "-j", "as_json", is_flag=True, help="JSON 출력")
+def nhis_ltc(as_json):
+    """장기요양 정보 조회."""
+    resp = safe_proxy_get("nhis-care-checkup-search", "/v1/nhis/long-term-care", {})
+    emit(resp, as_json=as_json)
 

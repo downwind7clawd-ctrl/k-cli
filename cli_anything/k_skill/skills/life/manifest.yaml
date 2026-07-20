@@ -9,11 +9,11 @@ dependencies:
   env_keys: []
 skills:
   gas:
-    name: cheap-gas
+    name: cheap-gas-nearby
     display_name: 주유소
     description: 근처 주유소 가격 조회
   waste:
-    name: household-waste
+    name: household-waste-info
     display_name: 쓰레기 배출
     description: 지역별 쓰레기 배출요일/장소
   parking:
@@ -21,11 +21,11 @@ skills:
     display_name: 주차장
     description: 공영주차장 잔여석
   library:
-    name: data4library
+    name: library-book-search
     display_name: 도서관
     description: 도서관 도서 검색
   lunch:
-    name: neis-school-meal
+    name: k-schoollunch-menu
     display_name: 급식
     description: 학교 급식메뉴
   drug:
@@ -109,4 +109,14 @@ skills:
     name: yebigun-training
     display_name: 예비군 훈련
     description: 예비군 훈련일정/메뉴 조회
+    category: life
+  holiday:
+    name: korean-holiday-calendar
+    display_name: 공휴일
+    description: 한국 공휴일 조회
+    category: life
+  nhis:
+    name: nhis-care-checkup-search
+    display_name: 건강보험 조회
+    description: 국민건강보험 검진/장기요양 조회
     category: life
