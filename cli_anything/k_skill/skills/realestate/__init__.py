@@ -19,10 +19,13 @@ def cli():
 
 # ── 실거래가/전월세 ────────────────────────────────────────
 
-@cli.group()
+@cli.group(name='real-estate', help='부동산 실거래가/법정동코드 조회 (real-estate-search)')
 def realestate():
     """부동산 실거래가/전월세 조회."""
     pass
+
+
+cli.add_command(realestate, name='realestate')
 
 
 @realestate.command("code")
@@ -88,10 +91,13 @@ def realestate_search(lawd_cd, deal_ymd, asset_type, deal_type, num_of_rows, as_
 
 # ── LH 청약공고 ───────────────────────────────────────────
 
-@cli.group()
+@cli.group(name='lh-notice', help='LH 한국토지주택공사 분양/입주 공고 조회 (lh-notice-search)')
 def lh():
     """LH 청약 공고문 조회."""
     pass
+
+
+cli.add_command(lh, name='lh')
 
 
 @lh.command("search")
