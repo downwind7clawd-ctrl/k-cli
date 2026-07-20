@@ -193,3 +193,29 @@
 - `python -m cli_anything.k_skill` 동작을 위해 `cli_anything/k_skill/__main__.py` 추가
 - 누락된 테스트 기대값 갱신: life 25→28, sports 8→9, other 4→7, stale 명령명 단언 4건 수정
 
+---
+
+## 2026-07-20 (추가) · CLI 명령어명을 upstream 키로 정렬 + 하위 호환 별칭 보존
+
+### 배경
+1차 sync에서 upstream 스킬 **키 매핑**(`safe_proxy_get` 1인자, manifest `name`)은 갱신됐으나, **사용자 노출 CLI 명령어명**은 구명 그대로 남아 있던 문제를 발견. upstream SKILL.md 예시를 그대로 타이핑할 수 있게 주 명령어명을 upstream 키로 통일하고, 구명은 별칭(alias)으로 보존해 기존 스크립트 호환성 유지.
+
+### 정렬 대상 (primary 명령어명 ← 기존 별칭)
+- weather: `fine-dust` ← `dust` / `han-river` ← `han_river`
+- finance: `korean-stock` ← `stock` / `nts-business` ← `nts` (group)
+- shopping: `naver-shopping` ← `naver-shop`
+- realestate: `real-estate` ← `realestate` (group) / `lh-notice` ← `lh` (group)
+- transit: `seoul-subway` ← `subway`
+- life: `cheap-gas-nearby` ← `gas` / `household-waste-info` ← `waste` / `library-book-search` ← `library` / `k-schoollunch-menu` ← `lunch` / `korean-holiday-calendar` ← `holiday` / `nhis-care-checkup-search` ← `nhis` (group)
+- (이미 일치: search `naver-news-search`, recruiting `jobkorea-talent-search`)
+
+### 변경 방식
+각 명령 함수에 primary `@cli.command(name='<upstream-key>')` 적용 후 `cli.add_command(func, name='<old>')` 로 별칭 등록. 프록시 키 문자열(`safe_proxy_get("fine-dust-location", ...)` 등)은 변경 없음.
+
+### Code review nits
+- `other/__init__.py` 중복 `error_response` 로컬 import 제거 (모듈 레벨 import로 통합)
+
+### Verification
+- 전 도메인 pytest 통과 (기존 180 + 신규 alias 테스트)
+- 신/구 명령어명 모두 `--help` exit 0 확인
+
