@@ -17,7 +17,7 @@ def cli():
     pass
 
 
-@cli.command("naver-shop")
+@cli.command(name='naver-shopping', help='네이버 쇼핑 검색/가격비교 (naver-shopping-search)')
 @click.argument("query")
 @click.option("--limit", default=10, help="반환 건수 (기본 10, 최대 40)")
 @click.option("--sort", default="rel", type=click.Choice(["rel", "date", "price_asc", "price_dsc", "review"]),
@@ -41,6 +41,9 @@ def naver_shop(query, limit, sort, page, as_json, timeout):
     params = {"q": query, "limit": min(max(limit, 1), 40), "sort": sort, "page": max(page, 1)}
     resp = safe_proxy_get("naver-shopping-search", "/v1/naver-shopping/search", params, timeout=timeout)
     emit(resp, as_json=as_json)
+
+
+cli.add_command(naver_shop, name='naver-shop')
 
 @cli.command(name='olive-young', help='올리브영 상품 검색 및 재고 확인')
 @click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
