@@ -7,7 +7,7 @@ dependencies:
   env_keys: []
 skills:
   subway:
-    name: seoul-subway
+    name: seoul-subway-arrival
     display_name: 서울 지하철 도착정보
     description: 실시간 지하철 도착정보
   subway-lost:

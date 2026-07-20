@@ -31,11 +31,11 @@ def subway(station_name, as_json):
       k-skill transit subway "서울역" -j
     """
     if not station_name or not station_name.strip():
-        emit(error_response("seoul-subway", "INVALID_INPUT", "역명을 입력하세요"),
+        emit(error_response("seoul-subway-arrival", "INVALID_INPUT", "역명을 입력하세요"),
              as_json=as_json)
         return
     params = {"stationName": station_name}
-    resp = safe_proxy_get("seoul-subway", "/v1/seoul-subway/arrival", params)
+    resp = safe_proxy_get("seoul-subway-arrival", "/v1/seoul-subway/arrival", params)
     emit(resp, as_json=as_json)
 
 @cli.command(name='subway-lost', help='서울교통공사 지하철 분실물 검색')

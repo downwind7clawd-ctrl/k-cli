@@ -7,11 +7,11 @@ dependencies:
   env_keys: []
 skills:
   realestate:
-    name: real-estate
+    name: real-estate-search
     display_name: 부동산 실거래가
     description: 부동산 실거래가/전월세
   lh:
-    name: lh-notice
+    name: lh-notice-search
     display_name: LH 공고
     description: LH 청약 공고문
   sh-notice:

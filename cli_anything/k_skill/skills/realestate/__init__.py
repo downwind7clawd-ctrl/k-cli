@@ -38,10 +38,10 @@ def realestate_code(query, as_json):
       k-skill realestate realestate code "마포구" -j
     """
     if not query or not query.strip():
-        emit(error_response("real-estate", "INVALID_INPUT", "지역명을 입력하세요"),
+        emit(error_response("real-estate-search", "INVALID_INPUT", "지역명을 입력하세요"),
              as_json=as_json)
         return
-    resp = safe_proxy_get("real-estate", "/v1/real-estate/region-code", {"q": query})
+    resp = safe_proxy_get("real-estate-search", "/v1/real-estate/region-code", {"q": query})
     emit(resp, as_json=as_json)
 
 
@@ -68,12 +68,12 @@ def realestate_search(lawd_cd, deal_ymd, asset_type, deal_type, num_of_rows, as_
     lawd_cd_clean = lawd_cd.strip()
     deal_ymd_clean = deal_ymd.strip()
     if len(lawd_cd_clean) != 5 or not lawd_cd_clean.isdigit():
-        emit(error_response("real-estate", "INVALID_INPUT",
+        emit(error_response("real-estate-search", "INVALID_INPUT",
                              "법정동코드는 5자리 숫자입니다 (code 명령으로 조회하세요)"),
              as_json=as_json)
         return
     if len(deal_ymd_clean) != 6 or not deal_ymd_clean.isdigit():
-        emit(error_response("real-estate", "INVALID_INPUT", "거래년월은 YYYYMM 형식입니다"),
+        emit(error_response("real-estate-search", "INVALID_INPUT", "거래년월은 YYYYMM 형식입니다"),
              as_json=as_json)
         return
     path = f"/v1/real-estate/{asset_type}/{deal_type}"
@@ -82,7 +82,7 @@ def realestate_search(lawd_cd, deal_ymd, asset_type, deal_type, num_of_rows, as_
         "deal_ymd": deal_ymd_clean,
         "num_of_rows": min(max(num_of_rows, 1), 1000),
     }
-    resp = safe_proxy_get("real-estate", path, params)
+    resp = safe_proxy_get("real-estate-search", path, params)
     emit(resp, as_json=as_json)
 
 
@@ -128,7 +128,7 @@ def lh_search(pan_ss, cnp_cd_nm, pan_nm, upp_ais_tp_cd, pan_nt_st_dt, clsg_dt, p
         params["panNtStDt"] = pan_nt_st_dt
     if clsg_dt:
         params["clsgDt"] = clsg_dt
-    resp = safe_proxy_get("lh-notice", "/v1/lh-notice/search", params)
+    resp = safe_proxy_get("lh-notice-search", "/v1/lh-notice/search", params)
     emit(resp, as_json=as_json)
 
 
@@ -150,7 +150,7 @@ def lh_detail(pan_id, ccr_cnnt_sys_ds_cd, spl_inf_tp_cd, as_json):
         "ccrCnntSysDsCd": ccr_cnnt_sys_ds_cd,
         "splInfTpCd": spl_inf_tp_cd,
     }
-    resp = safe_proxy_get("lh-notice", "/v1/lh-notice/detail", params)
+    resp = safe_proxy_get("lh-notice-search", "/v1/lh-notice/detail", params)
     emit(resp, as_json=as_json)
 
 
