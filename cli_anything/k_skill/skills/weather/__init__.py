@@ -34,7 +34,7 @@ def forecast(lat, lon, as_json):
     emit(resp, as_json=as_json)
 
 
-@cli.command()
+@cli.command(name='fine-dust', help='초미세먼지 측정소/실시간 농도 조회 (fine-dust-location)')
 @click.argument("region", required=False)
 @click.option("--station", "station_name", help="측정소명 (정확한 이름)")
 @click.option("--json", "-j", "as_json", is_flag=True, help="JSON 출력")
@@ -60,7 +60,7 @@ def dust(region, station_name, as_json):
     emit(resp, as_json=as_json)
 
 
-@cli.command()
+@cli.command(name='han-river', help='한강 수위/유량 조회 (han-river-water-level)')
 @click.argument("query", required=False)
 @click.option("--code", "station_code", help="관측소코드 (예: 1018683)")
 @click.option("--json", "-j", "as_json", is_flag=True, help="JSON 출력")
@@ -84,3 +84,7 @@ def han_river(query, station_code, as_json):
         return
     resp = safe_proxy_get("han-river-water-level", "/v1/han-river/water-level", params)
     emit(resp, as_json=as_json)
+
+
+cli.add_command(dust, name='dust')            # alias (old name)
+cli.add_command(han_river, name='han_river')  # alias (old name)
