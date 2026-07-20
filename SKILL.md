@@ -1,17 +1,17 @@
 ---
 name: k-skill
 display_name: K-Skill CLI
-description: 한국인을 위한 CLI 스킬 모음 95개 — 날씨, 교통, 금융, 부동산, 쇼핑, 스포츠, 생활 유틸리티를 단일 명령어로
-version: 2026.06.15.1
+description: 한국인을 위한 CLI 스킬 모음 114개 — 날씨, 교통, 금융, 부동산, 쇼핑, 스포츠, 생활 유틸리티를 단일 명령어로
+version: 2026.7.10.2
 dependencies: []
 ---
 
-Last updated: 2026-06-15
+Last updated: 2026-07-20
 ---
 
 # K-Skill CLI — 한국인을 위한 CLI 스킬 모음
 
-에이전트가 `pip install k-skill-cli` 후 즉시 사용 가능한 95개 한국 특화 CLI 스킬.
+에이전트가 `pip install k-skill-cli` 후 즉시 사용 가능한 114개 한국 특화 CLI 스킬.
 모든 명령에 `-j` (`--json`) 플래그로 구조화된 JSON 응답을 받을 수 있습니다.
 
 ## 설치
@@ -24,16 +24,16 @@ pip install k-skill-cli
 
 ```bash
 k-skill weather forecast --lat 37.5665 --lon 126.9780 -j
-k-skill transit subway "강남" -j
-k-skill finance stock "삼성전자" -j
+k-skill transit seoul-subway-arrival "강남" -j
+k-skill finance korean-stock "삼성전자" -j
 k-skill sports kbo --date 2025-06-01 -j
-k-skill life waste "강남구" -j
+k-skill life household-waste-info "강남구" -j
 k-skill market daangn-market --region "서울" -j
-k-skill search naver-news "AI" -j
+k-skill search naver-news-search "AI" -j
 k-skill setup check -j
 ```
 
-## 도메인 목록 (14개 도메인, 95개 스킬)
+## 도메인 목록 (18개 도메인, 114개 스킬)
 
 | 도메인 | 스킬 수 | 설명 |
 |--------|--------|------|
@@ -51,7 +51,7 @@ k-skill setup check -j
 | travel | 3 | 여행지, 숙소 검색 |
 | delivery | 1 | 택배 송장 조회 |
 | other | 4 | 기타 유틸리티 |
-| **합계** | **95** | |
+| **합계** | **114** | |
 
 ## JSON 응답 형식
 
@@ -109,8 +109,8 @@ Options:
   --help  Show this message and exit.
 
 Commands:
-  dust       미세먼지/초미세먼지 조회.
-  han-river  한강 수위/유량 조회.
+  fine-dust       미세먼지/초미세먼지 조회.
+  han-river-water-level  한강 수위/유량 조회.
   weather    한국 날씨 (기상청 단기예보).
 ```
 

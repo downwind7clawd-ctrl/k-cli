@@ -137,10 +137,10 @@
 
 ---
 
-## 2026-07-20 · k-skill sync (110 skills) + 14 renames
+## 2026-07-20 · k-skill sync (114 skills) + 14 renames
 
 ### Upstream
-- https://github.com/NomaDamas/k-skill (110 skills)
+- https://github.com/NomaDamas/k-skill (114 skills)
 
 ### Renamed (14)
 - weather: fine-dust → fine-dust-location

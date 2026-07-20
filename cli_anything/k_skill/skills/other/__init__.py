@@ -28,7 +28,6 @@ def iros(query, as_json, timeout):
 @click.argument('query', required=False)
 def setup(query, as_json, timeout):
     """k-skill 초기설정."""
-    from cli_anything.k_skill.output import error_response
     emit(error_response(
         "k-skill-setup", "NOT_IMPLEMENTED",
         "setup 명령은 k-skill setup check/install/proxy를 사용하세요.",
