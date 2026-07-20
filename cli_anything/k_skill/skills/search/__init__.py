@@ -34,7 +34,7 @@ def naver_news(query, display, start, sort, as_json):
       k-skill search naver-news "AI 규제" --sort date --display 5 -j
     """
     if not query or not query.strip() or len(query.strip()) < 2:
-        emit(error_response("naver-news", "INVALID_INPUT", "검색어를 입력하세요 (2글자 이상)"),
+        emit(error_response("naver-news-search", "INVALID_INPUT", "검색어를 입력하세요 (2글자 이상)"),
              as_json=as_json)
         return
     # Naver API constraint: start + display - 1 <= 1000
@@ -43,7 +43,7 @@ def naver_news(query, display, start, sort, as_json):
     if start + display - 1 > 1000:
         display = 1000 - start + 1
     params = {"q": query, "display": display, "start": start, "sort": sort}
-    resp = safe_proxy_get("naver-news", "/v1/naver-news/search", params)
+    resp = safe_proxy_get("naver-news-search", "/v1/naver-news/search", params)
     emit(resp, as_json=as_json)
 
 

@@ -35,11 +35,11 @@ def naver_shop(query, limit, sort, page, as_json, timeout):
       k-skill shopping naver-shop "커피머신" --sort price_asc --limit 5 -j
     """
     if not query or not query.strip():
-        emit(error_response("naver-shopping", "INVALID_INPUT", "검색어를 입력하세요 (2글자 이상)"),
+        emit(error_response("naver-shopping-search", "INVALID_INPUT", "검색어를 입력하세요 (2글자 이상)"),
              as_json=as_json)
         return
     params = {"q": query, "limit": min(max(limit, 1), 40), "sort": sort, "page": max(page, 1)}
-    resp = safe_proxy_get("naver-shopping", "/v1/naver-shopping/search", params, timeout=timeout)
+    resp = safe_proxy_get("naver-shopping-search", "/v1/naver-shopping/search", params, timeout=timeout)
     emit(resp, as_json=as_json)
 
 @cli.command(name='olive-young', help='올리브영 상품 검색 및 재고 확인')

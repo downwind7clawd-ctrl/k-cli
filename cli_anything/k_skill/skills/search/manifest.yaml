@@ -7,7 +7,7 @@ dependencies:
   env_keys: []
 skills:
   naver_news:
-    name: naver-news
+    name: naver-news-search
     display_name: 네이버 뉴스
     description: 네이버 뉴스 검색
   naver-blog:

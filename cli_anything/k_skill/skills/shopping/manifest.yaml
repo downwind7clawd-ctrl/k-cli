@@ -7,7 +7,7 @@ dependencies:
   env_keys: []
 skills:
   naver_shop:
-    name: naver-shopping
+    name: naver-shopping-search
     display_name: 네이버 쇼핑
     description: 네이버 쇼핑 검색
   olive-young:
