@@ -12,7 +12,7 @@ skills:
     description: 이력서 기반 채용공고 매칭
     category: recruiting
   jobkorea_talent:
-    name: jobkorea-talent
+    name: jobkorea-talent-search
     display_name: 잡코리아 인재
     description: 잡코리아 인재검색
     category: recruiting

@@ -89,16 +89,16 @@ def jobkorea_talent(keyword, work_area, career_min, career_max, limit, as_json, 
                 data = resp.json()
             except json.JSONDecodeError:
                 emit(error_response(
-                    "jobkorea-talent", "NO_JSON_API",
+                    "jobkorea-talent-search", "NO_JSON_API",
                     "잡코리아 공개 검색은 JSON API를 제공하지 않아 구조화 데이터를 받을 수 없습니다 (HTML 응답).",
                     fix="로그인 기반 잡코리아 API 키/세션이 필요합니다.",
                 ), as_json=as_json)
                 return
             emit({"status": "success", "data": data}, as_json=as_json)
     except httpx.HTTPStatusError as e:
-        emit(error_response("jobkorea-talent", "HTTP_ERROR", f"HTTP {e.response.status_code}"), as_json=as_json)
+        emit(error_response("jobkorea-talent-search", "HTTP_ERROR", f"HTTP {e.response.status_code}"), as_json=as_json)
     except Exception as e:
-        emit(error_response("jobkorea-talent", "UNKNOWN", str(e)), as_json=as_json)
+        emit(error_response("jobkorea-talent-search", "UNKNOWN", str(e)), as_json=as_json)
 
 
 # npm-based: saramin-talent-search
