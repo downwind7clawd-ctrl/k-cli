@@ -24,3 +24,12 @@ def test_subway_uses_renamed_skill_and_unchanged_path():
     assert result.exit_code == 0
     assert captured["name"] == "seoul-subway-arrival"
     assert captured["path"] == "/v1/seoul-subway/arrival"
+
+
+def test_seoul_subway_help_alias_both_registered():
+    runner = CliRunner()
+    primary = runner.invoke(transit_cli, ["seoul-subway", "--help"])
+    alias = runner.invoke(transit_cli, ["subway", "--help"])
+
+    assert primary.exit_code == 0
+    assert alias.exit_code == 0

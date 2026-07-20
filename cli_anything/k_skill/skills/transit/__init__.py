@@ -18,7 +18,7 @@ def cli():
     pass
 
 
-@cli.command()
+@cli.command(name='seoul-subway', help='서울 지하철 실시간 도착정보 조회 (seoul-subway-arrival)')
 @click.argument("station_name")
 @click.option("--json", "-j", "as_json", is_flag=True, help="JSON 출력")
 def subway(station_name, as_json):
@@ -37,6 +37,9 @@ def subway(station_name, as_json):
     params = {"stationName": station_name}
     resp = safe_proxy_get("seoul-subway-arrival", "/v1/seoul-subway/arrival", params)
     emit(resp, as_json=as_json)
+
+
+cli.add_command(subway, name='subway')
 
 @cli.command(name='subway-lost', help='서울교통공사 지하철 분실물 검색')
 @click.option('--json', '-j', 'as_json', is_flag=True, help='JSON 출력')
